@@ -32,6 +32,7 @@ app.logger.addHandler(handler)
 app.logger.setLevel(logging.INFO)
 
 from app.api.v1.users import user_blueprint
-
+from app.api.v1.goals import goal_blueprint
 # Register blueprint
 app.register_blueprint(user_blueprint)
+app.register_blueprint(goal_blueprint)

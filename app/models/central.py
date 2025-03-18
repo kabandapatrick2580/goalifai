@@ -113,6 +113,11 @@ class User(db.Model):
             current_app.logger.error(f"Error creating user:{str(e)}")
             current_app.logger.error(traceback.format_exc())
             return None
+    
+    @staticmethod
+    def get_all_users():
+        return User.query.all()
+
 class Goal(db.Model):
     __tablename__ = 'goals'
     goal_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
@@ -122,8 +127,8 @@ class Goal(db.Model):
     target_amount = db.Column(db.Numeric(12, 2), nullable=False)  # Amount user wants to achieve
     current_amount = db.Column(db.Numeric(12, 2), nullable=True, default=0)  # Amount user has saved so far
     due_date = db.Column(db.DateTime, nullable=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(datetime.timezone.utc))
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(datetime.timezone.utc), onupdate=datetime.now)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(datetime.timezone.utc))
 
     # Relationships
     user = db.relationship("User", back_populates="goals")
@@ -158,6 +163,37 @@ class Goal(db.Model):
         'updated_at': {self.updated_at}
         }
     
+    @staticmethod
+    def create_goal(user_id, title, target_amount, due_date, description=None):
+        try:
+            goal = Goal(
+                user_id=user_id,
+                title=title,
+                target_amount=target_amount,
+                due_date=due_date,
+                description=description
+            )
+            db.session.add(goal)
+            db.session.commit()
+            return goal
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error creating goal:{str(e)}")
+            current_app.logger.error(traceback.format_exc())
+            return None
+        
+    @staticmethod
+    def list_goals(user_id):
+        return Goal.query.filter_by(user_id=user_id).all()
+    
+    @staticmethod
+    def get_goal_by_id(goal_id):
+        return Goal.query.filter_by(goal_id=goal_id).first()
+    
+    @staticmethod
+    def list_all_goals():
+        return Goal.query.all()
+
     @classmethod
     def calculate_monthly_goal_savings(cls, user_id):
         """Calculates the required monthly savings for all goals of a user based on due dates."""

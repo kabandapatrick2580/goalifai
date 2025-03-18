@@ -562,3 +562,390 @@ sqlalchemy.exc.StatementError: (builtins.AttributeError) type object 'datetime.d
  - [in /home/patrick/goalifai/app/models/central.py:113]
 2025-02-24 20:27:06,835 - app - ERROR - An error occurred while creating the user - [in /home/patrick/goalifai/app/api/v1/users.py:37]
 2025-02-24 20:33:20,729 - app - INFO - User testuser@example.com created successfully - [in /home/patrick/goalifai/app/api/v1/users.py:41]
+2025-03-18 18:36:23,107 - app - INFO - User with email testuser@example.com already exists - [in /home/patrick/goalifai/app/api/v1/users.py:22]
+2025-03-18 18:39:26,565 - app - ERROR - An error occurred: type object 'User' has no attribute 'get_all_users' - [in /home/patrick/goalifai/app/api/v1/users.py:88]
+2025-03-18 18:39:26,572 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/users.py", line 66, in users_list
+    users = User.get_all_users()
+            ^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'User' has no attribute 'get_all_users'
+ - [in /home/patrick/goalifai/app/api/v1/users.py:89]
+2025-03-18 22:41:04,995 - app - INFO - User testuser@example.com created successfully - [in /home/patrick/goalifai/app/api/v1/users.py:41]
+2025-03-18 22:58:48,789 - app - ERROR - An error occurred: type object 'Goal' has no attribute 'create_goal' - [in /home/patrick/goalifai/app/api/v1/goals.py:36]
+2025-03-18 22:58:48,792 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/goals.py", line 26, in create_goal
+    goal = Goal.create_goal(
+           ^^^^^^^^^^^^^^^^
+AttributeError: type object 'Goal' has no attribute 'create_goal'. Did you mean: 'created_at'?
+ - [in /home/patrick/goalifai/app/api/v1/goals.py:37]
+2025-03-18 22:59:17,487 - app - ERROR - Error creating goal:(builtins.AttributeError) type object 'datetime.datetime' has no attribute 'timezone'
+[SQL: INSERT INTO goals (goal_id, user_id, title, description, target_amount, current_amount, due_date, created_at, updated_at) VALUES (%(goal_id)s::UUID, %(user_id)s::UUID, %(title)s, %(description)s, %(target_amount)s, %(current_amount)s, %(due_date)s, %(created_at)s, %(updated_at)s)]
+[parameters: [{'user_id': '4f010d70-0c4e-4c75-972c-e9575db16625', 'target_amount': 50000, 'due_date': datetime.datetime(2026, 1, 12, 0, 0), 'title': 'Buying a House', 'description': None}]] - [in /home/patrick/goalifai/app/models/central.py:181]
+2025-03-18 22:59:17,502 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1812, in _execute_context
+    context = constructor(
+              ^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 1422, in _init_compiled
+    self._process_execute_defaults()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 2358, in _process_execute_defaults
+    param[param_key] = arg(self)
+                       ^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 3622, in <lambda>
+    return util.wrap_callable(lambda ctx: fn(), fn)  # type: ignore
+                                          ^^^^
+  File "/home/patrick/goalifai/app/models/central.py", line 130, in <lambda>
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(datetime.timezone.utc))
+                                                                     ^^^^^^^^^^^^^^^^^
+AttributeError: type object 'datetime.datetime' has no attribute 'timezone'. Did you mean: 'astimezone'?
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/models/central.py", line 177, in create_goal
+    db.session.commit()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 516, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1818, in _execute_context
+    self._handle_dbapi_exception(
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1812, in _execute_context
+    context = constructor(
+              ^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 1422, in _init_compiled
+    self._process_execute_defaults()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 2358, in _process_execute_defaults
+    param[param_key] = arg(self)
+                       ^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 3622, in <lambda>
+    return util.wrap_callable(lambda ctx: fn(), fn)  # type: ignore
+                                          ^^^^
+  File "/home/patrick/goalifai/app/models/central.py", line 130, in <lambda>
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(datetime.timezone.utc))
+                                                                     ^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.StatementError: (builtins.AttributeError) type object 'datetime.datetime' has no attribute 'timezone'
+[SQL: INSERT INTO goals (goal_id, user_id, title, description, target_amount, current_amount, due_date, created_at, updated_at) VALUES (%(goal_id)s::UUID, %(user_id)s::UUID, %(title)s, %(description)s, %(target_amount)s, %(current_amount)s, %(due_date)s, %(created_at)s, %(updated_at)s)]
+[parameters: [{'user_id': '4f010d70-0c4e-4c75-972c-e9575db16625', 'target_amount': 50000, 'due_date': datetime.datetime(2026, 1, 12, 0, 0), 'title': 'Buying a House', 'description': None}]]
+ - [in /home/patrick/goalifai/app/models/central.py:182]
+2025-03-18 22:59:17,502 - app - ERROR - An error occurred while creating the goal - [in /home/patrick/goalifai/app/api/v1/goals.py:33]
+2025-03-18 23:05:57,415 - app - ERROR - Error creating goal:(builtins.AttributeError) 'method_descriptor' object has no attribute 'utc'
+[SQL: INSERT INTO goals (goal_id, user_id, title, description, target_amount, current_amount, due_date, created_at, updated_at) VALUES (%(goal_id)s::UUID, %(user_id)s::UUID, %(title)s, %(description)s, %(target_amount)s, %(current_amount)s, %(due_date)s, %(created_at)s, %(updated_at)s)]
+[parameters: [{'target_amount': 50000, 'due_date': datetime.datetime(2026, 1, 12, 0, 0), 'title': 'Buying a House', 'user_id': '4f010d70-0c4e-4c75-972c-e9575db16625', 'description': None}]] - [in /home/patrick/goalifai/app/models/central.py:181]
+2025-03-18 23:05:57,421 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1812, in _execute_context
+    context = constructor(
+              ^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 1422, in _init_compiled
+    self._process_execute_defaults()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 2358, in _process_execute_defaults
+    param[param_key] = arg(self)
+                       ^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 3622, in <lambda>
+    return util.wrap_callable(lambda ctx: fn(), fn)  # type: ignore
+                                          ^^^^
+  File "/home/patrick/goalifai/app/models/central.py", line 130, in <lambda>
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(datetime.astimezone.utc))
+                                                                     ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'method_descriptor' object has no attribute 'utc'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/models/central.py", line 177, in create_goal
+    db.session.commit()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 516, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1818, in _execute_context
+    self._handle_dbapi_exception(
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1812, in _execute_context
+    context = constructor(
+              ^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 1422, in _init_compiled
+    self._process_execute_defaults()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 2358, in _process_execute_defaults
+    param[param_key] = arg(self)
+                       ^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 3622, in <lambda>
+    return util.wrap_callable(lambda ctx: fn(), fn)  # type: ignore
+                                          ^^^^
+  File "/home/patrick/goalifai/app/models/central.py", line 130, in <lambda>
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(datetime.astimezone.utc))
+                                                                     ^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.StatementError: (builtins.AttributeError) 'method_descriptor' object has no attribute 'utc'
+[SQL: INSERT INTO goals (goal_id, user_id, title, description, target_amount, current_amount, due_date, created_at, updated_at) VALUES (%(goal_id)s::UUID, %(user_id)s::UUID, %(title)s, %(description)s, %(target_amount)s, %(current_amount)s, %(due_date)s, %(created_at)s, %(updated_at)s)]
+[parameters: [{'target_amount': 50000, 'due_date': datetime.datetime(2026, 1, 12, 0, 0), 'title': 'Buying a House', 'user_id': '4f010d70-0c4e-4c75-972c-e9575db16625', 'description': None}]]
+ - [in /home/patrick/goalifai/app/models/central.py:182]
+2025-03-18 23:05:57,421 - app - ERROR - An error occurred while creating the goal - [in /home/patrick/goalifai/app/api/v1/goals.py:33]
+2025-03-18 23:06:26,546 - app - ERROR - Error creating goal:(builtins.TypeError) tzinfo argument must be None or of a tzinfo subclass, not type 'method_descriptor'
+[SQL: INSERT INTO goals (goal_id, user_id, title, description, target_amount, current_amount, due_date, created_at, updated_at) VALUES (%(goal_id)s::UUID, %(user_id)s::UUID, %(title)s, %(description)s, %(target_amount)s, %(current_amount)s, %(due_date)s, %(created_at)s, %(updated_at)s)]
+[parameters: [{'user_id': '4f010d70-0c4e-4c75-972c-e9575db16625', 'title': 'Buying a House', 'target_amount': 50000, 'due_date': datetime.datetime(2026, 1, 12, 0, 0), 'description': None}]] - [in /home/patrick/goalifai/app/models/central.py:181]
+2025-03-18 23:06:26,552 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1812, in _execute_context
+    context = constructor(
+              ^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 1422, in _init_compiled
+    self._process_execute_defaults()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 2358, in _process_execute_defaults
+    param[param_key] = arg(self)
+                       ^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 3622, in <lambda>
+    return util.wrap_callable(lambda ctx: fn(), fn)  # type: ignore
+                                          ^^^^
+  File "/home/patrick/goalifai/app/models/central.py", line 130, in <lambda>
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(datetime.astimezone))
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: tzinfo argument must be None or of a tzinfo subclass, not type 'method_descriptor'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/models/central.py", line 177, in create_goal
+    db.session.commit()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 516, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1818, in _execute_context
+    self._handle_dbapi_exception(
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1812, in _execute_context
+    context = constructor(
+              ^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 1422, in _init_compiled
+    self._process_execute_defaults()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 2358, in _process_execute_defaults
+    param[param_key] = arg(self)
+                       ^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 3622, in <lambda>
+    return util.wrap_callable(lambda ctx: fn(), fn)  # type: ignore
+                                          ^^^^
+  File "/home/patrick/goalifai/app/models/central.py", line 130, in <lambda>
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(datetime.astimezone))
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.StatementError: (builtins.TypeError) tzinfo argument must be None or of a tzinfo subclass, not type 'method_descriptor'
+[SQL: INSERT INTO goals (goal_id, user_id, title, description, target_amount, current_amount, due_date, created_at, updated_at) VALUES (%(goal_id)s::UUID, %(user_id)s::UUID, %(title)s, %(description)s, %(target_amount)s, %(current_amount)s, %(due_date)s, %(created_at)s, %(updated_at)s)]
+[parameters: [{'user_id': '4f010d70-0c4e-4c75-972c-e9575db16625', 'title': 'Buying a House', 'target_amount': 50000, 'due_date': datetime.datetime(2026, 1, 12, 0, 0), 'description': None}]]
+ - [in /home/patrick/goalifai/app/models/central.py:182]
+2025-03-18 23:06:26,553 - app - ERROR - An error occurred while creating the goal - [in /home/patrick/goalifai/app/api/v1/goals.py:33]
+2025-03-18 23:07:14,810 - app - ERROR - Error creating goal:(builtins.TypeError) tzinfo argument must be None or of a tzinfo subclass, not type 'builtin_function_or_method'
+[SQL: INSERT INTO goals (goal_id, user_id, title, description, target_amount, current_amount, due_date, created_at, updated_at) VALUES (%(goal_id)s::UUID, %(user_id)s::UUID, %(title)s, %(description)s, %(target_amount)s, %(current_amount)s, %(due_date)s, %(created_at)s, %(updated_at)s)]
+[parameters: [{'user_id': '4f010d70-0c4e-4c75-972c-e9575db16625', 'due_date': datetime.datetime(2026, 1, 12, 0, 0), 'title': 'Buying a House', 'target_amount': 50000, 'description': None}]] - [in /home/patrick/goalifai/app/models/central.py:181]
+2025-03-18 23:07:14,818 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1812, in _execute_context
+    context = constructor(
+              ^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 1422, in _init_compiled
+    self._process_execute_defaults()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 2358, in _process_execute_defaults
+    param[param_key] = arg(self)
+                       ^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 3622, in <lambda>
+    return util.wrap_callable(lambda ctx: fn(), fn)  # type: ignore
+                                          ^^^^
+  File "/home/patrick/goalifai/app/models/central.py", line 130, in <lambda>
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(datetime.now))
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: tzinfo argument must be None or of a tzinfo subclass, not type 'builtin_function_or_method'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/models/central.py", line 177, in create_goal
+    db.session.commit()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 516, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1818, in _execute_context
+    self._handle_dbapi_exception(
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1812, in _execute_context
+    context = constructor(
+              ^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 1422, in _init_compiled
+    self._process_execute_defaults()
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 2358, in _process_execute_defaults
+    param[param_key] = arg(self)
+                       ^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 3622, in <lambda>
+    return util.wrap_callable(lambda ctx: fn(), fn)  # type: ignore
+                                          ^^^^
+  File "/home/patrick/goalifai/app/models/central.py", line 130, in <lambda>
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(datetime.now))
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.StatementError: (builtins.TypeError) tzinfo argument must be None or of a tzinfo subclass, not type 'builtin_function_or_method'
+[SQL: INSERT INTO goals (goal_id, user_id, title, description, target_amount, current_amount, due_date, created_at, updated_at) VALUES (%(goal_id)s::UUID, %(user_id)s::UUID, %(title)s, %(description)s, %(target_amount)s, %(current_amount)s, %(due_date)s, %(created_at)s, %(updated_at)s)]
+[parameters: [{'user_id': '4f010d70-0c4e-4c75-972c-e9575db16625', 'due_date': datetime.datetime(2026, 1, 12, 0, 0), 'title': 'Buying a House', 'target_amount': 50000, 'description': None}]]
+ - [in /home/patrick/goalifai/app/models/central.py:182]
+2025-03-18 23:07:14,818 - app - ERROR - An error occurred while creating the goal - [in /home/patrick/goalifai/app/api/v1/goals.py:33]
+2025-03-18 23:14:51,054 - app - ERROR - An error occurred: type object 'Goal' has no attribute 'get_all_goals' - [in /home/patrick/goalifai/app/api/v1/goals.py:63]
+2025-03-18 23:14:51,056 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/goals.py", line 49, in list_all_goals
+    goals = Goal.get_all_goals()
+            ^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'Goal' has no attribute 'get_all_goals'. Did you mean: 'list_all_goals'?
+ - [in /home/patrick/goalifai/app/api/v1/goals.py:64]

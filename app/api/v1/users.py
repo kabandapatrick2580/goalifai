@@ -59,3 +59,32 @@ def create_user():
         current_app.logger.error(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 
+"""List of all users"""
+@user_blueprint.route('/api/v1/users', methods=['GET'])
+def users_list():
+    try:
+        users = User.get_all_users()
+        if not users:
+            return jsonify({"error": "No users found"}), 404
+
+        users_list = []
+        for user in users:
+            users_list.append({
+                "user_id": str(user.user_id),
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "education_level": user.education_level,
+                "date_of_birth": user.date_of_birth.strftime("%Y-%m-%d"),
+                "country_of_residence": user.country_of_residence,
+                "currency": user.currency,
+                "created_at": user.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "updated_at": user.updated_at.strftime("%Y-%m-%d %H:%M:%S")
+            })
+
+        return jsonify(users_list), 200
+
+    except Exception as e:
+        current_app.logger.error(f"An error occurred: {str(e)}")
+        current_app.logger.error(traceback.format_exc())
+        return jsonify({"error": str(e)}), 500
