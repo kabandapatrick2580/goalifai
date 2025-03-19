@@ -3,6 +3,8 @@ from app.models.central import User, Goal
 from app import db
 from datetime import datetime
 import traceback
+from sqlalchemy.orm.exc import NoResultFound
+
 
 goal_blueprint = Blueprint('goal_api', __name__)
 @goal_blueprint.route('/api/v1/define_goal', methods=['POST'])
@@ -42,6 +44,34 @@ def create_goal():
     return jsonify({
         "message": "Goal created successfully",
     }), 201
+
+"""Update goal"""
+@goal_blueprint.route('/api/v1/goals/<uuid:goal_id>', methods=['PUT'])
+def update_goal(goal_id):
+    try:
+        # Ensure request contains JSON data
+        if not request.is_json:
+            return jsonify({"error": "Request must be JSON"}), 400
+        
+        data = request.get_json()
+
+        # Ensure there is data to update
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+
+        # Find and update the goal
+        updated_goal = Goal.update_goal(goal_id=goal_id, **data)
+
+        if not updated_goal:
+            return jsonify({"error": "Goal not found"}), 404
+
+        return jsonify(updated_goal.to_dict()), 200
+
+    except NoResultFound:
+        return jsonify({"error": "Goal not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
 
 @goal_blueprint.route('/api/v1/goals_list', methods=['GET'])
 def list_all_goals():

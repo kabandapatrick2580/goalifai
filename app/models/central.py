@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm.exc import NoResultFound
 import uuid
 from datetime import datetime
 from bcrypt import hashpw, gensalt, checkpw
@@ -226,6 +227,20 @@ class Goal(db.Model):
         for goal in goals:
             goals_dict.append(goal.to_dict())
         return goals_dict
+
+    @staticmethod
+    def update_goal(goal_id, **kwargs):
+        goal = Goal.query.filter_by(goal_id=goal_id).first()
+
+        if not goal:
+            raise NoResultFound("Goal not found")
+
+        for key, value in kwargs.items():
+            if hasattr(goal, key):  # Only update valid attributes
+                setattr(goal, key, value)
+
+        db.session.commit()
+        return goal
 
     @classmethod
     def calculate_monthly_goal_savings(cls, user_id):
