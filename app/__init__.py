@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
 import logging
+from flask_migrate import Migrate
 
 load_dotenv()
 
@@ -16,7 +17,8 @@ if not app.config['SQLALCHEMY_DATABASE_URI']:
 # Initialize db with the app after configuration
 db = SQLAlchemy(app)
 
-
+#initialize Flask-Migrate
+migrate = Migrate(app, db)
 
 # Other setup code if necessary
 

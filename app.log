@@ -949,3 +949,4 @@ sqlalchemy.exc.StatementError: (builtins.TypeError) tzinfo argument must be None
             ^^^^^^^^^^^^^^^^^^
 AttributeError: type object 'Goal' has no attribute 'get_all_goals'. Did you mean: 'list_all_goals'?
  - [in /home/patrick/goalifai/app/api/v1/goals.py:64]
+2025-03-19 18:02:26,690 - app - INFO - Goal Buying a plot created successfully - [in /home/patrick/goalifai/app/api/v1/goals.py:41]
