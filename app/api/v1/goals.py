@@ -46,23 +46,13 @@ def create_goal():
 @goal_blueprint.route('/api/v1/goals_list', methods=['GET'])
 def list_all_goals():
     try:
-        goals = Goal.list_all_goals()
-        goals_list = []
-        for goal in goals:
-            goals_list.append({
-                "goal_id": str(goal.goal_id),
-                "user_id": str(goal.user_id),
-                "title": goal.title,
-                "target_amount": goal.target_amount,
-                "due_date": goal.due_date.strftime("%Y-%m-%d"),
-                "created_at": goal.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-                "updated_at": goal.updated_at.strftime("%Y-%m-%d %H:%M:%S")
-            })
-        return jsonify(goals_list), 200
+        goals = Goal.get_all_goals()
+        return jsonify(goals), 200
     except Exception as e:
         current_app.logger.error(f"An error occurred: {str(e)}")
         current_app.logger.error(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
+
     
     
 

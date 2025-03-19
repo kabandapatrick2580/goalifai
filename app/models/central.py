@@ -120,15 +120,33 @@ class User(db.Model):
 
 class Goal(db.Model):
     __tablename__ = 'goals'
+
     goal_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=False)
+
+    # Goal details
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    target_amount = db.Column(db.Numeric(12, 2), nullable=False)  # Amount user wants to achieve
-    current_amount = db.Column(db.Numeric(12, 2), nullable=True, default=0)  # Amount user has saved so far
-    due_date = db.Column(db.DateTime, nullable=False)
+    category = db.Column(db.String(100), nullable=True)  # e.g., Education, Finance, Travel
+    
+    # Financial details
+    target_amount = db.Column(db.Numeric(12, 2), nullable=False)  # Total amount required
+    current_amount = db.Column(db.Numeric(12, 2), nullable=False, default=0)  # Amount saved so far
+    monthly_contribution = db.Column(db.Numeric(12, 2), nullable=False, default=0)  # User-planned savings per month
+    
+    # Priority & Deadline
+    priority = db.Column(db.Enum('High', 'Medium', 'Low', name='goal_priority'), nullable=False, default='Medium')
+    due_date = db.Column(db.DateTime, nullable=False)  # When the user wants to achieve the goal
+    expected_completion_date = db.Column(db.DateTime, nullable=True)  # Realistic completion date based on funds
+    
+    # Feasibility Tracking
+    funding_gap = db.Column(db.Numeric(12, 2), nullable=True, default=0)  # Shortfall in savings
+    status = db.Column(db.Enum('Active', 'Completed', 'On Hold', 'Adjusted', name='goal_status'), nullable=False, default='Active')
+
+    # Timestamps
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(datetime.timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
 
     # Relationships
     user = db.relationship("User", back_populates="goals")
@@ -138,31 +156,42 @@ class Goal(db.Model):
         return (self.current_amount / self.target_amount) * 100 if self.target_amount else 0
 
     def __repr__(self):
-        return f"""
-        goal_id: {self.goal_id}
-        user_id: {self.user_id}
-        title: {self.title}
-        description: {self.description}
-        target_amount: {self.target_amount}
-        current_amount: {self.current_amount}
-        due_date: {self.due_date}
-        created_at: {self.created_at}
-        updated_at: {self.updated_at}
-        """
+        return f"""<Goal(
+            goal_id={self.goal_id}, 
+            user_id={self.user_id}, 
+            title="{self.title}", 
+            description="{self.description}", 
+            category="{self.category}", 
+            priority="{self.priority}", 
+            target_amount={self.target_amount}, 
+            current_amount={self.current_amount}, 
+            monthly_contribution={self.monthly_contribution}, 
+            due_date={self.due_date}, 
+            expected_completion_date={self.expected_completion_date}, 
+            funding_gap={self.funding_gap}, 
+            status="{self.status}", 
+            created_at={self.created_at}, 
+            updated_at={self.updated_at}
+        )>"""
 
     def to_dict(self):
         return {
-        'goal_id': {self.goal_id},
-        'user_id': {self.user_id},
-        'title': {self.title},
-        'description': {self.description},
-        'target_amount': {self.target_amount},
-        'current_amount': {self.current_amount},
-        'due_date': {self.due_date},
-        'created_at': {self.created_at},
-        'updated_at': {self.updated_at}
+            'goal_id': str(self.goal_id),
+            'user_id': str(self.user_id),
+            'title': self.title,
+            'description': self.description,
+            'category': self.category,
+            'priority': self.priority,
+            'target_amount': float(self.target_amount),
+            'current_amount': float(self.current_amount),
+            'monthly_contribution': float(self.monthly_contribution),
+            'due_date': self.due_date.isoformat() if self.due_date else None,
+            'expected_completion_date': self.expected_completion_date.isoformat() if self.expected_completion_date else None,
+            'funding_gap': float(self.funding_gap) if self.funding_gap is not None else None,
+            'status': self.status,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
         }
-    
     @staticmethod
     def create_goal(user_id, title, target_amount, due_date, description=None):
         try:
@@ -191,8 +220,12 @@ class Goal(db.Model):
         return Goal.query.filter_by(goal_id=goal_id).first()
     
     @staticmethod
-    def list_all_goals():
-        return Goal.query.all()
+    def get_all_goals():
+        goals = Goal.query.all()
+        goals_dict = []
+        for goal in goals:
+            goals_dict.append(goal.to_dict())
+        return goals_dict
 
     @classmethod
     def calculate_monthly_goal_savings(cls, user_id):
