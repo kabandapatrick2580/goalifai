@@ -1,2 +1,26 @@
+# Ignore compiled Python files
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment folders
+venv/
+env/
+.local/
+*.egg-info/
+dist/
+build/
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.swp
+
+# Ignore configuration and sensitive files
+*.env
+config.json
+settings.py  # Only if this contains sensitive data
+
+
+app/models/__pycache__/central.cpython-312.pyc

@@ -46,7 +46,7 @@ def create_goal():
     }), 201
 
 """Update goal"""
-@goal_blueprint.route('/api/v1/goals/<uuid:goal_id>', methods=['PUT'])
+@goal_blueprint.route('/api/v1/goals/update/<uuid:goal_id>', methods=['PUT'])
 def update_goal(goal_id):
     try:
         # Ensure request contains JSON data
@@ -71,6 +71,29 @@ def update_goal(goal_id):
         return jsonify({"error": "Goal not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+@goal_blueprint.route('/api/v1/goals/list/<uuid:goal_id>', methods=['GET'])
+def get_goal(goal_id):
+    try:
+        goals = Goal.get_goal_by_id(goal_id)
+        user_goals = []
+        if goals is None:
+            return jsonify({"error": "No goal found"}), 404
+        for goal in goals:
+            user_goals.append(goal.to_dict())
+        return jsonify(user_goals), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+@goal_blueprint.route('/api/v1/goals/delete/<uuid:goal_id>', methods=['DELETE'])
+def delete_goal(goal_id):
+    try:
+        response = Goal.delete_goal(goal_id)
+        return jsonify(response), 200
+    except NoResultFound:
+        return jsonify({"error": "Goal not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400    
 
 
 @goal_blueprint.route('/api/v1/goals_list', methods=['GET'])

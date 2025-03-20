@@ -241,7 +241,20 @@ class Goal(db.Model):
 
         db.session.commit()
         return goal
+    # List goals for a user
+    @staticmethod
+    def get_goal_by_id(user_id):
+        return Goal.query.filter_by(user_id=user_id).all()
 
+    # delete a goal
+    @staticmethod
+    def delete_goal(goal_id):
+        goal = Goal.query.filter_by(goal_id=goal_id).first()
+        if not goal:
+            raise NoResultFound("Goal not found")
+        db.session.delete(goal)
+        db.session.commit()
+        return {"message": "Goal deleted successfully"}
     @classmethod
     def calculate_monthly_goal_savings(cls, user_id):
         """Calculates the required monthly savings for all goals of a user based on due dates."""
