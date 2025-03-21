@@ -1057,3 +1057,4 @@ sqlalchemy.exc.ProgrammingError: (psycopg2.ProgrammingError) can't adapt type 'b
 [parameters: {'title': 'Buying a Luxury House', 'target_amount': 80000.0, 'priority': 'High', 'updated_at': <built-in method now of type object at 0xa4fd20>, 'goals_goal_id': UUID('fc2bade8-0a8e-478e-b7cc-8529c0020c13')}]
 (Background on this error at: https://sqlalche.me/e/20/f405)
  - [in /home/patrick/goalifai/app/api/v1/goals.py:63]
+2025-03-21 08:18:04,152 - app - INFO - Goal Buying a plot created successfully - [in /home/patrick/goalifai/app/api/v1/goals.py:43]
