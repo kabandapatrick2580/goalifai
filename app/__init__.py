@@ -35,6 +35,8 @@ app.logger.setLevel(logging.INFO)
 
 from app.api.v1.users import user_blueprint
 from app.api.v1.goals import goal_blueprint
+from app.api.v1.fin_profile import fin_profile
 # Register blueprint
 app.register_blueprint(user_blueprint)
 app.register_blueprint(goal_blueprint)
+app.register_blueprint(fin_profile)

@@ -11,3 +11,12 @@ migrate = Migrate(app, db)
 export FLASK_APP=app
 flask db init
 ```
+
+4. Run the following command to create the migration script
+```
+flask db migrate
+```
+
+next:
+implementation of financial records
+implementation of categories

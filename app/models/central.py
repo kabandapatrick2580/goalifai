@@ -35,6 +35,7 @@ class User(db.Model):
 
     # Relationships
     goals = db.relationship('Goal', back_populates='user', cascade='all, delete')
+    financial_profile = db.relationship('UserFinancialProfile', back_populates='user', uselist=False, cascade='all, delete')
 
     def __repr__(self):
         return f"""
@@ -317,7 +318,6 @@ class UserFinancialProfile(db.Model):
 
     # Relationships
     user = db.relationship("User", back_populates="financial_profile")
-
     def __repr__(self):
         return f"""<UserFinancialProfile(
             id={self.id}, 
@@ -340,7 +340,7 @@ class UserFinancialProfile(db.Model):
             'updated_at': self.updated_at.isoformat()
         }
     
-    @staticmethod
+    @classmethod
     def create_financial_profile(cls, user_id, expected_monthly_income, expected_monthly_expenses):
         """Create a user's financial profile."""
         try:
