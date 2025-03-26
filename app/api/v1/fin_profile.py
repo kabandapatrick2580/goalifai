@@ -14,7 +14,9 @@ def create_profile():
     user_id = data.get('user_id')
     expected_monthly_income = data.get('expected_monthly_income')
     expected_monthly_expenses = data.get('expected_monthly_expenses')
-
+    existing_profile = UserFinancialProfile.get_financial_profile_by_user_id(user_id)
+    if existing_profile:
+        return jsonify({"error": "Profile already exists for this user"}), 400
     missing_fields = [field for field, value in {
         "user_id": user_id,
         "expected_monthly_income": expected_monthly_income,

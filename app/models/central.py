@@ -289,19 +289,8 @@ class Goal(db.Model):
     
 class UserFinancialProfile(db.Model):
     """
-    Represents a user's financial profile, including their expected monthly income, 
-    expenses, and savings. This model is used as a base for goal projections and
-    financial planning if the user not yet entered their actual financial data. 
-    associated with a specific user.
-    Attributes:
-        id (UUID): The unique identifier for the financial profile.
-        user_id (UUID): The foreign key referencing the associated user.
-        expected_monthly_income (Numeric): The user's expected monthly income.
-        expected_monthly_expenses (Numeric): The user's expected monthly expenses.
-        expected_monthly_savings (Numeric): The user's expected monthly savings, 
-            calculated as income minus expenses.
-        created_at (DateTime): The timestamp when the financial profile was created.
-        updated_at (DateTime): The timestamp when the financial profile was last updated.
+    Represents a user's financial profile, including expected and actual financial data.
+    If actual values are missing, expected values will be used for goal projections.
     """
     
     __tablename__ = 'user_financial_profiles'
@@ -309,36 +298,81 @@ class UserFinancialProfile(db.Model):
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=False)
     
+    # Expected financial values (User's planned budget)
     expected_monthly_income = db.Column(db.Numeric(12, 2), nullable=False, default=0)
     expected_monthly_expenses = db.Column(db.Numeric(12, 2), nullable=False, default=0)
-    expected_monthly_savings = db.Column(db.Numeric(12, 2), nullable=False, default=0)  # income - expenses
-    
+
+    # Actual financial values (Recorded real data)
+    actual_monthly_income = db.Column(db.Numeric(12, 2), nullable=True)  # Nullable, as user might not enter yet
+    actual_monthly_expenses = db.Column(db.Numeric(12, 2), nullable=True)
+
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
-    # Relationships
     user = db.relationship("User", back_populates="financial_profile")
+    
+    @property
+    def monthly_income(self):
+        """Return actual income if available, otherwise fallback to expected."""
+        return self.actual_monthly_income if self.actual_monthly_income is not None else self.expected_monthly_income
+
+    @property
+    def monthly_expenses(self):
+        """Return actual expenses if available, otherwise fallback to expected."""
+        return self.actual_monthly_expenses if self.actual_monthly_expenses is not None else self.expected_monthly_expenses
+
+    @property
+    def monthly_savings(self):
+        """Calculate savings dynamically as income minus expenses."""
+        return self.monthly_income - self.monthly_expenses
+
+    def to_dict(self):
+        """Convert financial profile to dictionary format."""
+        return {
+            'id': str(self.id),
+            'user_id': str(self.user_id),
+            'expected_monthly_income': float(self.expected_monthly_income),
+            'expected_monthly_expenses': float(self.expected_monthly_expenses),
+            'actual_monthly_income': float(self.actual_monthly_income) if self.actual_monthly_income is not None else None,
+            'actual_monthly_expenses': float(self.actual_monthly_expenses) if self.actual_monthly_expenses is not None else None,
+            'monthly_income': float(self.monthly_income),  # Fallback applied here
+            'monthly_expenses': float(self.monthly_expenses),  # Fallback applied here
+            'monthly_savings': float(self.monthly_savings),  # Auto-calculated
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
+        }
+
     def __repr__(self):
         return f"""<UserFinancialProfile(
             id={self.id}, 
             user_id={self.user_id}, 
             expected_monthly_income={self.expected_monthly_income}, 
             expected_monthly_expenses={self.expected_monthly_expenses}, 
-            expected_monthly_savings={self.expected_monthly_savings}, 
+            actual_monthly_income={self.actual_monthly_income}, 
+            actual_monthly_expenses={self.actual_monthly_expenses}, 
             created_at={self.created_at}, 
             updated_at={self.updated_at}
         )>"""
     
-    def to_dict(self):
-        return {
-            'id': str(self.id),
-            'user_id': str(self.user_id),
-            'expected_monthly_income': float(self.expected_monthly_income),
-            'expected_monthly_expenses': float(self.expected_monthly_expenses),
-            'expected_monthly_savings': float(self.expected_monthly_savings),
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
-        }
+    @staticmethod
+    def update_financial_profile(profile_id, **kwargs):
+        """
+        Update the user's financial profile while maintaining fallback logic.
+        Only valid attributes will be updated.
+        """
+        profile = UserFinancialProfile.query.filter_by(id=profile_id).first()
+
+        if not profile:
+            raise NoResultFound("Financial profile not found")
+
+        # Update attributes dynamically
+        allowed_fields = {'expected_monthly_income', 'expected_monthly_expenses', 'actual_monthly_income', 'actual_monthly_expenses'}
+        for key, value in kwargs.items():
+            if key in allowed_fields and value is not None:
+                setattr(profile, key, value)
+
+        db.session.commit()
+        return profile
     
     @classmethod
     def create_financial_profile(cls, user_id, expected_monthly_income, expected_monthly_expenses):
@@ -363,51 +397,10 @@ class UserFinancialProfile(db.Model):
     def get_financial_profile_by_id(cls, profile_id):
         return cls.query.filter_by(id=profile_id).first()
     
-    @staticmethod
+    @classmethod
     def get_financial_profile_by_user_id(cls, user_id):
         return cls.query.filter_by(user_id=user_id).first()
     
-    @staticmethod
-    def update_financial_profile(profile_id, **kwargs):
-        """
-        Update a user's financial profile with provided fields.
-        Automatically recalculates expected_monthly_savings if 
-        income or expenses are updated.
-
-        Args:
-            profile_id (UUID): The ID of the financial profile to update.
-            kwargs (dict): Dictionary of fields to update.
-
-        Returns:
-            UserFinancialProfile: Updated financial profile object.
-
-        Raises:
-            NoResultFound: If the financial profile does not exist.
-            ValueError: If an invalid field is provided.
-        """
-        profile = UserFinancialProfile.query.filter_by(id=profile_id).first()
-
-        if not profile:
-            raise NoResultFound("Financial profile not found")
-
-        valid_fields = {column.name for column in UserFinancialProfile.__table__.columns}  # Get valid column names
-        invalid_fields = [key for key in kwargs if key not in valid_fields]
-
-        if invalid_fields:
-            raise ValueError(f"Invalid fields provided: {', '.join(invalid_fields)}")
-
-        # Update the valid fields dynamically
-        for key, value in kwargs.items():
-            setattr(profile, key, value)
-
-        # Ensure expected_monthly_savings is always updated if income or expenses change
-        if "expected_monthly_income" in kwargs or "expected_monthly_expenses" in kwargs:
-            profile.expected_monthly_savings = profile.expected_monthly_income - profile.expected_monthly_expenses
-
-        # Commit changes to the database
-        db.session.commit()
-        return profile
-
 
 
 """

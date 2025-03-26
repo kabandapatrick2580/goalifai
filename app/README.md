@@ -19,4 +19,5 @@ flask db migrate
 
 next:
 implementation of financial records
+    1. User profile has to be one per user
 implementation of categories
