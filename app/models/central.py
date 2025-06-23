@@ -36,6 +36,7 @@ class User(db.Model):
     # Relationships
     goals = db.relationship('Goal', back_populates='user', cascade='all, delete')
     financial_profile = db.relationship('UserFinancialProfile', back_populates='user', uselist=False, cascade='all, delete')
+    categories = db.relationship('Categories', back_populates='user', cascade='all, delete')
 
     def __repr__(self):
         return f"""
@@ -402,94 +403,188 @@ class UserFinancialProfile(db.Model):
         return cls.query.filter_by(user_id=user_id).first()
     
 
-
-"""
-class Transaction(db.Model):
-    __tablename__ = 'transactions'
-    transaction_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=False)
-    amount = db.Column(db.Numeric, nullable=False)
-    type = db.Column(db.String(10), nullable=False)  # 'income' or 'expense'
-    category_id = db.Column(UUID(as_uuid=True), db.ForeignKey('categories.category_id'))
-    payment_method = db.Column(db.String(50))
-    transaction_date = db.Column(db.DateTime, default=lambda: datetime.now(datetime.timezone.utc))
-    description = db.Column(db.Text)
-    is_recurring = db.Column(db.Boolean, default=False)
-    goal_id = db.Column(UUID(as_uuid=True), db.ForeignKey('goals.goal_id'), nullable=True)  # Link to a goal (optional)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(datetime.timezone.utc))
-
-    # Relationships
-    user = db.relationship("User", back_populates="transactions")
-    category = db.relationship("Category", back_populates="transactions")
-    goal = db.relationship("Goal", back_populates="transactions", cascade="all, delete")
-
+class CategoriesType(db.Model):
+    __tablename__ = "categories_type"
+    type_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False, unique=True)  # e.g., 'Income', 'Expense'
+    description = db.Column(db.String(255), nullable=True)
+    def __repr__(self):
+        return f"<CategoriesType(type_id={self.type_id}, name='{self.name}', description='{self.description}')>"
     
     def to_dict(self):
         return {
-        'transaction_id': {self.transaction_id},
-        'user_id': {self.user_id},
-        'amount': {self.amount},
-        'type': {self.type},
-        'category_id': {self.category_id},
-        'payment_method': {self.payment_method},
-        'transaction_date': {self.transaction_date},
-        'description': {self.description},
-        'goal_id': {self.goal_id} 
+            "id": self.type_id,
+            "name": self.name,
+            "description": self.description,
         }
+    @staticmethod
+    def get_all_category_types():
+        """Get all category types."""
+        return CategoriesType.query.all()
+    
+    @staticmethod
+    def create_category_type(name, description=None):
+        """Create a new category type."""
+        try:
+            new_type = CategoriesType(name=name, description=description)
+            db.session.add(new_type)
+            db.session.commit()
+            return new_type
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error creating category type: {str(e)}")
+            raise Exception(f"Error creating category type: {str(e)}")
 
-class TransactionProjection(db.Model):
-    __tablename__ = 'transaction_projections'
+    @staticmethod
+    def update_category_type(type_id, **kwargs):
+        """Update an existing category type."""
+        category_type = CategoriesType.query.filter_by(type_id=type_id).first()
+        
+        if not category_type:
+            raise NoResultFound("Category type not found")
+        
+        for key, value in kwargs.items():
+            if hasattr(category_type, key):
+                setattr(category_type, key, value)
+        db.session.commit()
+        return {f"'message':{category_type} updated successfully"}
+    
+    @staticmethod
+    def delete_category_type(type_id):
+        """Delete a category type by type_id."""
+        category_type = CategoriesType.query.filter_by(type_id=type_id).first()
+        if not category_type:
+            raise NoResultFound("Category type not found")
+        db.session.delete(category_type)
+        db.session.commit()
+        return {"message": "Category type deleted successfully"}
 
-    projection_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=False)
-    category_id = db.Column(UUID(as_uuid=True), db.ForeignKey('categories.category_id'), nullable=True)
-    goal_id = db.Column(UUID(as_uuid=True), db.ForeignKey('goals.goal_id'), nullable=True)  # Optional link to a goal
-    amount = db.Column(db.Numeric, nullable=False)
-    type = db.Column(db.String(10), nullable=False)  # 'income' or 'expense'
-    projection_date = db.Column(db.DateTime, nullable=False)  # When is this projection happening
-    description = db.Column(db.Text)
-    is_recurring = db.Column(db.Boolean, default=False)  # Whether this projection is recurring
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(datetime.timezone.utc))
+    @staticmethod
+    def get_category_type_by_id(type_id):
+        """Get a category type by its ID."""
+        return CategoriesType.query.filter_by(type_id=type_id).first()
+    
 
-    # Relationships
-    user = db.relationship("User", back_populates="transaction_projections")
-    category = db.relationship("Category", back_populates="transaction_projections")
-    goal = db.relationship("Goal", back_populates="transaction_projections", cascade="all, delete")
-
-    def to_dict(self):
-        return {
-            'projection_id': str(self.projection_id),
-            'user_id': str(self.user_id),
-            'category_id': str(self.category_id),
-            'goal_id': str(self.goal_id) if self.goal_id else None,
-            'amount': self.amount,
-            'type': self.type,
-            'projection_date': self.projection_date,
-            'description': self.description,
-            'is_recurring': self.is_recurring
-        }
-"""
-
-"""
-class Category(db.Model):
-    __tablename__ = 'categories'
+class Categories(db.Model):
+    """Represents a transaction category for a user, which can be either an income or expense category.
+        Example categories: 'Salary', 'Groceries', 'Utilities', etc.
+        Each category is associated with a user and has a type (Income or Expense).
+    """
+    __tablename__ = "transaction_categories"
     category_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    name = db.Column(db.String(255), unique=True, nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    is_income = db.Column(db.Boolean, nullable=False, default=False)  # True for income, False for expenses
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(datetime.timezone.utc))
-
-    transactions = db.relationship("Transaction", back_populates="category")
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("users.user_id"), nullable=True)  
+    name = db.Column(db.String(100), nullable=False)
+    category_type = db.Column(db.ForeignKey("categories_type.type_id"), nullable=False)  # Foreign key to CategoriesType
+    description = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # Relationship (User can have multiple categories)
+    user = db.relationship("User", back_populates="categories")
+    type = db.relationship("CategoriesType", backref="categories", lazy=True)  #
 
     def __repr__(self):
-        return f"Category(name={self.name}, is_income={self.is_income})"
-    
+        return f"<Category(name={self.name}, type={self.type}, user_id={self.user_id})>"
+
     def to_dict(self):
         return {
-            'category_id': {self.category_id},
-            'name': {self.name},
-            'description': {self.description},
-            'is_income': {self.is_income},
-            'created_at': {self.created_at}
+            "id": self.category_id,
+            "user_id": str(self.user_id) if self.user_id else None,
+            "name": self.name,
+            "type": self.category_type,
+            "description": self.description,
+            "created_at": self.created_at.isoformat(),
         }
-"""
+    
+    @staticmethod
+    def create_category(**kwargs):
+        """Create a new category with dynamic arguments passed as kwargs."""
+        try:
+            name = kwargs.get("name")
+            category_type = kwargs.get("category_type")
+            description = kwargs.get("description", None)
+            user_id = kwargs.get("user_id", None)
+            new_category = Categories(
+                name=name,
+                category_type=category_type,
+                description=description,
+                user_id=user_id
+            )
+
+            db.session.add(new_category)
+            db.session.commit()
+            return new_category
+        except Exception as e:
+           db.session.rollback()
+           raise Exception(f"Error creating category: {str(e)}")
+        
+    @staticmethod
+    def get_category_by_id(category_id):
+        """get category by category_id"""
+        return Categories.query.filter_by(category_id=category_id).first()
+    
+    @staticmethod
+    def get_category_by_name(name):
+        """get category by name"""
+        return Categories.query.filter_by(name=name).first()
+    
+    @staticmethod
+    def get_all_categories():
+        """Get all categories"""
+        return Categories.query.all()
+    
+    @staticmethod
+    def update_category(category_id, **kwargs):
+        """Update a category with dynamic arguments passed as kwargs."""
+        category = Categories.query.filter_by(category_id=category_id).first()
+        
+        allowed_types = {"Income", "Expense"}
+
+        
+        if not category:
+            raise NoResultFound("Category not found")
+        
+
+        for key, value in kwargs.items():
+            if key == "category_type" and value not in allowed_types:
+                raise ValueError(f"Invalid category type: {value}. Must be one of {allowed_types}")
+            
+            if isinstance(value, str):  # Remove leading/trailing whitespace for string inputs
+                value = value.strip()
+
+            if hasattr(category, key):  # Only update valid attributes
+                setattr(category, key, value)
+        db.session.commit()
+        return category
+    
+    @staticmethod
+    def delete_category(category_id):
+        """Delete a category by category_id."""
+        category = Categories.query.filter_by(category_id=category_id).first()
+        if not category:
+            raise NoResultFound("Category not found")
+        db.session.delete(category)
+        db.session.commit()
+        return {"message": "Category deleted successfully"}
+    
+    @staticmethod
+    def batch_add_categories(categories_data):
+        """Batch insert categories into the database."""
+        try:
+            for category_data in categories_data:
+                # filter out existing categories
+                existing_category = Categories.get_category_by_name(category_data['name'])
+                if existing_category:
+                    continue
+                # if not Income or expense skip
+                if category_data['type'] not in ['Income', 'Expense']:
+                    continue
+                categories_data = Categories(
+                    name=category_data['name'],
+                    category_type=category_data['type'],
+                    description=category_data.get('description', '')
+                )
+                db.session.add(categories_data)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise Exception(f"Error adding categories: {str(e)}")
+        
