@@ -1,3 +1,4 @@
+from psycopg2 import IntegrityError
 from app import db
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm.exc import NoResultFound
@@ -137,7 +138,7 @@ class Goal(db.Model):
     monthly_contribution = db.Column(db.Numeric(12, 2), nullable=False, default=0)  # User-planned savings per month
     
     # Priority & Deadline
-    priority = db.Column(db.Enum('High', 'Medium', 'Low', name='goal_priority'), nullable=False, default='Medium')
+    priority = db.Column(db.Enum('High', 'Medium', 'Low', name='priority'), nullable=False, default='Medium')
     due_date = db.Column(db.DateTime, nullable=False)  # When the user wants to achieve the goal
     expected_completion_date = db.Column(db.DateTime, nullable=True)  # Realistic completion date based on funds
     
@@ -437,17 +438,57 @@ class CategoriesType(db.Model):
 
     @staticmethod
     def update_category_type(type_id, **kwargs):
-        """Update an existing category type."""
+        """Update an existing category type.
+
+        Args:
+            type_id (int): The ID of the category type to update.
+            **kwargs: Key-value pairs of fields to update (e.g., name).
+
+        Returns:
+            dict: Success message with the updated category type.
+
+        Raises:
+            NoResultFound: If the category type with the given type_id is not found.
+            ValueError: If the input validation fails (e.g., duplicate name).
+            IntegrityError: If a database integrity constraint is violated.
+        """
         category_type = CategoriesType.query.filter_by(type_id=type_id).first()
         
         if not category_type:
             raise NoResultFound("Category type not found")
-        
-        for key, value in kwargs.items():
-            if hasattr(category_type, key):
-                setattr(category_type, key, value)
-        db.session.commit()
-        return {f"'message':{category_type} updated successfully"}
+
+        # Validate inputs
+        if "name" in kwargs:
+            new_name = kwargs["name"].strip() if isinstance(kwargs["name"], str) else kwargs["name"]
+            if not new_name:
+                raise ValueError("Name cannot be empty")
+            if len(new_name) > 100:  # Adjust based on schema
+                raise ValueError("Name cannot exceed 100 characters")
+            
+            # Check for duplicate name (excluding the current record)
+            existing_category = CategoriesType.query.filter(
+                CategoriesType.name == new_name,
+                CategoriesType.type_id != type_id
+            ).first()
+            if existing_category:
+                raise ValueError(f"Category type with name '{new_name}' already exists")
+
+        try:
+            for key, value in kwargs.items():
+                if hasattr(category_type, key):
+                    if isinstance(value, str):
+                        value = value.strip()  # Remove unnecessary whitespace
+                    setattr(category_type, key, value)
+            db.session.commit()
+            return {"message": f"Category type '{category_type.name}' updated successfully"}
+        except IntegrityError as e:
+            db.session.rollback()
+            current_app.logger.error(f"Database integrity error updating category type {type_id}: {str(e)}")
+            raise ValueError("Update failed due to duplicate name or other constraint violation")
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Unexpected error updating category type {type_id}: {str(e)}")
+            raise
     
     @staticmethod
     def delete_category_type(type_id):

@@ -3,3 +3,17 @@
 2025-06-23 12:05:57,532 - app - ERROR - Error creating category type: 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'. - [in /home/patrick/goalifai/app/api/v1/category_types.py:33]
 2025-06-23 12:06:32,965 - app - ERROR - Error fetching category types: type object 'CategoriesType' has no attribute 'get_all_category_types' - [in /home/patrick/goalifai/app/api/v1/category_types.py:14]
 2025-06-23 12:07:06,146 - app - ERROR - Error fetching category types: type object 'CategoriesType' has no attribute 'get_all_category_types' - [in /home/patrick/goalifai/app/api/v1/category_types.py:14]
+2025-06-23 12:09:46,314 - app - INFO - Category type Expense created successfully - [in /home/patrick/goalifai/app/api/v1/category_types.py:27]
+2025-06-23 13:06:28,084 - app - ERROR - Error updating category type: 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'. - [in /home/patrick/goalifai/app/api/v1/category_types.py:52]
+2025-06-23 13:06:39,620 - app - ERROR - Error updating category type: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "categories_type_name_key"
+DETAIL:  Key (name)=(Income) already exists.
+
+[SQL: UPDATE categories_type SET name=%(name)s WHERE categories_type.type_id = %(categories_type_type_id)s::UUID]
+[parameters: {'name': 'Income', 'categories_type_type_id': UUID('5330c279-9760-4db2-901b-c1e0cbd00c95')}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj) - [in /home/patrick/goalifai/app/api/v1/category_types.py:52]
+2025-06-23 13:15:11,223 - app - ERROR - Error updating category type: Category type with name 'Income' already exists - [in /home/patrick/goalifai/app/api/v1/category_types.py:59]
+2025-06-23 13:18:55,089 - app - ERROR - Error updating category type: 'name' - [in /home/patrick/goalifai/app/api/v1/category_types.py:61]
+2025-06-23 13:23:23,083 - app - INFO - Category type 5330c279-9760-4db2-901b-c1e0cbd00c95 updated successfully - [in /home/patrick/goalifai/app/api/v1/category_types.py:53]
+2025-06-23 13:23:23,084 - app - ERROR - Error updating category type: 'dict' object has no attribute 'to_dict' - [in /home/patrick/goalifai/app/api/v1/category_types.py:59]
+2025-06-23 13:43:25,140 - app - INFO - Category type 5330c279-9760-4db2-901b-c1e0cbd00c95 updated successfully - [in /home/patrick/goalifai/app/api/v1/category_types.py:57]
+2025-06-23 13:43:57,116 - app - WARNING - Validation error updating category type 5330c279-9760-4db2-901b-c1e0cbd00c95: Category type with name 'Income' already exists - [in /home/patrick/goalifai/app/api/v1/category_types.py:66]

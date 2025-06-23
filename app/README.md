@@ -15,6 +15,9 @@ flask db init
 4. Run the following command to create the migration script
 ```
 flask db migrate
+# undoing the last migration
+flask db migrate --rev-id <revision_id> # to undo the last migration where <revision_id> is the id of the last migration
+
 ```
 
 next:
