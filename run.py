@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from app import app, db
-from app.models.central import User, Goal
+from app.models.central import Goal
+from app.models.users_model import User, UserFinancialProfile
 # Create all tables if they don't exist
 with app.app_context():
     db.create_all()

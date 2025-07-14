@@ -19,7 +19,10 @@ def create_category():
                 return jsonify({"error": f"'{field}' is required"}), 400
             
         # check if category already exists
-        existing_category = Categories.get_category_by_name(data['name'])
+        # Check if category already exists (case-insensitive)
+        existing_category = Categories.query.filter(
+            db.func.lower(Categories.name) == data['name'].lower()
+        ).first()
         if existing_category:
             message = f"Category {data['name']} already exists"
             current_app.logger.info(f"Category {data['name']} already exists")
