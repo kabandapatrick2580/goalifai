@@ -32,5 +32,80 @@ def create_degree():
     except Exception as e:
         current_app.logger.error(f"An error occurred: {str(e)}")
         return jsonify({"error": str(e)}), 500
+    
+@degree_blue_print.route('/api/v1/degrees', methods=['GET'])
+def get_degrees():
+    try:
+        degrees = Degree.get_all_degrees()
+        if not degrees:
+            return jsonify({"message": "No degrees found"}), 404
+        
+        return jsonify({
+            "degrees": [degree.to_dict() for degree in degrees]
+        }), 200
+    except Exception as e:
+        current_app.logger.error(f"An error occurred: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
+@degree_blue_print.route('/api/v1/degrees/<uuid:degree_id>', methods=['PUT'])
+def update_degree(degree_id):
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+        
+        updated_degree = Degree.update_degree(degree_id=degree_id, **data)
+        if not updated_degree:
+            return jsonify({"error": "Degree not found"}), 404
+        
+        return jsonify(updated_degree.to_dict()), 200
+    except Exception as e:
+        current_app.logger.error(f"An error occurred: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@degree_blue_print.route('/api/v1/degrees/<uuid:degree_id>', methods=['DELETE'])
+def delete_degree(degree_id):
+    try:
+        degree = Degree.get_degree_by_id(degree_id)
+        if not degree:
+            return jsonify({"error": "Degree not found"}), 404
+        
+        Degree.delete_degree(degree_id)
+        current_app.logger.info(f"Degree {degree.name} deleted successfully")
+        return jsonify({"message": f"Degree {degree.name} deleted successfully"}), 200
+    except Exception as e:
+        current_app.logger.error(f"An error occurred: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@degree_blue_print.route('/api/v1/degrees/<uuid:degree_id>', methods=['GET'])
+def get_degree(degree_id):
+    try:
+        degree = Degree.get_degree_by_id(degree_id)
+        if not degree:
+            return jsonify({"error": "Degree not found"}), 404
+        
+        return jsonify(degree.to_dict()), 200
+    except Exception as e:
+        current_app.logger.error(f"An error occurred: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@degree_blue_print.route('/api/v1/degrees/search', methods=['GET'])
+def search_degrees():
+    try:
+        query = request.args.get('query', '').strip().lower()
+        if not query:
+            return jsonify({"error": "Query parameter is required"}), 400
+        
+        degrees = Degree.search_degrees(query)
+        if not degrees:
+            return jsonify({"message": "No degrees found"}), 404
+        
+        return jsonify({
+            "degrees": [degree.to_dict() for degree in degrees]
+        }), 200
+    except Exception as e:
+        current_app.logger.error(f"An error occurred: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 
         
