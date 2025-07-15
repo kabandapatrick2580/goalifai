@@ -38,10 +38,11 @@ from app.api.v1.goals import goal_blueprint
 from app.api.v1.fin_profile import fin_profile
 from app.api.v1.categories import categories_blueprint
 from app.api.v1.category_types import cat_types_blueprint
-
+from app.api.v1.degree import degree_blue_print
 # Register blueprint
 app.register_blueprint(user_blueprint)
 app.register_blueprint(goal_blueprint)
 app.register_blueprint(fin_profile)
 app.register_blueprint(categories_blueprint)
 app.register_blueprint(cat_types_blueprint)
+app.register_blueprint(degree_blue_print)

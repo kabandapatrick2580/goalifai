@@ -131,3 +131,4 @@ class FinancialRecord(db.Model):
         db.session.delete(record)
         db.session.commit()
         return True
+

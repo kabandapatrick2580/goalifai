@@ -23,7 +23,6 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=False)
-    education_level = db.Column(db.String(255), nullable=True)  # e.g. 'Bachelor', 'Master', etc.
     date_of_birth = db.Column(Datetime, nullable=False)  # Store date of birth
     country_of_residence = db.Column(db.String(255), nullable=False)
     currency = db.Column(db.String(3), default="USD")  # Default currency is USD
@@ -37,6 +36,7 @@ class User(db.Model):
     goals = db.relationship('Goal', back_populates='user', cascade='all, delete')
     financial_profile = db.relationship('UserFinancialProfile', back_populates='user', uselist=False, cascade='all, delete')
     categories = db.relationship('Categories', back_populates='user', cascade='all, delete')
+    education = db.relationship('Education', back_populates='user', cascade='all, delete')
 
     def __repr__(self):
         return f"""
@@ -44,7 +44,6 @@ class User(db.Model):
         email: {self.email}
         first_name: {self.first_name}
         last_name: {self.last_name}
-        education_level: {self.education_level}
         date_of_birth: {self.date_of_birth}
         country_of_residence: {self.country_of_residence}
         currency: {self.currency}
@@ -245,6 +244,9 @@ class Degree(db.Model):
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
+    # Relationships
+    education = db.relationship('Education', back_populates='degree', cascade='all, delete')
+
     def __repr__(self):
         return f"<Degree(degree_id={self.degree_id}, name={self.name})>"
     
@@ -283,6 +285,11 @@ class Degree(db.Model):
     def get_all_degrees():
         """Get all degrees."""
         return Degree.query.all()
+
+    @staticmethod
+    def get_degree_by_name(name):
+        """Get a degree by its name."""
+        return Degree.query.filter_by(name=name.strip().lower()).first()
 
     @staticmethod
     def update_degree(degree_id, name=None, description=None):
@@ -325,8 +332,7 @@ class Education(db.Model):
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     user = db.relationship('User', back_populates='education', cascade='all, delete')
-    degree = db.relationship('Degree', backref='education', lazy=True)
-
+    degree = db.relationship('Degree', back_populates='education', cascade='all, delete')
     def __repr__(self):
         return f"""
         education_id: {self.education_id}
