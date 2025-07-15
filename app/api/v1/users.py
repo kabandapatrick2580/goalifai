@@ -28,7 +28,6 @@ def create_user():
             password=data['password'],
             first_name=data['first_name'],
             last_name=data['last_name'],
-            education_level=data['education_level'],
             date_of_birth=data['date_of_birth'],
             country_of_residence=data['country_of_residence'],
             currency=data['currency']
@@ -46,7 +45,6 @@ def create_user():
             "email": user.email,
             "first_name": user.first_name,
             "last_name": user.last_name,
-            "education_level": user.education_level,
             "date_of_birth": user.date_of_birth.strftime("%Y-%m-%d"),
             "country_of_residence": user.country_of_residence,
             "currency": user.currency,
@@ -74,7 +72,6 @@ def users_list():
                 "email": user.email,
                 "first_name": user.first_name,
                 "last_name": user.last_name,
-                "education_level": user.education_level,
                 "date_of_birth": user.date_of_birth.strftime("%Y-%m-%d"),
                 "country_of_residence": user.country_of_residence,
                 "currency": user.currency,
@@ -82,7 +79,15 @@ def users_list():
                 "updated_at": user.updated_at.strftime("%Y-%m-%d %H:%M:%S")
             })
 
-        return jsonify(users_list), 200
+        return jsonify(
+            {
+                "status": "success",
+                "data": {
+                    "users": users_list
+                },
+                "message": "Users retrieved successfully"
+            }
+        ), 200
 
     except Exception as e:
         current_app.logger.error(f"An error occurred: {str(e)}")

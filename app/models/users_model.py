@@ -36,7 +36,7 @@ class User(db.Model):
     goals = db.relationship('Goal', back_populates='user', cascade='all, delete')
     financial_profile = db.relationship('UserFinancialProfile', back_populates='user', uselist=False, cascade='all, delete')
     categories = db.relationship('Categories', back_populates='user', cascade='all, delete')
-    education = db.relationship('Education', back_populates='user', cascade='all, delete')
+    educations = db.relationship('Education', back_populates='user', cascade='all, delete')
 
     def __repr__(self):
         return f"""
@@ -245,7 +245,7 @@ class Degree(db.Model):
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
-    education = db.relationship('Education', back_populates='degree', cascade='all, delete')
+    educations = db.relationship('Education', back_populates='degree', cascade='all, delete')
 
     def __repr__(self):
         return f"<Degree(degree_id={self.degree_id}, name={self.name})>"
@@ -326,13 +326,13 @@ class Education(db.Model):
     institution_name = db.Column(db.String(255), nullable=False)
     degree_id = db.Column(UUID(as_uuid=True), db.ForeignKey('degrees.degree_id'), nullable=False)
     field_of_study = db.Column(db.String(255), nullable=False)
-    start_date = db.Column(Datetime, nullable=False)
-    end_date = db.Column(Datetime, nullable=True)  # Nullable if still ongoing
+    start_date = db.Column(db.String(10), nullable=False)  # Format: YYYY-MM-DD
+    end_date = db.Column(db.String(10), nullable=True)  # Format: YYYY-MM-DD, can be None if ongoing
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
-    user = db.relationship('User', back_populates='education', cascade='all, delete')
-    degree = db.relationship('Degree', back_populates='education', cascade='all, delete')
+    user = db.relationship('User', back_populates='educations')
+    degree = db.relationship('Degree', back_populates='educations')
     def __repr__(self):
         return f"""
         education_id: {self.education_id}
@@ -350,26 +350,31 @@ class Education(db.Model):
         return {
             'education_id': str(self.education_id),
             'user_id': str(self.user_id),
+            'user_name': self.user.first_name + ' ' + self.user.last_name if self.user else None,
+            'degree_id': str(self.degree_id) if self.degree else None,
             'institution_name': self.institution_name,
-            'degree': self.degree,
+            'degree_name': self.degree.name if self.degree else None,
             'field_of_study': self.field_of_study,
-            'start_date': self.start_date.isoformat(),
-            'end_date': self.end_date.isoformat() if self.end_date else None,
+            'start_date': self.start_date,
+            'end_date': self.end_date if self.end_date else None,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }
     
     @staticmethod
-    def create_education(user_id, institution_name, degree, field_of_study, start_date, end_date=None):
+    def create_education(user_id, institution_name, degree_id, field_of_study, start_date_str, end_date_str):
         """Create a new education record for a user."""
         try:
+            # Convert dates
+            start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date() if end_date_str else None
             education = Education(
-                user_id=user_id,
+                user_id=User.query.get(user_id).user_id,
                 institution_name=institution_name,
-                degree=degree,
+                degree_id=Degree.query.get(degree_id).degree_id,
                 field_of_study=field_of_study,
                 start_date=start_date,
-                end_date=end_date
+                end_date=end_date or None 
             )
             db.session.add(education)
             db.session.commit()
@@ -378,3 +383,56 @@ class Education(db.Model):
             db.session.rollback()
             current_app.logger.error(f"Error creating education record: {str(e)}")
             return None
+        
+    @staticmethod
+    def get_education_by_id(education_id):
+        """Get an education record by its ID."""
+        return Education.query.filter_by(education_id=education_id).first()
+    
+    @staticmethod
+    def get_educations_by_user_id(user_id):
+        """Get all education records for a user."""
+        return Education.query.filter_by(user_id=user_id).all()
+    
+    @staticmethod
+    def get_education_by_user_and_degree(user_id, degree_id):
+        """Get an education record by user ID and degree ID."""
+        return Education.query.filter_by(user_id=user_id, degree_id=degree_id).first()
+    
+    @staticmethod
+    def update_education(education_id, **kwargs):
+        """Update an existing education record."""
+        education = Education.get_education_by_id(education_id)
+        if not education:
+            return None
+        
+        # Update attributes dynamically
+        allowed_fields = {'institution_name', 'degree_id', 'field_of_study', 'start_date', 'end_date'}
+        for key, value in kwargs.items():
+            if key in allowed_fields and value is not None:
+                setattr(education, key, value)
+
+        db.session.commit()
+        return education
+    
+    @staticmethod
+    def delete_education(education_id):
+        """Delete an education record by its ID."""
+        education = Education.get_education_by_id(education_id)
+        if not education:
+            return None
+        
+        db.session.delete(education)
+        db.session.commit()
+        return education
+    
+    @staticmethod
+    def get_all_educations():
+        """Get all education records."""
+        return Education.query.all()
+    
+    @staticmethod
+    def get_education_by_user(user_id):
+        """Get all education records for a user."""
+        return Education.query.filter_by(user_id=user_id).all()
+    

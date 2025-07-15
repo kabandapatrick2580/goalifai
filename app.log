@@ -24,3 +24,255 @@ DETAIL:  Key (name)=(Income) already exists.
 2025-07-15 22:39:35,364 - app - ERROR - An error occurred: Mapper 'Mapper[Degree(degrees)]' has no property 'education'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called. - [in /home/patrick/goalifai/app/api/v1/degree.py:28]
 2025-07-15 22:42:41,736 - app - INFO - Degree High school created successfully - [in /home/patrick/goalifai/app/api/v1/degree.py:28]
 2025-07-15 22:54:47,558 - app - INFO - Degree high school deleted successfully - [in /home/patrick/goalifai/app/api/v1/degree.py:74]
+2025-07-15 23:23:15,035 - app - ERROR - An error occurred: 'User' object has no attribute 'education_level' - [in /home/patrick/goalifai/app/api/v1/users.py:88]
+2025-07-15 23:23:15,036 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/users.py", line 77, in users_list
+    "education_level": user.education_level,
+                       ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'User' object has no attribute 'education_level'
+ - [in /home/patrick/goalifai/app/api/v1/users.py:89]
+2025-07-15 23:30:04,374 - app - ERROR - An error occurred: Education.create_education() got an unexpected keyword argument 'degree_id' - [in /home/patrick/goalifai/app/api/v1/education.py:50]
+2025-07-15 23:32:54,653 - app - ERROR - Error creating education record: 'str' object has no attribute '_sa_instance_state' - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:32:54,653 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-15 23:36:20,870 - app - ERROR - Error creating education record: 'str' object has no attribute '_sa_instance_state' - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:36:20,870 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-15 23:38:21,000 - app - ERROR - Error creating education record: 'str' object has no attribute '_sa_instance_state' - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:38:21,000 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-15 23:44:03,785 - app - ERROR - Error creating education record: 'str' object has no attribute '_sa_instance_state' - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:44:03,785 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-15 23:44:49,133 - app - ERROR - Error creating education record: (psycopg2.ProgrammingError) can't adapt type 'User'
+[SQL: INSERT INTO education (education_id, user_id, institution_name, degree_id, field_of_study, start_date, end_date, created_at, updated_at) VALUES (%(education_id)s::UUID, %(user_id)s::UUID, %(institution_name)s, %(degree_id)s::UUID, %(field_of_study)s, %(start_date)s, %(end_date)s, %(created_at)s, %(updated_at)s)]
+[parameters: {'education_id': UUID('dd5f32f3-bed7-4526-b883-aa1b5c3b0390'), 'user_id': 
+        user_id: b53164c4-7510-4c68-9641-499353facd90
+        email: abc@example.com
+        first_name: Jane
+        last_name: Doe
+        date_of_ ... (134 characters truncated) ... mated_monthly_expenses: None
+        savings: 0
+        created_at: 2025-03-19 22:25:41.841054
+        updated_at: 2025-03-19 22:25:41.841058
+        , 'institution_name': 'Harvard university', 'degree_id': UUID('390222d6-0419-4679-8e4f-d2885257e512'), 'field_of_study': 'Reasearch and alchaeology', 'start_date': '2019-04-09', 'end_date': None, 'created_at': datetime.datetime(2025, 7, 15, 21, 44, 49, 131202, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2025, 7, 15, 21, 44, 49, 131205, tzinfo=datetime.timezone.utc)}]
+(Background on this error at: https://sqlalche.me/e/20/f405) - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:44:49,133 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-15 23:46:17,680 - app - INFO - Education record for user b53164c4-7510-4c68-9641-499353facd90 created successfully - [in /home/patrick/goalifai/app/api/v1/education.py:44]
+2025-07-15 23:46:17,694 - app - ERROR - An error occurred: Object of type Degree is not JSON serializable - [in /home/patrick/goalifai/app/api/v1/education.py:51]
+2025-07-15 23:46:17,700 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/education.py", line 45, in create_education
+    return jsonify({
+           ^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/__init__.py", line 170, in jsonify
+    return current_app.json.response(*args, **kwargs)  # type: ignore[return-value]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 214, in response
+    f"{self.dumps(obj, **dump_args)}\n", mimetype=self.mimetype
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 179, in dumps
+    return json.dumps(obj, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/usr/lib/python3.12/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 121, in _default
+    raise TypeError(f"Object of type {type(o).__name__} is not JSON serializable")
+TypeError: Object of type Degree is not JSON serializable
+ - [in /home/patrick/goalifai/app/api/v1/education.py:52]
+2025-07-15 23:47:21,104 - app - ERROR - Error creating education record: 'str' object has no attribute '_sa_instance_state' - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:47:21,105 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-15 23:48:07,879 - app - ERROR - Error creating education record: (psycopg2.ProgrammingError) can't adapt type 'User'
+[SQL: INSERT INTO education (education_id, user_id, institution_name, degree_id, field_of_study, start_date, end_date, created_at, updated_at) VALUES (%(education_id)s::UUID, %(user_id)s::UUID, %(institution_name)s, %(degree_id)s::UUID, %(field_of_study)s, %(start_date)s, %(end_date)s, %(created_at)s, %(updated_at)s)]
+[parameters: {'education_id': UUID('776faa2c-cf6a-4652-8535-9f70d02e22fe'), 'user_id': 
+        user_id: b53164c4-7510-4c68-9641-499353facd90
+        email: abc@example.com
+        first_name: Jane
+        last_name: Doe
+        date_of_ ... (134 characters truncated) ... mated_monthly_expenses: None
+        savings: 0
+        created_at: 2025-03-19 22:25:41.841054
+        updated_at: 2025-03-19 22:25:41.841058
+        , 'institution_name': 'Harvard university', 'degree_id': UUID('390222d6-0419-4679-8e4f-d2885257e512'), 'field_of_study': 'Reasearch and alchaeology', 'start_date': '2019-04-09', 'end_date': None, 'created_at': datetime.datetime(2025, 7, 15, 21, 48, 7, 877263, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2025, 7, 15, 21, 48, 7, 877266, tzinfo=datetime.timezone.utc)}]
+(Background on this error at: https://sqlalche.me/e/20/f405) - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:48:07,879 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-15 23:51:33,906 - app - ERROR - Error creating education record: 'UUID' object has no attribute '_sa_instance_state' - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:51:33,906 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-15 23:51:50,893 - app - ERROR - Error creating education record: 'UUID' object has no attribute '_sa_instance_state' - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:51:50,894 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-15 23:52:41,590 - app - ERROR - Error creating education record: Neither 'InstrumentedAttribute' object nor 'Comparator' object associated with Education.user has an attribute 'user_id' - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:52:41,591 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-15 23:53:40,532 - app - ERROR - Error creating education record: type object 'User' has no attribute 'user' - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:53:40,533 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-15 23:54:22,246 - app - ERROR - Error creating education record: Neither 'InstrumentedAttribute' object nor 'Comparator' object associated with User.education has an attribute 'user_id' - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:54:22,247 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-15 23:54:45,825 - app - ERROR - Error creating education record: 'UUID' object has no attribute '_sa_instance_state' - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:54:45,826 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-15 23:55:02,247 - app - ERROR - Error creating education record: 'UUID' object has no attribute '_sa_instance_state' - [in /home/patrick/goalifai/app/models/users_model.py:379]
+2025-07-15 23:55:02,247 - app - ERROR - An error occurred while creating the education record - [in /home/patrick/goalifai/app/api/v1/education.py:42]
+2025-07-16 00:05:51,439 - app - INFO - Education record for user b53164c4-7510-4c68-9641-499353facd90 created successfully - [in /home/patrick/goalifai/app/api/v1/education.py:44]
+2025-07-16 00:05:51,443 - app - ERROR - An error occurred: Object of type Degree is not JSON serializable - [in /home/patrick/goalifai/app/api/v1/education.py:51]
+2025-07-16 00:05:51,444 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/education.py", line 45, in create_education
+    return jsonify({
+           ^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/__init__.py", line 170, in jsonify
+    return current_app.json.response(*args, **kwargs)  # type: ignore[return-value]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 214, in response
+    f"{self.dumps(obj, **dump_args)}\n", mimetype=self.mimetype
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 179, in dumps
+    return json.dumps(obj, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/usr/lib/python3.12/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 121, in _default
+    raise TypeError(f"Object of type {type(o).__name__} is not JSON serializable")
+TypeError: Object of type Degree is not JSON serializable
+ - [in /home/patrick/goalifai/app/api/v1/education.py:52]
+2025-07-16 00:09:07,258 - app - INFO - Education record for user b53164c4-7510-4c68-9641-499353facd90 created successfully - [in /home/patrick/goalifai/app/api/v1/education.py:44]
+2025-07-16 00:10:10,365 - app - INFO - Education record for user b53164c4-7510-4c68-9641-499353facd90 created successfully - [in /home/patrick/goalifai/app/api/v1/education.py:44]
+2025-07-16 00:13:02,031 - app - INFO - Education record for user b53164c4-7510-4c68-9641-499353facd90 and degree 390222d6-0419-4679-8e4f-d2885257e512 already exists - [in /home/patrick/goalifai/app/api/v1/education.py:35]
+2025-07-16 00:19:43,511 - app - INFO - Retrieved 4 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]
+2025-07-16 00:19:43,511 - app - ERROR - An error occurred: Object of type Degree is not JSON serializable - [in /home/patrick/goalifai/app/api/v1/education.py:140]
+2025-07-16 00:19:43,512 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/education.py", line 135, in list_all_educations
+    return jsonify({
+           ^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/__init__.py", line 170, in jsonify
+    return current_app.json.response(*args, **kwargs)  # type: ignore[return-value]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 214, in response
+    f"{self.dumps(obj, **dump_args)}\n", mimetype=self.mimetype
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 179, in dumps
+    return json.dumps(obj, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/usr/lib/python3.12/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 326, in _iterencode_list
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 121, in _default
+    raise TypeError(f"Object of type {type(o).__name__} is not JSON serializable")
+TypeError: Object of type Degree is not JSON serializable
+ - [in /home/patrick/goalifai/app/api/v1/education.py:141]
+2025-07-16 00:21:04,892 - app - INFO - Retrieved 4 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]
+2025-07-16 00:21:04,892 - app - ERROR - An error occurred: Object of type Degree is not JSON serializable - [in /home/patrick/goalifai/app/api/v1/education.py:140]
+2025-07-16 00:21:04,893 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/education.py", line 135, in list_all_educations
+    return jsonify({
+           ^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/__init__.py", line 170, in jsonify
+    return current_app.json.response(*args, **kwargs)  # type: ignore[return-value]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 214, in response
+    f"{self.dumps(obj, **dump_args)}\n", mimetype=self.mimetype
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 179, in dumps
+    return json.dumps(obj, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/usr/lib/python3.12/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 326, in _iterencode_list
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 121, in _default
+    raise TypeError(f"Object of type {type(o).__name__} is not JSON serializable")
+TypeError: Object of type Degree is not JSON serializable
+ - [in /home/patrick/goalifai/app/api/v1/education.py:141]
+2025-07-16 00:21:19,583 - app - INFO - Retrieved 4 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]
+2025-07-16 00:21:19,584 - app - ERROR - An error occurred: Object of type Degree is not JSON serializable - [in /home/patrick/goalifai/app/api/v1/education.py:140]
+2025-07-16 00:21:19,585 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/education.py", line 135, in list_all_educations
+    return jsonify({
+           ^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/__init__.py", line 170, in jsonify
+    return current_app.json.response(*args, **kwargs)  # type: ignore[return-value]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 214, in response
+    f"{self.dumps(obj, **dump_args)}\n", mimetype=self.mimetype
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 179, in dumps
+    return json.dumps(obj, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/usr/lib/python3.12/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 326, in _iterencode_list
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-engine/lib/python3.12/site-packages/flask/json/provider.py", line 121, in _default
+    raise TypeError(f"Object of type {type(o).__name__} is not JSON serializable")
+TypeError: Object of type Degree is not JSON serializable
+ - [in /home/patrick/goalifai/app/api/v1/education.py:141]
+2025-07-16 00:22:02,574 - app - INFO - Retrieved 4 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]
+2025-07-16 00:23:44,424 - app - INFO - Retrieved 4 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]
+2025-07-16 00:23:50,935 - app - INFO - Retrieved 4 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]
+2025-07-16 00:24:58,987 - app - INFO - Retrieved 4 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]
+2025-07-16 00:28:09,174 - app - INFO - Education record e7767f5a-04f8-486f-9447-8f8efd9682b4 updated successfully - [in /home/patrick/goalifai/app/api/v1/education.py:81]
+2025-07-16 00:28:27,736 - app - INFO - Education record e7767f5a-04f8-486f-9447-8f8efd9682b4 updated successfully - [in /home/patrick/goalifai/app/api/v1/education.py:81]
+2025-07-16 00:28:39,562 - app - INFO - Retrieved 4 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]
+2025-07-16 00:30:32,084 - app - INFO - Education record 1ccaf9b5-f483-435c-9fad-857a900955ae deleted successfully - [in /home/patrick/goalifai/app/api/v1/education.py:98]
+2025-07-16 00:30:45,136 - app - INFO - Retrieved 3 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]
+2025-07-16 00:31:32,872 - app - INFO - Retrieved 3 education records - [in /home/patrick/goalifai/app/api/v1/education.py:135]
+2025-07-16 00:32:05,908 - app - INFO - Retrieved 3 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]
+2025-07-16 00:32:42,840 - app - INFO - Education record 03542d5d-a331-4c7d-800d-0a63b1340446 deleted successfully - [in /home/patrick/goalifai/app/api/v1/education.py:98]
+2025-07-16 00:32:50,798 - app - INFO - Retrieved 2 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]
