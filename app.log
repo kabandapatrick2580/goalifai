@@ -276,3 +276,4 @@ TypeError: Object of type Degree is not JSON serializable
 2025-07-16 00:32:05,908 - app - INFO - Retrieved 3 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]
 2025-07-16 00:32:42,840 - app - INFO - Education record 03542d5d-a331-4c7d-800d-0a63b1340446 deleted successfully - [in /home/patrick/goalifai/app/api/v1/education.py:98]
 2025-07-16 00:32:50,798 - app - INFO - Retrieved 2 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]
+2025-07-21 01:01:04,759 - app - INFO - Retrieved 2 education records - [in /home/patrick/goalifai/app/api/v1/education.py:134]

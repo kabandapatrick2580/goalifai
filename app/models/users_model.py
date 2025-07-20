@@ -37,6 +37,7 @@ class User(db.Model):
     financial_profile = db.relationship('UserFinancialProfile', back_populates='user', uselist=False, cascade='all, delete')
     categories = db.relationship('Categories', back_populates='user', cascade='all, delete')
     educations = db.relationship('Education', back_populates='user', cascade='all, delete')
+    financial_records = db.relationship('FinancialRecord', back_populates='user', cascade='all, delete')
 
     def __repr__(self):
         return f"""

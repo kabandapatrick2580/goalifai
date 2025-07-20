@@ -1,5 +1,5 @@
 from flask import request, jsonify, Blueprint, current_app
-from app.models.central import Categories
+from app.models.financial import Categories
 from app import db
 from datetime import datetime
 import traceback
@@ -83,7 +83,10 @@ def update_category(category_id):
 @categories_blueprint.route('/api/v1/categories/list', methods=['GET'])
 def get_categories():
     try:
+        
         categories = Categories.get_all_categories()
+        if not categories:
+            return jsonify({"message": "No categories found"}), 404
         return jsonify([category.to_dict() for category in categories]), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

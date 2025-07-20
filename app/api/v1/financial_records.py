@@ -1,9 +1,8 @@
 from flask import request, jsonify, Blueprint, current_app
 from app.models.financial import FinancialRecord
-from app import db
 from datetime import datetime
-import traceback
 from sqlalchemy.orm.exc import NoResultFound
+from app.models.financial import CategoriesType
 
 financial_records_blueprint = Blueprint('financial_record_api', __name__)
 @financial_records_blueprint.route('/api/v1/users/<uuid:user_id>/financial-records', methods=['POST'])
@@ -11,13 +10,14 @@ def create_financial_record(user_id):
     """Creates a new financial record for a specific user."""
     try:
         data = request.get_json()
-        required_fields = ['category_id', 'record_type', 'amount', 'recorded_at']
+        required_fields = ['category_id', 'amount', 'recorded_at']
 
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"'{field}' is required"}), 400
 
-        if data['record_type'] not in {'Income', 'Expense'}:
+        categories = [cat.category_id for cat in CategoriesType.get_all_category_types()]
+        if data['category_id'] not in categories:
             return jsonify({"error": "Invalid record type. Must be 'Income' or 'Expense'"}), 400
 
         new_record = FinancialRecord.create_record(
