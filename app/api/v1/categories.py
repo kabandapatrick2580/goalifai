@@ -92,34 +92,48 @@ def get_categories():
         return jsonify({"error": str(e)}), 500
 
 
-def load_cattegories_from_file(file_path):
-    # Load categories data from the specified JSON file
-    try:
-        with open(file_path, 'r') as file:
-            categories_data = json.load(file)
-            return categories_data
-    except Exception as e:
-        current_app.logger.error(f"An error occurred while loading categories from file: {str(e)}")
-        return []
+
     
 
 @categories_blueprint.route('/api/v1/categories/load', methods=['POST'])
 def load_categories():
+    """Load categories from a JSON file."""
+    def load_categories_from_file(file_path):
+    # Load categories data from the specified JSON file
+        try:
+            with open(file_path, 'r') as file:
+                categories_data = json.load(file)
+                return categories_data
+        except Exception as e:
+            current_app.logger.error(f"An error occurred while loading categories from file: {str(e)}")
+            return []
+        
     try:
         data = request.get_json()
-        # Example of how data should look:
+        # Example of how request data should look:
         # {
-        #     "file_path": "/path/to/categories.json"
-        # }
+        #     "file_path": "/app/files/default_categories.json"
         if 'file_path' not in data:
             return jsonify({"error": "file_path is required"}), 400
         
-        categories_data = load_cattegories_from_file(data['file_path'])
+        categories_data = load_categories_from_file(data['file_path'])
         if not categories_data:
             return jsonify({"error": "No data found in file"}), 400
         
         # Load categories
         Categories.batch_add_categories(categories_data)
         return jsonify({"message": "Categories loaded successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@categories_blueprint.route('/api/v1/categories/category_type/<uuid:category_type_id>', methods=['GET'])
+def get_category_by_id(category_type_id):
+    """Fetch a category by its ID."""
+    try:
+        category = Categories.get_categories_by_category_type(category_type_id)
+        if not category:
+            return jsonify({"error": "Category not found"}), 404
+        
+        return jsonify(category.to_dict()), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

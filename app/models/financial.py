@@ -232,11 +232,14 @@ class Categories(db.Model):
                 if existing_category:
                     continue
                 # if not Income or expense skip
-                if category_data['type'] not in ['Income', 'Expense']:
+                category_type_id = uuid.UUID(category_data['category_type'])
+                print(category_type_id)
+                print(type(category_type_id))
+                if category_type_id not in [cat.type_id for cat in CategoriesType.get_all_category_types()]:
                     continue
                 categories_data = Categories(
                     name=category_data['name'],
-                    category_type=category_data['type'],
+                    category_type=category_type_id,
                     description=category_data.get('description', '')
                 )
                 db.session.add(categories_data)
@@ -245,6 +248,20 @@ class Categories(db.Model):
             db.session.rollback()
             raise Exception(f"Error adding categories: {str(e)}")
         
+    @staticmethod
+    def get_categories_by_category_type(category_type_id):
+        """Get categories by category type ID."""
+
+        # return an array of categories that match the category type ID
+        categories = [
+            category.to_dict() for category in Categories.query.filter_by(category_type=category_type_id).all()
+        ]
+        if not categories:
+            return None
+        return categories
+
+
+
 
 class FinancialRecord(db.Model):
     """
