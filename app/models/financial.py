@@ -146,6 +146,8 @@ class Categories(db.Model):
             "id": self.category_id,
             "user_id": str(self.user_id) if self.user_id else None,
             "name": self.name,
+            "category_type": str(self.category_type) if self.category_type else None,
+            "category_type_name": self.type.name if self.type else None,
             "type": self.category_type,
             "description": self.description,
             "created_at": self.created_at.isoformat(),
@@ -193,7 +195,8 @@ class Categories(db.Model):
         """Update a category with dynamic arguments passed as kwargs."""
         category = Categories.query.filter_by(category_id=category_id).first()
         
-        allowed_types = {"Income", "Expense"}
+        allowed_types = CategoriesType.get_all_category_types()
+        allowed_types = [cat.type_id for cat in allowed_types]  # Extract type_ids
 
         
         if not category:
@@ -202,7 +205,7 @@ class Categories(db.Model):
 
         for key, value in kwargs.items():
             if key == "category_type" and value not in allowed_types:
-                raise ValueError(f"Invalid category type: {value}. Must be one of {allowed_types}")
+                raise ValueError(f"Invalid category type: {value}")
             
             if isinstance(value, str):  # Remove leading/trailing whitespace for string inputs
                 value = value.strip()
@@ -250,16 +253,19 @@ class Categories(db.Model):
         
     @staticmethod
     def get_categories_by_category_type(category_type_id):
+
+        try: 
+            category_type_id_uuid = uuid.UUID(str(category_type_id))
+        except ValueError:
+            current_app.logger.error(f"Invalid UUID for category_type_id: {category_type_id}")
+            return []  # Return empty list for invalid UUID
         """Get categories by category type ID."""
-
         # return an array of categories that match the category type ID
-        categories = [
-            category.to_dict() for category in Categories.query.filter_by(category_type=category_type_id).all()
-        ]
+        categories = Categories.query.filter_by(category_type=category_type_id_uuid).all()
         if not categories:
-            return None
-        return categories
-
+            current_app.logger.warning(f"No categories found for category type ID: {category_type_id}")
+            return {"status": "error", "message": "No categories found for this category type"}
+        return {"status": "success", "categories": [category.to_dict() for category in categories]}
 
 
 

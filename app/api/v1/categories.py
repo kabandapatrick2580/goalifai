@@ -72,14 +72,14 @@ def update_category(category_id):
         )
         if updated_category:
             current_app.logger.info(f"Category {existing_category.name} updated successfully")
-            return jsonify({"message": "Category updated successfully"}), 200
+            return jsonify({f"message": f"Category {existing_category.name} updated successfully", "status": "success"}), 200
         if updated_category is None:
             current_app.logger.error(f"An error occurred while updating the category")
-            return jsonify({"error": "An error occurred while updating the category"}), 500
-        
+            return jsonify({"error": "An error occurred while updating the category", "status": "error"}), 500
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
+        return jsonify({"error": str(e), "status": "error"}), 500
+
 @categories_blueprint.route('/api/v1/categories/list', methods=['GET'])
 def get_categories():
     try:
@@ -87,7 +87,7 @@ def get_categories():
         categories = Categories.get_all_categories()
         if not categories:
             return jsonify({"message": "No categories found"}), 404
-        return jsonify([category.to_dict() for category in categories]), 200
+        return jsonify([category.to_dict() for category in categories], {"status": "success"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -127,13 +127,80 @@ def load_categories():
         return jsonify({"error": str(e)}), 500
     
 @categories_blueprint.route('/api/v1/categories/category_type/<uuid:category_type_id>', methods=['GET'])
-def get_category_by_id(category_type_id):
+def get_categories_by_cateogory_type_id(category_type_id):
     """Fetch a category by its ID."""
     try:
         category = Categories.get_categories_by_category_type(category_type_id)
         if not category:
             return jsonify({"error": "Category not found"}), 404
         
-        return jsonify(category.to_dict()), 200
+        return category, 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@categories_blueprint.route('/api/v1/categories/<uuid:category_id>', methods=['GET'])
+def get_category_by_id(category_id):
+    """Fetch a category by its ID."""
+    try:
+        category = Categories.get_category_by_id(category_id)
+        if not category:
+            return jsonify({"error": "Category not found"}), 404
+        
+        return jsonify(category.to_dict()), 200
+    except NoResultFound:
+        return jsonify({"error": "Category not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@categories_blueprint.route('/api/v1/categories/delete/<uuid:category_id>', methods=['DELETE'])
+def delete_category(category_id):
+    """Delete a category by its ID."""
+    try:
+        # Check if category exists
+        existing_category = Categories.get_category_by_id(category_id)
+        if not existing_category:
+            return jsonify({"error": "Category not found"}), 404
+        
+        # Delete category
+        Categories.delete_category(category_id)
+        current_app.logger.info(f"Category {existing_category.name} deleted successfully")
+        return jsonify({"message": "Category deleted successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@categories_blueprint.route('/api/v1/categories/update/<uuid:category_id>', methods=['PUT'])
+def update_category_record(category_id):
+    """Update the status of a category."""
+    try:
+        # Ensure request contains JSON data
+        if not request.is_json:
+            return jsonify({"error": "Request must be JSON"}), 400
+        
+        data = request.get_json()
+
+        if not data or 'category_id' not in data:
+            return jsonify({"error": "No data provided or 'category_id' is missing"}), 400
+        
+        # Check if category exists
+        existing_category = Categories.get_category_by_id(category_id)
+        if existing_category is None:
+            return jsonify({"error": "Category does not exist"}), 404
+        
+        # Update category status
+        updated_category = Categories.update_category(
+            category_id=category_id,
+            name=data.get('name', existing_category.name),
+            category_type=data.get('category_type', existing_category.category_type),
+            description=data.get('description', existing_category.description),
+            user_id=data.get('user_id', existing_category.user_id)
+        )
+        if updated_category:
+            current_app.logger.info(f"Category {existing_category.name} status updated successfully")
+            return jsonify({"message": "Category status updated successfully", "status":"success"}), 200
+        if updated_category is None:
+            current_app.logger.error(f"An error occurred while updating the category status")
+            return jsonify({"error": "An error occurred while updating the category status", "status":"error"}), 500
+
+    except Exception as e:
+        current_app.logger.error(f"An unexpected error occurred: {str(e)}")
+        return jsonify({"error": "An unexpected error occurred", "status":"error"}), 500
