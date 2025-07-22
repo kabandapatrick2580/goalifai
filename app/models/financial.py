@@ -223,8 +223,8 @@ class Categories(db.Model):
             raise NoResultFound("Category not found")
         db.session.delete(category)
         db.session.commit()
-        return {"message": "Category deleted successfully"}
-    
+        return {"message": "Category deleted successfully", "status": "success"}
+
     @staticmethod
     def batch_add_categories(categories_data):
         """Batch insert categories into the database."""

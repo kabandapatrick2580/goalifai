@@ -76,14 +76,12 @@ def update_category(category_id):
         if updated_category is None:
             current_app.logger.error(f"An error occurred while updating the category")
             return jsonify({"error": "An error occurred while updating the category", "status": "error"}), 500
-
     except Exception as e:
         return jsonify({"error": str(e), "status": "error"}), 500
 
 @categories_blueprint.route('/api/v1/categories/list', methods=['GET'])
 def get_categories():
     try:
-        
         categories = Categories.get_all_categories()
         if not categories:
             return jsonify({"message": "No categories found"}), 404
@@ -164,10 +162,10 @@ def delete_category(category_id):
         # Delete category
         Categories.delete_category(category_id)
         current_app.logger.info(f"Category {existing_category.name} deleted successfully")
-        return jsonify({"message": "Category deleted successfully"}), 200
+        return jsonify({"message": f"Category {existing_category.name} deleted successfully", "status": "success"}), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
+        current_app.logger.error(f"An error occurred while deleting the category: {str(e)}")
+        return jsonify({"error": str(e), "status": "error"}), 500
 @categories_blueprint.route('/api/v1/categories/update/<uuid:category_id>', methods=['PUT'])
 def update_category_record(category_id):
     """Update the status of a category."""
