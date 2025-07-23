@@ -14,6 +14,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import datetime
 import traceback
+from app.models.central import Degree
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -31,6 +32,8 @@ class User(db.Model):
     savings = db.Column(db.Numeric, default=0)  # Total savings of the user
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(datetime.timezone.utc))
+    is_employed = db.Column(db.Boolean, default=True, nullable=True)
+    employment_status = db.Column(UUID(as_uuid=True), db.ForeignKey('employment_statuses.status_id'), nullable=True)
 
     # Relationships
     goals = db.relationship('Goal', back_populates='user', cascade='all, delete')
@@ -38,6 +41,7 @@ class User(db.Model):
     categories = db.relationship('Categories', back_populates='user', cascade='all, delete')
     educations = db.relationship('Education', back_populates='user', cascade='all, delete')
     financial_records = db.relationship('FinancialRecord', back_populates='user', cascade='all, delete')
+    employment_statuses = db.relationship('EmploymentStatus', back_populates='users', cascade='all, delete')
 
     def __repr__(self):
         return f"""
@@ -61,11 +65,12 @@ class User(db.Model):
             'email': self.email,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'education_level': self.education_level,
             'date_of_birth': self.date_of_birth,
             'country_of_residence': self.country_of_residence,
+            'employment_status': self.employment_status,
+            'is_employed': self.is_employed,
             'currency': self.currency,
-            'estimated_monthly_income': {self.estimated_monthly_expenses},
+            'estimated_monthly_income': {self.estimated_monthly_income},
             'estimated_monthly_expenses': {self.estimated_monthly_expenses},
             'savings': {self.savings},
             'created_at': self.created_at,
@@ -236,89 +241,6 @@ class UserFinancialProfile(db.Model):
         return cls.query.filter_by(user_id=user_id).first()
     
 
-class Degree(db.Model):
-    """Degrees defined by the developer, e.g. 'Bachelor', 'Master', etc."""
-    __tablename__ = 'degrees'
-    degree_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    name = db.Column(db.String(255), unique=True, nullable=False)
-    description = db.Column(db.Text, nullable=True)  # Optional description of the degree
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
-
-    # Relationships
-    educations = db.relationship('Education', back_populates='degree', cascade='all, delete')
-
-    def __repr__(self):
-        return f"<Degree(degree_id={self.degree_id}, name={self.name})>"
-    
-    def to_dict(self):
-        return {
-            'degree_id': str(self.degree_id),
-            'name': self.name,
-            'description': self.description,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
-        }
-
-    @staticmethod
-    def create_degree(name, description=None):
-        """Create a new degree."""
-        try:
-            degree = Degree(name=name, description=description)
-            db.session.add(degree)
-            db.session.commit()
-            return degree
-        except IntegrityError as e:
-            db.session.rollback()
-            current_app.logger.error(f"Error creating degree: {str(e)}")
-            return None
-        except Exception as e:
-            db.session.rollback()
-            current_app.logger.error(f"Unexpected error creating degree: {str(e)}")
-            return None
-
-    @staticmethod
-    def get_degree_by_id(degree_id):
-        """Get a degree by its ID."""
-        return Degree.query.filter_by(degree_id=degree_id).first()
-    
-    @staticmethod
-    def get_all_degrees():
-        """Get all degrees."""
-        return Degree.query.all()
-
-    @staticmethod
-    def get_degree_by_name(name):
-        """Get a degree by its name."""
-        return Degree.query.filter_by(name=name.strip().lower()).first()
-
-    @staticmethod
-    def update_degree(degree_id, name=None, description=None):
-        """Update an existing degree."""
-        degree = Degree.get_degree_by_id(degree_id)
-        if not degree:
-            return None
-        
-        if name:
-            degree.name = name
-        if description:
-            degree.description = description
-        
-        db.session.commit()
-        return degree
-
-    @staticmethod
-    def delete_degree(degree_id):
-        """Delete a degree by its ID."""
-        degree = Degree.get_degree_by_id(degree_id)
-        if not degree:
-            return None
-        
-        db.session.delete(degree)
-        db.session.commit()
-        return degree
-
-
 class Education(db.Model):
     __tablename__ = 'education'
 
@@ -437,3 +359,4 @@ class Education(db.Model):
         """Get all education records for a user."""
         return Education.query.filter_by(user_id=user_id).all()
     
+

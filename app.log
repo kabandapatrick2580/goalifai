@@ -291,3 +291,4 @@ TypeError: Object of type Degree is not JSON serializable
 2025-07-22 23:10:37,486 - app - INFO - Category Savings deleted successfully - [in /home/patrick/goalifai/app/api/v1/categories.py:164]
 2025-07-22 23:13:26,319 - app - INFO - Category Taxes updated successfully - [in /home/patrick/goalifai/app/api/v1/categories.py:74]
 2025-07-22 23:13:40,092 - app - INFO - Category Taxes deleted successfully - [in /home/patrick/goalifai/app/api/v1/categories.py:164]
+2025-07-23 09:02:36,272 - app - INFO - Education record e7767f5a-04f8-486f-9447-8f8efd9682b4 updated successfully - [in /home/patrick/goalifai/app/api/v1/education.py:81]
