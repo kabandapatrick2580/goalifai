@@ -13,7 +13,7 @@ from app import db
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import datetime
-import traceback
+from flask import jsonify 
 
 
 
@@ -309,7 +309,9 @@ class FinancialRecord(db.Model):
             "record_id": str(self.record_id),
             "user_id": str(self.user_id),
             "category_id": str(self.category_id),
-            "record_type": self.record_type,
+            "category_name": self.category.name if self.category else None,
+            "category_type": str(self.category.category_type) if self.category else None,
+            "category_type_name": self.category.type.name if self.category and self.category.type else None,
             "amount": float(self.amount),
             "description": self.description,
             "recorded_at": self.recorded_at.isoformat(),
@@ -318,13 +320,12 @@ class FinancialRecord(db.Model):
         }
 
     @staticmethod
-    def create_record(user_id, category_id, record_type, amount, recorded_at, expected=False, description=None):
+    def create_record(user_id, category_id, amount, recorded_at, expected=False, description=None):
         """Creates a new financial record (either expected or actual)."""
         try:
             new_record = FinancialRecord(
                 user_id=user_id,
                 category_id=category_id,
-                record_type=record_type,
                 amount=amount,
                 recorded_at=recorded_at,
                 description=description.strip() if description else None,
@@ -336,7 +337,8 @@ class FinancialRecord(db.Model):
             # Handle integrity errors, such as duplicate entries
             db.session.rollback()
             current_app.logger.error(f"Error creating financial record: {str(e)}")
-            return None
+
+            return jsonify({"error": "Failed to create financial record due to integrity error"}), 400
         
         except Exception as e:
             # Handle other exceptions
