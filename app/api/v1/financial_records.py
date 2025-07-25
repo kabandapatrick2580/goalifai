@@ -41,8 +41,6 @@ def create_financial_record(user_id):
         return jsonify({"error": str(e)}), 500
 
 
-
-
 @financial_records_blueprint.route('/api/v1/financial-records/<uuid:user_id>', methods=['GET'])
 def get_financial_records(user_id):
     """Fetch all financial records for a user."""
@@ -61,8 +59,14 @@ def update_financial_record(record_id):
     """Updates an existing financial record."""
     try:
         data = request.get_json()
-        updated_record = FinancialRecord.update_record(record_id, **data)
-        return jsonify(updated_record.to_dict()), 200
+
+        cleaned_data = {k: v.strip() if isinstance(v, str) else v for k, v in data.items()}
+
+        updated_record = FinancialRecord.update_record(record_id, **cleaned_data)
+        return jsonify({
+            "message": "Financial record updated successfully",
+            "status": "success",
+        }), 200
     except NoResultFound:
         return jsonify({"error": "Financial record not found"}), 404
     except ValueError as e:
