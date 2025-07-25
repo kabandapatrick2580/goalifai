@@ -63,10 +63,13 @@ def update_financial_record(record_id):
         cleaned_data = {k: v.strip() if isinstance(v, str) else v for k, v in data.items()}
 
         updated_record = FinancialRecord.update_record(record_id, **cleaned_data)
-        return jsonify({
-            "message": "Financial record updated successfully",
-            "status": "success",
-        }), 200
+        if updated_record:
+            return jsonify({
+                "message": "Financial record updated successfully",
+                "status": "success",
+            }), 200
+        return jsonify({"error": "Financial record not found"}), 404
+    
     except NoResultFound:
         return jsonify({"error": "Financial record not found"}), 404
     except ValueError as e:
