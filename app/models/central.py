@@ -14,6 +14,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import datetime
 import traceback
+from uuid import uuid4
 
 class EmploymentStatus(db.Model):
     """Model for employment statuses, eg. self-employed, full-time, part-time, student, unemployed."""
@@ -160,3 +161,49 @@ class Degree(db.Model):
         db.session.commit()
         return degree
 
+class GoalStatus(db.Model):
+    """example: 'Active', 'Completed', 'Cancelled', 'In Progress'"""
+    __tablename__ = 'goal_statuses'
+
+    status_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+
+    def __repr__(self):
+        return f"<GoalStatus(name='{self.name}')>"
+
+    def to_dict(self):
+        return {
+            "status_id": str(self.status_id),
+            "name": self.name
+        }
+    
+    @staticmethod
+    def get_all_statuses():
+        """Fetch all goal statuses ex:ample: 'Active', 'Completed', 'Cancelled', 'In Progress'."""
+        try:
+            statuses = GoalStatus.query.all()
+            return statuses
+        except Exception as e:
+            current_app.logger.error(f"Error fetching goal statuses: {e}")
+            raise e     
+    @staticmethod
+    def update_status(status_id, name):
+        """Update a goal status."""
+        try:
+            status = GoalStatus.query.filter_by(status_id=status_id).first()
+            if not status:
+                current_app.logger.error(f"Goal status with ID {status_id} not found.")
+                return None
+            
+            status.name = name
+            db.session.commit()
+            return status.to_dict()
+        except IntegrityError as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error updating goal status: {e}")
+            return e
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Unexpected error updating goal status: {e}")
+            return e
+        
