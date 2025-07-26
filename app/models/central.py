@@ -176,7 +176,19 @@ class GoalStatus(db.Model):
             "status_id": str(self.status_id),
             "name": self.name
         }
-    
+
+    @staticmethod
+    def create_goal_status(name):
+        """Create goal statuses"""
+        try:
+            goal_status = GoalStatus(name=name)
+            db.session.add(goal_status)
+            db.session.commit()
+            return goal_status.to_dict()
+        except Exception as e:
+            current_app.logger.info(f"Error while adding goal status {e}")
+            return  None
+
     @staticmethod
     def get_all_statuses():
         """Fetch all goal statuses ex:ample: 'Active', 'Completed', 'Cancelled', 'In Progress'."""
@@ -201,9 +213,9 @@ class GoalStatus(db.Model):
         except IntegrityError as e:
             db.session.rollback()
             current_app.logger.error(f"Error updating goal status: {e}")
-            return e
+            return None
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Unexpected error updating goal status: {e}")
-            return e
+            return None
         

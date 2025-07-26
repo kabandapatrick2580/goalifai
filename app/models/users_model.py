@@ -15,7 +15,7 @@ import uuid
 from datetime import datetime
 import traceback
 from app.models.central import Degree
-
+from uuid import uuid4
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -360,3 +360,59 @@ class Education(db.Model):
         return Education.query.filter_by(user_id=user_id).all()
     
 
+class GoalPriority(db.Model):
+    """Model for goal priorities.
+        - It defines the priority levels for goals, such as 'High', 'Medium', 'Low'.
+        - Initial priorities are created by the system upon user registration with default values.
+        - later on can be updated by the user or admin.
+        
+    """
+    __tablename__ = 'goal_priorities'
+
+    priority_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+
+    def __repr__(self):
+        return f"<GoalPriority(name='{self.name}')>"
+
+    def to_dict(self):
+        return {
+            "priority_id": str(self.priority_id),
+            "name": self.name
+        }
+
+    @staticmethod
+    def create_priority(name):
+        """Create a new goal priority."""
+        try:
+            priority = GoalPriority(name=name)
+            db.session.add(priority)
+            db.session.commit()
+            return priority.to_dict()
+        except IntegrityError as e:
+            db.session.rollback()
+            current_app.logger.error(f"Integrity error creating priority: {e.orig}")
+            return {"error": "Priority already exists"}, 400
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error creating priority: {e}")
+            return {"error": "An unexpected error occurred"}, 500
+        
+    @staticmethod
+    def update_priority(priority_id):
+        """Update an existing goal priority."""
+        priority = GoalPriority.query.filter_by(priority_id=priority_id).first()
+        if not priority:
+            return {"error": "Priority not found"}, 404
+        
+        try:
+            db.session.commit()
+            return priority.to_dict()
+        except IntegrityError as e:
+            db.session.rollback()
+            current_app.logger.error(f"Integrity error updating priority: {e.orig}")
+            return {"error": "Priority already exists"}, 400
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error updating priority: {e}")
+            return {"error": "An unexpected error occurred"}, 500

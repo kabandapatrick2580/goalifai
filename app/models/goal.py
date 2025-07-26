@@ -169,20 +169,6 @@ class Goal(db.Model):
             current_app.logger.error(f"Error fetching completed goals: {e}")
             return jsonify({"error": str(e)}), 500
         
+
+
     
-
-class GoalPriority(db.Model):
-    """Model for goal priorities."""
-    __tablename__ = 'goal_priorities'
-
-    priority_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
-    name = db.Column(db.String(50), nullable=False, unique=True)
-
-    def __repr__(self):
-        return f"<GoalPriority(name='{self.name}')>"
-
-    def to_dict(self):
-        return {
-            "priority_id": str(self.priority_id),
-            "name": self.name
-        }

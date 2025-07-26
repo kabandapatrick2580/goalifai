@@ -41,6 +41,7 @@ from app.api.v1.category_types import cat_types_blueprint
 from app.api.v1.degree import degree_blue_print
 from app.api.v1.education import education_blueprint
 from app.api.v1.financial_records import financial_records_blueprint
+from app.api.v1.goal_priorities import goal_status_bp
 # Register blueprint
 app.register_blueprint(user_blueprint)
 app.register_blueprint(goal_blueprint)
@@ -50,3 +51,4 @@ app.register_blueprint(cat_types_blueprint)
 app.register_blueprint(degree_blue_print)
 app.register_blueprint(education_blueprint)
 app.register_blueprint(financial_records_blueprint)
+app.register_blueprint(goal_status_bp)
