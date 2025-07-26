@@ -219,3 +219,19 @@ class GoalStatus(db.Model):
             current_app.logger.error(f"Unexpected error updating goal status: {e}")
             return None
         
+    @staticmethod
+    def delete_status(status_id):
+        """Delete a goal status."""
+        try:
+            status = GoalStatus.query.filter_by(status_id=status_id).first()
+            if not status:
+                current_app.logger.error(f"Goal status with ID {status_id} not found.")
+                return None
+            
+            db.session.delete(status)
+            db.session.commit()
+            return status.to_dict()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error deleting goal status: {e}")
+            return None
