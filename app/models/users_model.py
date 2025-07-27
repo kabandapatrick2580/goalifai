@@ -416,3 +416,5 @@ class GoalPriority(db.Model):
             db.session.rollback()
             current_app.logger.error(f"Error updating priority: {e}")
             return {"error": "An unexpected error occurred"}, 500
+
+
