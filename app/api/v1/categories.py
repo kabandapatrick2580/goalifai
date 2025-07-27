@@ -85,7 +85,8 @@ def get_categories():
         categories = Categories.get_all_categories()
         if not categories:
             return jsonify({"message": "No categories found"}), 404
-        return jsonify([category.to_dict() for category in categories], {"status": "success"}), 200
+        return jsonify({"data": {"categories": [category.to_dict() for category in categories]}, 
+                        "message": "Categories retrieved successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

@@ -15,6 +15,7 @@ import uuid
 from datetime import datetime
 import traceback
 from uuid import uuid4
+from app.utils.errors import handle_db_errors
 
 class EmploymentStatus(db.Model):
     """Model for employment statuses, eg. self-employed, full-time, part-time, student, unemployed."""
@@ -197,7 +198,7 @@ class GoalStatus(db.Model):
             return statuses
         except Exception as e:
             current_app.logger.error(f"Error fetching goal statuses: {e}")
-            raise e     
+            return None   
     @staticmethod
     def update_status(status_id, name):
         """Update a goal status."""

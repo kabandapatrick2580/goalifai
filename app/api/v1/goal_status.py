@@ -1,17 +1,22 @@
 from flask import Blueprint, current_app
 from flask import request, jsonify
 from app.models.central import GoalStatus
+from app.utils.validator import (is_valid_string)
 
 goal_status_bp = Blueprint('goal_status',__name__)
-
 @goal_status_bp.route('/api/v1/goal_status', methods=['POST'])
 def create_goal_status():
     data = request.get_json()
-    name = data.get('name', '').strip().lower()
+    name = data.get('name', '')
+    if not is_valid_string(name):
+        return jsonify({"status": "error", "message": "Invalid name"}), 400
     if not data or 'name' not in data:
         return jsonify({"status": "error" , "message": "Missing required field: name"}), 400
     try: 
-        GoalStatus.create_goal_status(name)
+        goal_status = GoalStatus.create_goal_status(name)
+        if not goal_status:
+            return jsonify({"status": "error", "message": "Error while creating goal status"}), 500
+        current_app.logger.info(f"Goal status {name} created successfully")
         return jsonify({"status": "success", "message": "Goal priority created successfully"})
     except Exception as e:
         current_app.logger.info(f"Error while adding priority: {str(e)}")
