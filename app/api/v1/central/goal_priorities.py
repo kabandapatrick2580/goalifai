@@ -1,5 +1,5 @@
 from flask import request, jsonify, Blueprint, current_app
-from app.models.users_model import GoalPriority
+from app.models.client.users_model import GoalPriority
 from app import db
 import json
 

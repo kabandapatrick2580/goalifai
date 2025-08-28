@@ -1,5 +1,5 @@
 from flask import request, jsonify, Blueprint, current_app
-from app.models.users_model import User
+from app.models.client.users_model import User
 from app import db
 from datetime import datetime
 import traceback
@@ -9,7 +9,7 @@ user_blueprint = Blueprint('user_api', __name__)
 def create_user():
     try:
         data = request.get_json()
-        required_fields = ['email', 'password', 'first_name', 'last_name', 'education_level', 'date_of_birth', 'country_of_residence', 'currency']
+        required_fields = ['email', 'password', 'first_name', 'last_name', 'date_of_birth', 'country_of_residence', 'currency']
 
         # Validate required fields
         for field in required_fields:

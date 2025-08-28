@@ -24,3 +24,5 @@ settings.py  # Only if this contains sensitive data
 
 
 app/models/__pycache__/central.cpython-312.pyc
+
+local-env/

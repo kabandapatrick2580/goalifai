@@ -1,8 +1,8 @@
 from flask import request, jsonify, Blueprint, current_app
-from app.models.financial import FinancialRecord
+from app.models.client.financial import FinancialRecord
 from datetime import datetime
 from sqlalchemy.orm.exc import NoResultFound
-from app.models.financial import Categories
+from app.models.client.financial import Categories
 import uuid
 
 financial_records_blueprint = Blueprint('financial_record_api', __name__)

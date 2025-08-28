@@ -1,6 +1,6 @@
 from flask import request, jsonify, Blueprint, current_app
-from app.models.goal import Goal
-from app.models.users_model import User
+from app.models.client.goal import Goal
+from app.models.client.users_model import User
 from app import db
 from datetime import datetime
 import traceback

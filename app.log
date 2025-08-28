@@ -312,3 +312,10 @@ DETAIL:  Key (name)=(1234) already exists.
 [parameters: {'status_id': UUID('541695d4-beeb-4f99-86de-5331edd0c2bc'), 'name': 1234}]
 (Background on this error at: https://sqlalche.me/e/20/gkpj) - [in /home/patrick/goalifai/app/models/central.py:191]
 2025-07-26 11:27:29,828 - app - INFO - Goal status Suprise created successfully - [in /home/patrick/goalifai/app/api/v1/goal_status.py:22]
+2025-08-28 19:41:57,277 - app - ERROR - An error occurred: User.create_user() missing 1 required positional argument: 'education_level' - [in /home/patrick/goalifai/app/api/v1/client/users.py:56]
+2025-08-28 19:41:57,278 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/users.py", line 26, in create_user
+    user = User.create_user(
+           ^^^^^^^^^^^^^^^^^
+TypeError: User.create_user() missing 1 required positional argument: 'education_level'
+ - [in /home/patrick/goalifai/app/api/v1/client/users.py:57]

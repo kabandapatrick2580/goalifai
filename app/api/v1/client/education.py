@@ -1,4 +1,4 @@
-from app.models.users_model import Education, User, Degree
+from app.models.client.users_model import Education, User, Degree
 from flask import Blueprint, request, jsonify, current_app
 import traceback
 

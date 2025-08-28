@@ -1,6 +1,6 @@
 from flask import Blueprint, current_app
 from flask import request, jsonify
-from app.models.central import GoalStatus
+from app.models.central.central import GoalStatus
 from app.utils.validator import (is_valid_string)
 
 goal_status_bp = Blueprint('goal_status',__name__)

@@ -14,7 +14,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import datetime
 import traceback
-from app.models.central import Degree
+from app.models.central.central import Degree
 from uuid import uuid4
 class User(db.Model):
     __tablename__ = 'users'
@@ -107,7 +107,6 @@ class User(db.Model):
                 password=hashed_pwd,
                 first_name=first_name,
                 last_name=last_name,
-                education_level=education_level,
                 date_of_birth=date_of_birth,
                 country_of_residence=country_of_residence,
                 currency=currency

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.models.users_model import Degree
+from app.models.client.users_model import Degree
 from flask import current_app
 import traceback
 

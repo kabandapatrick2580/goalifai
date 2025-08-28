@@ -1,5 +1,5 @@
 from flask import request, jsonify, Blueprint, current_app
-from app.models.financial import Categories
+from app.models.client.financial import Categories
 from app import db
 from datetime import datetime
 import traceback
