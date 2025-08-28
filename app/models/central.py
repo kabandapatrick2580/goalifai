@@ -79,7 +79,18 @@ class EmploymentStatus(db.Model):
         status = EmploymentStatus.get_status_by_id(status_id)
         if not status:
             return None
-        
+
+    @staticmethod
+    def delete_status(status_id):
+        """Delete an employment status by its ID."""
+        status = EmploymentStatus.get_status_by_id(status_id)
+        if not status:
+            return None
+
+        db.session.delete(status)
+        db.session.commit()
+        return status
+
 class Degree(db.Model):
     """Degrees defined by the developer, e.g. 'Bachelor', 'Master', etc."""
     __tablename__ = 'degrees'

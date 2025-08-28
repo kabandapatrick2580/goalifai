@@ -18,8 +18,7 @@ from flask import jsonify
 
 
 class CategoriesType(db.Model):
-    """Represents a type of category, such as Income or Expense.    """
-
+    """Represents a type of category, such as Income or Expense."""
     __tablename__ = "categories_type"
     type_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     name = db.Column(db.String(100), nullable=False, unique=True)  # e.g., 'Income', 'Expense'

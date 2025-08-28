@@ -33,7 +33,7 @@ handler.setFormatter(formatter)
 app.logger.addHandler(handler)
 app.logger.setLevel(logging.INFO)
 
-from app.api.v1.users import user_blueprint
+from app.api.v1.client.users import user_blueprint
 from app.api.v1.goals import goal_blueprint
 from app.api.v1.fin_profile import fin_profile
 from app.api.v1.categories import categories_blueprint
