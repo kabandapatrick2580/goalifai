@@ -24,7 +24,7 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=False)
-    date_of_birth = db.Column(Datetime, nullable=False)  # Store date of birth
+    date_of_birth = db.Column(Datetime, nullable=True)  # Store date of birth
     country_of_residence = db.Column(db.String(255), nullable=False)
     currency = db.Column(db.String(3), default="USD")  # Default currency is USD
     estimated_monthly_income = db.Column(db.Numeric, nullable=True)
@@ -98,7 +98,7 @@ class User(db.Model):
         return User.query.filter_by(user_id=user_id).first()
     
     @staticmethod
-    def create_user(email, password, first_name, last_name, education_level, date_of_birth, country_of_residence, currency):
+    def create_user(email, password, first_name, last_name, country_of_residence, currency):
         """Create a user authenticated via the app"""
         hashed_pwd = User.hash_password(password)
         try:
@@ -107,7 +107,6 @@ class User(db.Model):
                 password=hashed_pwd,
                 first_name=first_name,
                 last_name=last_name,
-                date_of_birth=date_of_birth,
                 country_of_residence=country_of_residence,
                 currency=currency
                 )

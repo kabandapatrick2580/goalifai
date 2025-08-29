@@ -25,14 +25,15 @@ def upgrade():
                type_=sa.Enum('High', 'Medium', 'Low', name='goal_priority'),
                existing_nullable=False,
                existing_server_default=sa.text("'Medium'::priority"))"
-    """
+    
 
     with op.batch_alter_table('user_financial_profiles', schema=None) as batch_op:
         batch_op.add_column(sa.Column('actual_monthly_income', sa.Numeric(precision=12, scale=2), nullable=True))
         batch_op.add_column(sa.Column('actual_monthly_expenses', sa.Numeric(precision=12, scale=2), nullable=True))
         batch_op.create_unique_constraint(None, ['id'])
         batch_op.drop_column('expected_monthly_savings')
-
+    """
+    pass
     # ### end Alembic commands ###
 
 

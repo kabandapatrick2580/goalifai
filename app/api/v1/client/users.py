@@ -9,7 +9,7 @@ user_blueprint = Blueprint('user_api', __name__)
 def create_user():
     try:
         data = request.get_json()
-        required_fields = ['email', 'password', 'first_name', 'last_name', 'date_of_birth', 'country_of_residence', 'currency']
+        required_fields = ['email', 'password', 'first_name', 'last_name', 'country_of_residence', 'currency']
 
         # Validate required fields
         for field in required_fields:
@@ -28,7 +28,6 @@ def create_user():
             password=data['password'],
             first_name=data['first_name'],
             last_name=data['last_name'],
-            date_of_birth=data['date_of_birth'],
             country_of_residence=data['country_of_residence'],
             currency=data['currency']
         )
@@ -45,7 +44,6 @@ def create_user():
             "email": user.email,
             "first_name": user.first_name,
             "last_name": user.last_name,
-            "date_of_birth": user.date_of_birth.strftime("%Y-%m-%d"),
             "country_of_residence": user.country_of_residence,
             "currency": user.currency,
             "created_at": user.created_at.strftime("%Y-%m-%d %H:%M:%S"),
@@ -72,7 +70,7 @@ def users_list():
                 "email": user.email,
                 "first_name": user.first_name,
                 "last_name": user.last_name,
-                "date_of_birth": user.date_of_birth.strftime("%Y-%m-%d"),
+                "date_of_birth": user.date_of_birth.strftime("%Y-%m-%d") if user.date_of_birth else None,
                 "country_of_residence": user.country_of_residence,
                 "currency": user.currency,
                 "created_at": user.created_at.strftime("%Y-%m-%d %H:%M:%S"),

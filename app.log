@@ -319,3 +319,18 @@ DETAIL:  Key (name)=(1234) already exists.
            ^^^^^^^^^^^^^^^^^
 TypeError: User.create_user() missing 1 required positional argument: 'education_level'
  - [in /home/patrick/goalifai/app/api/v1/client/users.py:57]
+2025-08-28 22:07:46,070 - app - INFO - User testuser@example.com created successfully - [in /home/patrick/goalifai/app/api/v1/client/users.py:39]
+2025-08-28 22:07:46,076 - app - ERROR - An error occurred: 'NoneType' object has no attribute 'strftime' - [in /home/patrick/goalifai/app/api/v1/client/users.py:55]
+2025-08-28 22:07:46,077 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/users.py", line 47, in create_user
+    "date_of_birth": user.date_of_birth.strftime("%Y-%m-%d"),
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'strftime'
+ - [in /home/patrick/goalifai/app/api/v1/client/users.py:56]
+2025-08-29 21:01:32,057 - app - ERROR - An error occurred: 'NoneType' object has no attribute 'strftime' - [in /home/patrick/goalifai/app/api/v1/client/users.py:91]
+2025-08-29 21:01:32,061 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/users.py", line 73, in users_list
+    "date_of_birth": user.date_of_birth.strftime("%Y-%m-%d"),
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'strftime'
+ - [in /home/patrick/goalifai/app/api/v1/client/users.py:92]
