@@ -334,3 +334,10 @@ AttributeError: 'NoneType' object has no attribute 'strftime'
                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AttributeError: 'NoneType' object has no attribute 'strftime'
  - [in /home/patrick/goalifai/app/api/v1/client/users.py:92]
+2025-08-29 21:14:01,107 - app - ERROR - An error occurred: 'NoneType' object has no attribute 'strftime' - [in /home/patrick/goalifai/app/api/v1/client/users.py:90]
+2025-08-29 21:14:01,110 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/users.py", line 73, in users_list
+    "date_of_birth": user.date_of_birth.strftime("%Y-%m-%d") ,
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'strftime'
+ - [in /home/patrick/goalifai/app/api/v1/client/users.py:91]

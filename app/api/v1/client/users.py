@@ -89,4 +89,8 @@ def users_list():
     except Exception as e:
         current_app.logger.error(f"An error occurred: {str(e)}")
         current_app.logger.error(traceback.format_exc())
-        return jsonify({"error": str(e)}), 500
+        return jsonify(
+            {
+                "status": "error",
+                "message": "User retrieval failed"
+            }), 500
