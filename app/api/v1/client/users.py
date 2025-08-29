@@ -78,11 +78,10 @@ def users_list():
             })
 
         return jsonify(
-            {
+            response = {
                 "status": "success",
-                "data": {
-                    "users": users_list
-                },
+                "count": len(users_list),        
+                "data": users_list,              
                 "message": "Users retrieved successfully"
             }
         ), 200
