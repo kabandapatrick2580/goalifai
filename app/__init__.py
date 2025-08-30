@@ -43,6 +43,7 @@ from app.api.v1.client.education import education_blueprint
 from app.api.v1.client.financial_records import financial_records_blueprint
 from app.api.v1.central.goal_status import goal_status_bp
 from app.api.v1.central.goal_priorities import goal_priorities_blueprint
+from app.api.v1.central.currencies import currency_bp
 # Register blueprint
 app.register_blueprint(user_blueprint)
 app.register_blueprint(goal_blueprint)
@@ -54,3 +55,4 @@ app.register_blueprint(education_blueprint)
 app.register_blueprint(financial_records_blueprint)
 app.register_blueprint(goal_status_bp)
 app.register_blueprint(goal_priorities_blueprint)
+app.register_blueprint(currency_bp)
