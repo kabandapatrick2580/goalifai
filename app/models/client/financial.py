@@ -136,7 +136,7 @@ class Categories(db.Model):
     category_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("users.user_id"), nullable=True)  
     name = db.Column(db.String(100), nullable=False)
-    category_type = db.Column(db.ForeignKey("categories_type.type_id"), nullable=False)  # Foreign key to CategoriesType
+    category_type = db.Column(db.String(255),db.ForeignKey("categories_type.name"), nullable=False, unique=False)  # Foreign key to CategoriesType.name
     description = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     # Relationship (User can have multiple categories)

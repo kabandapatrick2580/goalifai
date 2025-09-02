@@ -1,77 +1,77 @@
 [
     {
         "name": "Salary",
-        "category_type": "35c95f52-4627-4593-922b-7faf85ca7c4b",
+        "category_type_name": "Income",
         "description": "Monthly salary income from employer."
     },
     {
         "name": "Freelance Income",
-        "category_type": "35c95f52-4627-4593-922b-7faf85ca7c4b",
+        "category_type_name": "Income",
         "description": "Income from freelance projects or side jobs."
     },
     {
         "name": "Investment Income",
-        "category_type": "35c95f52-4627-4593-922b-7faf85ca7c4b",
+        "category_type_name": "Income",
         "description": "Income generated from investments (e.g., dividends, interest)."
     },
     {
         "name": "Rental Income",
-        "category_type": "35c95f52-4627-4593-922b-7faf85ca7c4b",
+        "category_type_name": "Income",
         "description": "Income from renting out property."
     },
     {
         "name": "Bank Interest",
-        "category_type": "35c95f52-4627-4593-922b-7faf85ca7c4b",
+        "category_type_name": "Income",
         "description": "Interest earned from savings accounts or investments."
     },
     {
         "name": "Groceries",
-        "category_type": "5330c279-9760-4db2-901b-c1e0cbd00c95",
+        "category_type_name": "Expense",
         "description": "Monthly expenses for food and household supplies."
     },
     {
         "name": "Utilities",
-        "category_type": "5330c279-9760-4db2-901b-c1e0cbd00c95",
+        "category_type_name": "Expense",
         "description": "Expenses for utilities like electricity, water, gas, etc."
     },
     {
         "name": "Rent/Mortgage",
-        "category_type": "5330c279-9760-4db2-901b-c1e0cbd00c95",
+        "category_type_name": "Expense",
         "description": "Monthly rent or mortgage payment for housing."
     },
     {
         "name": "Transportation",
-        "category_type": "5330c279-9760-4db2-901b-c1e0cbd00c95",
+        "category_type_name": "Expense",
         "description": "Expenses related to transportation, including gas, car payments, or public transit."
     },
     {
         "name": "Insurance",
-        "category_type": "5330c279-9760-4db2-901b-c1e0cbd00c95",
+        "category_type_name": "Expense",
         "description": "Insurance payments (e.g., health, life, car)."
     },
     {
         "name": "Entertainment",
-        "category_type": "5330c279-9760-4db2-901b-c1e0cbd00c95",
+        "category_type_name": "Expense",
         "description": "Spending on leisure activities like movies, dining out, etc."
     },
     {
         "name": "Medical",
-        "category_type": "5330c279-9760-4db2-901b-c1e0cbd00c95",
+        "category_type_name": "Expense",
         "description": "Expenses related to healthcare and medical bills."
     },
     {
         "name": "Debt Repayment",
-        "category_type": "5330c279-9760-4db2-901b-c1e0cbd00c95",
+        "category_type_name": "Expense",
         "description": "Payments toward credit card or loan debt."
     },
     {
         "name": "Savings",
-        "category_type": "5330c279-9760-4db2-901b-c1e0cbd00c95",
+        "category_type_name": "Expense",
         "description": "Monthly savings contribution to a bank account or investment fund."
     },
     {
         "name": "Taxes",
-        "category_type": "5330c279-9760-4db2-901b-c1e0cbd00c95",
+        "category_type_name": "Expense",
         "description": "Income tax payments or other tax-related expenses."
     }
 ]
