@@ -341,3 +341,23 @@ AttributeError: 'NoneType' object has no attribute 'strftime'
                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AttributeError: 'NoneType' object has no attribute 'strftime'
  - [in /home/patrick/goalifai/app/api/v1/client/users.py:91]
+2025-08-30 17:28:15,343 - app - ERROR - Error in bulk creating category types: I/O operation on closed file. - [in /home/patrick/goalifai/app/api/v1/central/category_types.py:69]
+2025-08-30 17:29:41,980 - app - ERROR - Error in bulk creating category types: Expecting value: line 1 column 1 (char 0) - [in /home/patrick/goalifai/app/api/v1/central/category_types.py:69]
+2025-08-30 17:34:52,681 - app - ERROR - Error in bulk creating category types: CategoriesType.create_category_type_from_file() got an unexpected keyword argument 'id' - [in /home/patrick/goalifai/app/api/v1/central/category_types.py:85]
+2025-08-30 17:35:45,840 - app - ERROR - Error creating category type from file: 'id' is an invalid keyword argument for CategoriesType - [in /home/patrick/goalifai/app/models/client/financial.py:63]
+2025-08-30 17:35:45,840 - app - ERROR - Error in bulk creating category types: Error creating category type from file: 'id' is an invalid keyword argument for CategoriesType - [in /home/patrick/goalifai/app/api/v1/central/category_types.py:85]
+2025-09-02 17:45:05,820 - app - INFO - Category type Income created successfully - [in /home/patrick/goalifai/app/api/v1/central/category_types.py:45]
+2025-09-02 17:45:17,000 - app - ERROR - Error creating category type: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "categories_type_name_key"
+DETAIL:  Key (name)=(Income) already exists.
+
+[SQL: INSERT INTO categories_type (type_id, name, description) VALUES (%(type_id)s::UUID, %(name)s, %(description)s)]
+[parameters: {'type_id': UUID('5ff576c7-b64f-45c5-97dd-c67c52bc4d6f'), 'name': 'Income', 'description': None}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj) - [in /home/patrick/goalifai/app/models/client/financial.py:50]
+2025-09-02 17:45:17,001 - app - ERROR - Error creating category type: Error creating category type: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "categories_type_name_key"
+DETAIL:  Key (name)=(Income) already exists.
+
+[SQL: INSERT INTO categories_type (type_id, name, description) VALUES (%(type_id)s::UUID, %(name)s, %(description)s)]
+[parameters: {'type_id': UUID('5ff576c7-b64f-45c5-97dd-c67c52bc4d6f'), 'name': 'Income', 'description': None}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj) - [in /home/patrick/goalifai/app/api/v1/central/category_types.py:51]
+2025-09-02 17:46:58,837 - app - ERROR - Error creating category type: Category type with name 'Income' already exists - [in /home/patrick/goalifai/app/api/v1/central/category_types.py:51]
+2025-09-02 17:51:36,125 - app - INFO - Category type Expense created successfully - [in /home/patrick/goalifai/app/api/v1/central/category_types.py:45]

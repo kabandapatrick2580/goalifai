@@ -1,6 +1,7 @@
 import json
 import requests
 from flask import Flask, jsonify, Blueprint
+from app.models.central.central import Currency
 
 currency_bp = Blueprint('currency_bp', __name__)
 
@@ -93,3 +94,24 @@ def get_currency_symbol(code):
     }
     return currency_symbols.get(code, "")  # Default to empty string if symbol not found
 
+
+@currency_bp.route('/api/currencies', methods=['POST'])
+def send_currencies_from_file_to_db():
+    try:
+        with open('currencies.json', 'r') as json_file:
+            currencies = json.load(json_file)
+
+        for code, info in currencies.items():
+            Currency.create_currency(
+                name=info['name'],
+                symbol=info['symbol'],
+                code=code
+            )
+
+        return jsonify({
+            "status": "success",
+            "message": "Currencies imported successfully"
+        }), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

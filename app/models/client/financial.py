@@ -40,6 +40,12 @@ class CategoriesType(db.Model):
     @staticmethod
     def create_category_type(name, description=None):
         """Create a new category type."""
+
+        """Check for existing category type with the same name"""
+        existing_category = CategoriesType.query.filter_by(name=name).first()
+        if existing_category:
+            raise ValueError(f"Category type with name '{name}' already exists")
+
         try:
             new_type = CategoriesType(name=name, description=description)
             db.session.add(new_type)
@@ -49,6 +55,7 @@ class CategoriesType(db.Model):
             db.session.rollback()
             current_app.logger.error(f"Error creating category type: {str(e)}")
             raise Exception(f"Error creating category type: {str(e)}")
+
 
     @staticmethod
     def update_category_type(type_id, **kwargs):

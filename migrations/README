@@ -1,1 +1,5 @@
-Single-database configuration for Flask.
+1. Install postgres
+2. Create a user and db called goalifai grnt privileges to that user
+3. Create  transaction category types from the file category_types.json to the database (Income, Expenses)
+4. Create transaction categories tied to transaction categories' types (Utilities : Expense) there is a json file
+2. Flask and dependencies
