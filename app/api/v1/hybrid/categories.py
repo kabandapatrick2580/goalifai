@@ -111,7 +111,9 @@ def load_categories():
         data = request.get_json()
         # Example of how request data should look:
         # {
-        #     "file_path": "/app/files/default_categories.json"
+        #     "file_path": "/home/patrick/goalifai/app/files/default_categories.json"
+        # }
+        current_app.logger.info(f"Request data: {data}")
         if 'file_path' not in data:
             return jsonify({"error": "file_path is required"}), 400
         
@@ -125,15 +127,15 @@ def load_categories():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@categories_blueprint.route('/api/v1/categories/category_type/<uuid:category_type_id>', methods=['GET'])
-def get_categories_by_cateogory_type_id(category_type_id):
+@categories_blueprint.route('/api/v1/categories/category_type/<category_type_name>', methods=['GET'])
+def get_categories_by_category_type(category_type_name):
     """Fetch a category by its ID."""
     try:
-        category = Categories.get_categories_by_category_type(category_type_id)
+        category = Categories.get_categories_by_category_type(category_type_name)
         if not category:
             return jsonify({"error": "Category not found"}), 404
         
-        return category, 200
+        return jsonify({"data": {"categories": category}, "message": "Categories retrieved successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     

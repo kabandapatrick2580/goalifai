@@ -361,3 +361,7 @@ DETAIL:  Key (name)=(Income) already exists.
 (Background on this error at: https://sqlalche.me/e/20/gkpj) - [in /home/patrick/goalifai/app/api/v1/central/category_types.py:51]
 2025-09-02 17:46:58,837 - app - ERROR - Error creating category type: Category type with name 'Income' already exists - [in /home/patrick/goalifai/app/api/v1/central/category_types.py:51]
 2025-09-02 17:51:36,125 - app - INFO - Category type Expense created successfully - [in /home/patrick/goalifai/app/api/v1/central/category_types.py:45]
+2025-09-03 08:33:20,344 - app - ERROR - An error occurred while loading categories from file: [Errno 2] No such file or directory: '/app/files/default_categories.json' - [in /home/patrick/goalifai/app/api/v1/hybrid/categories.py:107]
+2025-09-03 08:34:07,115 - app - INFO - Request data: {'file_path': '/app/files/default_categories.json'} - [in /home/patrick/goalifai/app/api/v1/hybrid/categories.py:116]
+2025-09-03 08:34:07,115 - app - ERROR - An error occurred while loading categories from file: [Errno 2] No such file or directory: '/app/files/default_categories.json' - [in /home/patrick/goalifai/app/api/v1/hybrid/categories.py:107]
+2025-09-03 08:37:10,862 - app - INFO - Request data: {'file_path': '/home/patrick/goalifai/app/files/default_categories.json'} - [in /home/patrick/goalifai/app/api/v1/hybrid/categories.py:116]

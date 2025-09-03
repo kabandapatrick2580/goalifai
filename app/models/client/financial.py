@@ -153,7 +153,6 @@ class Categories(db.Model):
             "user_id": str(self.user_id) if self.user_id else None,
             "name": self.name,
             "category_type": str(self.category_type) if self.category_type else None,
-            "category_type_name": self.type.name if self.type else None,
             "type": self.category_type,
             "description": self.description,
             "created_at": self.created_at.isoformat(),
@@ -241,14 +240,14 @@ class Categories(db.Model):
                 if existing_category:
                     continue
                 # if not Income or expense skip
-                category_type_id = uuid.UUID(category_data['category_type'])
-                print(category_type_id)
-                print(type(category_type_id))
-                if category_type_id not in [cat.type_id for cat in CategoriesType.get_all_category_types()]:
+                category_type = category_data['category_type']
+                print(category_type)
+                print(type(category_type))
+                if category_type not in [cat.name for cat in CategoriesType.get_all_category_types()]:
                     continue
                 categories_data = Categories(
                     name=category_data['name'],
-                    category_type=category_type_id,
+                    category_type=category_type,
                     description=category_data.get('description', '')
                 )
                 db.session.add(categories_data)
@@ -258,20 +257,14 @@ class Categories(db.Model):
             raise Exception(f"Error adding categories: {str(e)}")
         
     @staticmethod
-    def get_categories_by_category_type(category_type_id):
-
-        try: 
-            category_type_id_uuid = uuid.UUID(str(category_type_id))
-        except ValueError:
-            current_app.logger.error(f"Invalid UUID for category_type_id: {category_type_id}")
-            return []  # Return empty list for invalid UUID
-        """Get categories by category type ID."""
-        # return an array of categories that match the category type ID
-        categories = Categories.query.filter_by(category_type=category_type_id_uuid).all()
+    def get_categories_by_category_type(category_type_name):
+        """Get categories by category type name."""
+        # return an array of categories that match the category type name
+        category_type_name = category_type_name.strip().lower()
+        categories = Categories.query.filter(Categories.category_type.ilike(category_type_name)).all()
         if not categories:
-            current_app.logger.warning(f"No categories found for category type ID: {category_type_id}")
-            return {"status": "error", "message": "No categories found for this category type"}
-        return {"status": "success", "categories": [category.to_dict() for category in categories]}
+            return []
+        return [category.to_dict() for category in categories]
 
 
 

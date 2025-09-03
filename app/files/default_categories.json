@@ -1,77 +1,77 @@
 [
     {
         "name": "Salary",
-        "category_type_name": "Income",
+        "category_type": "Income",
         "description": "Monthly salary income from employer."
     },
     {
         "name": "Freelance Income",
-        "category_type_name": "Income",
+        "category_type": "Income",
         "description": "Income from freelance projects or side jobs."
     },
     {
         "name": "Investment Income",
-        "category_type_name": "Income",
+        "category_type": "Income",
         "description": "Income generated from investments (e.g., dividends, interest)."
     },
     {
         "name": "Rental Income",
-        "category_type_name": "Income",
+        "category_type": "Income",
         "description": "Income from renting out property."
     },
     {
         "name": "Bank Interest",
-        "category_type_name": "Income",
+        "category_type": "Income",
         "description": "Interest earned from savings accounts or investments."
     },
     {
         "name": "Groceries",
-        "category_type_name": "Expense",
+        "category_type": "Expense",
         "description": "Monthly expenses for food and household supplies."
     },
     {
         "name": "Utilities",
-        "category_type_name": "Expense",
+        "category_type": "Expense",
         "description": "Expenses for utilities like electricity, water, gas, etc."
     },
     {
         "name": "Rent/Mortgage",
-        "category_type_name": "Expense",
+        "category_type": "Expense",
         "description": "Monthly rent or mortgage payment for housing."
     },
     {
         "name": "Transportation",
-        "category_type_name": "Expense",
+        "category_type": "Expense",
         "description": "Expenses related to transportation, including gas, car payments, or public transit."
     },
     {
         "name": "Insurance",
-        "category_type_name": "Expense",
+        "category_type": "Expense",
         "description": "Insurance payments (e.g., health, life, car)."
     },
     {
         "name": "Entertainment",
-        "category_type_name": "Expense",
+        "category_type": "Expense",
         "description": "Spending on leisure activities like movies, dining out, etc."
     },
     {
         "name": "Medical",
-        "category_type_name": "Expense",
+        "category_type": "Expense",
         "description": "Expenses related to healthcare and medical bills."
     },
     {
         "name": "Debt Repayment",
-        "category_type_name": "Expense",
+        "category_type": "Expense",
         "description": "Payments toward credit card or loan debt."
     },
     {
         "name": "Savings",
-        "category_type_name": "Expense",
+        "category_type": "Expense",
         "description": "Monthly savings contribution to a bank account or investment fund."
     },
     {
         "name": "Taxes",
-        "category_type_name": "Expense",
+        "category_type": "Expense",
         "description": "Income tax payments or other tax-related expenses."
     }
 ]
