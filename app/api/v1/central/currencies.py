@@ -145,3 +145,14 @@ def get_currencies():
     except Exception as e:
         current_app.logger.error(f"Error fetching currencies: {str(e)}")
         return jsonify({"status": "error", "message": "An error occurred while fetching currencies"}), 500
+    
+@currency_bp.route('/api/currencies/<uuid:currency_id>', methods=['GET'])
+def get_currency(currency_id):
+    try:
+        currency = Currency.get_currency_by_id(currency_id)
+        if not currency:
+            return jsonify({"status": "error", "message": "Currency not found"}), 404
+        return jsonify({"status": "success", "data": currency.to_dict()}), 200
+    except Exception as e:
+        current_app.logger.error(f"Error fetching currency: {str(e)}")
+        return jsonify({"status": "error", "message": "An error occurred while fetching the currency"}), 500
