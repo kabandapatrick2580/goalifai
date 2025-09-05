@@ -1,5 +1,7 @@
+2. Flask and dependencies
 1. Install postgres
 2. Create a user and db called goalifai grnt privileges to that user
-3. Create  transaction category types from the file category_types.json to the database (Income, Expenses)
-4. Create transaction categories tied to transaction categories' types (Utilities : Expense) there is a json file
-2. Flask and dependencies
+3. Create  transaction category types to the database (Income, Expenses)
+4. Create transaction categories tied to transaction categories' types (Utilities : Expense) there is a json file run this route '/api/v1/categories/load'
+5. Create currencies from file by calling this route '/api/currencies', methods=['POST']
+6. 

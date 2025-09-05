@@ -305,3 +305,17 @@ class Currency(db.Model):
         except Exception as e:
             return None
         
+    @staticmethod
+    def get_currency_by_code(code):
+        try:
+            return Currency.query.filter_by(code=code).one()
+        except NoResultFound:
+            return None
+        
+    @staticmethod
+    def get_currency_by_name(name):
+        try:
+            return Currency.query.filter_by(name=name).one()
+        except NoResultFound:
+            return None
+        

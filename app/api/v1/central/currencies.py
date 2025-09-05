@@ -105,13 +105,19 @@ def send_currencies_from_file_to_db():
         if not currencies:
             return jsonify({"status": "error", "message": "No currencies found in JSON file"}), 400
 
+
+
         try:
             for code, info in currencies.items():
-                created_currency = Currency.create_currency(
-                    name=info['name'],
-                    symbol=info['symbol'],
-                    code=code
-            )
+                if Currency.get_currency_by_code(code):
+                    current_app.logger.info(f"Currency already exists: {info['name']} ({code})")
+                    return jsonify({"status": "error", "message": f"Currency already exists: {info['name']} ({code})"}), 400
+                else:
+                    created_currency = Currency.create_currency(
+                        name=info['name'],
+                        symbol=info['symbol'],
+                        code=code
+                )
                 if not created_currency:
                     return jsonify({"status": "error", "message": f"Failed to add currency: {info['name']} ({code})"}), 500
                 
@@ -135,7 +141,7 @@ def get_currencies():
         currencies = Currency.get_all_currencies()
         if not currencies:
             return jsonify({"status": "success", "data": [], "message": "No currencies found"}), 200
-        return jsonify({"status": "success", "data": currencies}), 200
+        return jsonify({"status": "success", "data": [currency.to_dict() for currency in currencies]}), 200
     except Exception as e:
         current_app.logger.error(f"Error fetching currencies: {str(e)}")
         return jsonify({"status": "error", "message": "An error occurred while fetching currencies"}), 500
