@@ -257,14 +257,15 @@ class Currency(db.Model):
     symbol = db.Column(db.String(10), nullable=True)
     code = db.Column(db.String(5), nullable=False, unique=True)
 
+    # relationships
+    users = db.relationship('User', back_populates='currencies')
     def __repr__(self):
         return f"<Currency {self.name} ({self.code})>"
 
-    def __init__(self, name, symbol, code, exchange_rate_to_usd):
+    def __init__(self, name, symbol, code):
         self.name = name
         self.symbol = symbol
         self.code = code
-        self.exchange_rate_to_usd = exchange_rate_to_usd
 
     def to_dict(self):
         return {
@@ -287,6 +288,7 @@ class Currency(db.Model):
             return new_currency
         except Exception as e:
             db.session.rollback()
+            current_app.logger.error(f"Error creating currency: {str(e)}")
             return None
 
     @staticmethod
@@ -297,7 +299,7 @@ class Currency(db.Model):
             return None
         
     @staticmethod
-    def list_currencies():
+    def get_all_currencies():
         try:
             return Currency.query.all()
         except Exception as e:

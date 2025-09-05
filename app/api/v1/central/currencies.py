@@ -2,6 +2,7 @@ import json
 import requests
 from flask import Flask, jsonify, Blueprint
 from app.models.central.central import Currency
+from flask import current_app
 
 currency_bp = Blueprint('currency_bp', __name__)
 
@@ -101,17 +102,40 @@ def send_currencies_from_file_to_db():
         with open('currencies.json', 'r') as json_file:
             currencies = json.load(json_file)
 
-        for code, info in currencies.items():
-            Currency.create_currency(
-                name=info['name'],
-                symbol=info['symbol'],
-                code=code
-            )
+        if not currencies:
+            return jsonify({"status": "error", "message": "No currencies found in JSON file"}), 400
 
-        return jsonify({
-            "status": "success",
-            "message": "Currencies imported successfully"
-        }), 201
+        try:
+            for code, info in currencies.items():
+                created_currency = Currency.create_currency(
+                    name=info['name'],
+                    symbol=info['symbol'],
+                    code=code
+            )
+                if not created_currency:
+                    return jsonify({"status": "error", "message": f"Failed to add currency: {info['name']} ({code})"}), 500
+                
+            current_app.logger.info(f"Currency to be added: {info['name']} ({code})")
+
+            return jsonify({
+                "status": "success",
+                "message": "Currencies imported successfully"
+            }), 201
+        except Exception as e:
+            current_app.logger.error(f"Error importing currencies: {str(e)}")
+            return jsonify({"status": "error", "message": "An error occurred while importing currencies"}), 500
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+@currency_bp.route('/api/currencies', methods=['GET'])
+def get_currencies():
+    try:
+        currencies = Currency.get_all_currencies()
+        if not currencies:
+            return jsonify({"status": "success", "data": [], "message": "No currencies found"}), 200
+        return jsonify({"status": "success", "data": currencies}), 200
+    except Exception as e:
+        current_app.logger.error(f"Error fetching currencies: {str(e)}")
+        return jsonify({"status": "error", "message": "An error occurred while fetching currencies"}), 500

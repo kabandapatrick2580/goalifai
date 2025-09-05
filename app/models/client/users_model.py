@@ -26,7 +26,7 @@ class User(db.Model):
     last_name = db.Column(db.String(255), nullable=False)
     date_of_birth = db.Column(Datetime, nullable=True)  # Store date of birth
     country_of_residence = db.Column(db.String(255), nullable=False)
-    currency = db.Column(db.String(3), default="USD")  # Default currency is USD
+    currency = db.Column(db.String(10), db.ForeignKey('currencies.code'), nullable=False)
     estimated_monthly_income = db.Column(db.Numeric, nullable=True)
     estimated_monthly_expenses = db.Column(db.Numeric, nullable=True)
     savings = db.Column(db.Numeric, default=0)  # Total savings of the user
@@ -42,6 +42,7 @@ class User(db.Model):
     educations = db.relationship('Education', back_populates='user', cascade='all, delete')
     financial_records = db.relationship('FinancialRecord', back_populates='user', cascade='all, delete')
     employment_statuses = db.relationship('EmploymentStatus', back_populates='users', cascade='all, delete')
+    currencies = db.relationship('Currency', back_populates='users')
 
     def __repr__(self):
         return f"""
