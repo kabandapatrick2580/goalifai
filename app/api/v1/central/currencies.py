@@ -1,8 +1,9 @@
 import json
 import requests
-from flask import Flask, jsonify, Blueprint
+from flask import Flask, jsonify, Blueprint, request
 from app.models.central.central import Currency
 from flask import current_app
+
 
 currency_bp = Blueprint('currency_bp', __name__)
 
@@ -152,7 +153,71 @@ def get_currency(currency_id):
         currency = Currency.get_currency_by_id(currency_id)
         if not currency:
             return jsonify({"status": "error", "message": "Currency not found"}), 404
-        return jsonify({"status": "success", "data": currency.to_dict()}), 200
+        return jsonify({"status": "success", "data": currency.to_dict(), "message": "Currency fetched successfully"}), 200
     except Exception as e:
         current_app.logger.error(f"Error fetching currency: {str(e)}")
         return jsonify({"status": "error", "message": "An error occurred while fetching the currency"}), 500
+    
+
+@currency_bp.route('/api/currencies/<uuid:currency_id>', methods=['DELETE'])
+def delete_currency(currency_id):
+    try:
+        currency = Currency.get_currency_by_id(currency_id)
+        if not currency:
+            return jsonify({"status": "error", "message": "Currency not found"}), 404
+        
+        Currency.delete_currency(currency_id)
+        return jsonify({"status": "success", "message": "Currency deleted successfully"}), 200
+    except Exception as e:
+        current_app.logger.error(f"Error deleting currency: {str(e)}")
+        return jsonify({"status": "error", "message": "An error occurred while deleting the currency"}), 500
+    
+@currency_bp.route('/api/currency/update/<uuid:currency_id>', methods=['PUT'])
+def update_currency(currency_id):
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"status": "error", "message": "No data provided"}), 400
+        
+        currency = Currency.get_currency_by_id(currency_id)
+        if not currency:
+            return jsonify({"status": "error", "message": "Currency not found"}), 404
+        
+        updated_currency = Currency.update_currency(
+            currency_id,
+            name=data.get('name', currency.name),
+            symbol=data.get('symbol', currency.symbol),
+            code=data.get('code', currency.code)
+        )
+        
+        if not updated_currency:
+            return jsonify({"status": "error", "message": "Failed to update currency"}), 500
+        
+        return jsonify({"status": "success", "data": updated_currency.to_dict(), "message": "Currency updated successfully"}), 200
+    except Exception as e:
+        current_app.logger.error(f"Error updating currency: {str(e)}")
+        return jsonify({"status": "error", "message": "An error occurred while updating the currency"}), 500
+    
+@currency_bp.route('/api/currency/create', methods=['POST'])
+def create_currency():
+    try:
+        data = request.get_json()
+        if not data or 'name' not in data or 'code' not in data:
+            return jsonify({"status": "error", "message": "Name and code are required"}), 400
+        
+        if Currency.get_currency_by_code(data['code']):
+            return jsonify({"status": "error", "message": "Currency with this code already exists"}), 400
+        
+        new_currency = Currency.create_currency(
+            name=data['name'],
+            symbol=data.get('symbol', ''),
+            code=data['code']
+        )
+        
+        if not new_currency:
+            return jsonify({"status": "error", "message": "Failed to create currency"}), 500
+        
+        return jsonify({"status": "success", "data": new_currency.to_dict(), "message": "Currency created successfully"}), 201
+    except Exception as e:
+        current_app.logger.error(f"Error creating currency: {str(e)}")
+        return jsonify({"status": "error", "message": "An error occurred while creating the currency"}), 500

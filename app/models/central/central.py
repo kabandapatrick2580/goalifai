@@ -280,7 +280,7 @@ class Currency(db.Model):
         try:
             new_currency = Currency(
                 name=name,
-                symbol=symbol,
+                symbol=symbol if symbol else "",
                 code=code,
             )
             db.session.add(new_currency)
@@ -319,3 +319,16 @@ class Currency(db.Model):
         except NoResultFound:
             return None
         
+    @staticmethod
+    def delete_currency(currency_id):
+        try:
+            currency = Currency.get_currency_by_id(currency_id)
+            if not currency:
+                return None
+            db.session.delete(currency)
+            db.session.commit()
+            return currency
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error deleting currency: {str(e)}")
+            return None
