@@ -18,7 +18,6 @@ def create_financial_record(user_id):
                 return jsonify({"error": f"{field} is required"}), 400
 
         categories = [cat.category_id for cat in Categories.get_all_categories()]
-
         category_id_uuid = uuid.UUID(data['category_id'])
 
 
@@ -47,7 +46,8 @@ def get_financial_records(user_id):
     try:
         records = FinancialRecord.get_records_by_user(user_id)
         return jsonify({
-            "financial_records":[record.to_dict() for record in records],
+            "message": "Financial records fetched successfully",
+            "data":[record.to_dict() for record in records],
             "status": "success"
         }), 200
     except Exception as e:

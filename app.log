@@ -361,3 +361,4 @@ DETAIL:  Key (name)=(United Arab Emirates Dirham) already exists.
 2025-09-05 08:18:05,219 - app - INFO - Currency to be added: Zimbabwean Dollar (ZWL) - [in /home/patrick/goalifai/app/api/v1/central/currencies.py:125]
 2025-09-05 08:18:32,475 - app - INFO - Currency already exists: United Arab Emirates Dirham (AED) - [in /home/patrick/goalifai/app/api/v1/central/currencies.py:114]
 2025-09-05 08:20:17,014 - app - ERROR - Error fetching currencies: Object of type Currency is not JSON serializable - [in /home/patrick/goalifai/app/api/v1/central/currencies.py:146]
+2025-09-05 08:38:22,021 - app - INFO - User kabanda.patrick2580@gmail.com created successfully - [in /home/patrick/goalifai/app/api/v1/client/users.py:39]

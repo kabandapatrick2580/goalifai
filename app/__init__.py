@@ -4,10 +4,12 @@ from dotenv import load_dotenv
 import os
 import logging
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app) # Enable CORS for all routes
 
 # Load the database URI from environment variables
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
