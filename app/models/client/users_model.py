@@ -220,7 +220,6 @@ class UserFinancialProfile(db.Model):
                 user_id=user_id,
                 expected_monthly_income=expected_monthly_income,
                 expected_monthly_expenses=expected_monthly_expenses,
-                expected_monthly_savings=expected_monthly_income - expected_monthly_expenses
             )
             db.session.add(financial_profile)
             db.session.commit()

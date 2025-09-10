@@ -362,3 +362,51 @@ DETAIL:  Key (name)=(United Arab Emirates Dirham) already exists.
 2025-09-05 08:18:32,475 - app - INFO - Currency already exists: United Arab Emirates Dirham (AED) - [in /home/patrick/goalifai/app/api/v1/central/currencies.py:114]
 2025-09-05 08:20:17,014 - app - ERROR - Error fetching currencies: Object of type Currency is not JSON serializable - [in /home/patrick/goalifai/app/api/v1/central/currencies.py:146]
 2025-09-05 08:38:22,021 - app - INFO - User kabanda.patrick2580@gmail.com created successfully - [in /home/patrick/goalifai/app/api/v1/client/users.py:39]
+2025-09-10 09:03:46,229 - app - ERROR - Error creating financial profile:'expected_monthly_savings' is an invalid keyword argument for UserFinancialProfile - [in /home/patrick/goalifai/app/models/client/users_model.py:230]
+2025-09-10 09:03:46,231 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/models/client/users_model.py", line 219, in create_financial_profile
+    financial_profile = cls(
+                        ^^^^
+  File "<string>", line 4, in __init__
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/state.py", line 571, in _initialize_instance
+    with util.safe_reraise():
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/state.py", line 569, in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/decl_base.py", line 2179, in _declarative_constructor
+    raise TypeError(
+TypeError: 'expected_monthly_savings' is an invalid keyword argument for UserFinancialProfile
+ - [in /home/patrick/goalifai/app/models/client/users_model.py:231]
+2025-09-10 09:06:02,720 - app - ERROR - Error creating financial profile:'expected_monthly_savings' is an invalid keyword argument for UserFinancialProfile - [in /home/patrick/goalifai/app/models/client/users_model.py:230]
+2025-09-10 09:06:02,723 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/models/client/users_model.py", line 219, in create_financial_profile
+    financial_profile = cls(
+                        ^^^^
+  File "<string>", line 4, in __init__
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/state.py", line 571, in _initialize_instance
+    with util.safe_reraise():
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/state.py", line 569, in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/decl_base.py", line 2179, in _declarative_constructor
+    raise TypeError(
+TypeError: 'expected_monthly_savings' is an invalid keyword argument for UserFinancialProfile
+ - [in /home/patrick/goalifai/app/models/client/users_model.py:231]
+2025-09-10 09:07:33,930 - app - ERROR - Error creating financial profile:'expected_monthly_savings' is an invalid keyword argument for UserFinancialProfile - [in /home/patrick/goalifai/app/models/client/users_model.py:230]
+2025-09-10 09:07:33,933 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/models/client/users_model.py", line 219, in create_financial_profile
+    financial_profile = cls(
+                        ^^^^
+  File "<string>", line 4, in __init__
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/state.py", line 571, in _initialize_instance
+    with util.safe_reraise():
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/state.py", line 569, in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/decl_base.py", line 2179, in _declarative_constructor
+    raise TypeError(
+TypeError: 'expected_monthly_savings' is an invalid keyword argument for UserFinancialProfile
+ - [in /home/patrick/goalifai/app/models/client/users_model.py:231]
