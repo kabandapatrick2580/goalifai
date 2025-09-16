@@ -88,10 +88,11 @@ class User(db.Model):
         }
     
     # Password helpers
+    @staticmethod
     def set_password(self, user_password: str):
         """Hashes the password and stores it."""
         self.password = generate_password_hash(user_password)
-
+    @staticmethod
     def check_password(self, user_password: str) -> bool:
         """Verifies the given password against the stored hash."""
         return check_password_hash(self.password, user_password)
