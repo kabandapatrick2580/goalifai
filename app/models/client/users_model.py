@@ -16,6 +16,10 @@ from datetime import datetime
 import traceback
 from app.models.central.central import Degree
 from uuid import uuid4
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
+
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -34,6 +38,11 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(datetime.timezone.utc))
     is_employed = db.Column(db.Boolean, default=True, nullable=True)
     employment_status = db.Column(UUID(as_uuid=True), db.ForeignKey('employment_statuses.status_id'), nullable=True)
+
+     # Auth-related extras
+    is_active = db.Column(db.Boolean, default=True)       # can be used to disable login
+    is_admin = db.Column(db.Boolean, default=False)       # optional role control
+    last_login = db.Column(db.DateTime, nullable=True)   # track last login time
 
     # Relationships
     goals = db.relationship('Goal', back_populates='user', cascade='all, delete')
@@ -78,17 +87,15 @@ class User(db.Model):
             'updated_at': self.updated_at
         }
     
-    @staticmethod
-    def hash_password(password):
-        salt = gensalt()
-        hashed_pwd = hashpw(password.encode('utf-8'), salt)
-        return hashed_pwd.decode('utf-8')
-    
-    def verify_password(self, password):
-        if not self.password:
-            return False
-        return checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
-    
+    # Password helpers
+    def set_password(self, user_password: str):
+        """Hashes the password and stores it."""
+        self.password = generate_password_hash(user_password)
+
+    def check_password(self, user_password: str) -> bool:
+        """Verifies the given password against the stored hash."""
+        return check_password_hash(self.password, user_password)
+
     @staticmethod
     def get_user_by_email(email):
         return User.query.filter_by(email=email).first()

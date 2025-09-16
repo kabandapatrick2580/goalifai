@@ -5,6 +5,7 @@ import os
 import logging
 from flask_migrate import Migrate
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 
 load_dotenv()
 
@@ -18,7 +19,7 @@ if not app.config['SQLALCHEMY_DATABASE_URI']:
 
 # Initialize db with the app after configuration
 db = SQLAlchemy(app)
-
+jwt = JWTManager(app)
 #initialize Flask-Migrate
 migrate = Migrate(app, db)
 

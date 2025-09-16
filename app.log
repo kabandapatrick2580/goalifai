@@ -410,3 +410,4 @@ TypeError: 'expected_monthly_savings' is an invalid keyword argument for UserFin
     raise TypeError(
 TypeError: 'expected_monthly_savings' is an invalid keyword argument for UserFinancialProfile
  - [in /home/patrick/goalifai/app/models/client/users_model.py:231]
+2025-09-16 08:03:06,960 - app - INFO - Request data: {'file_path': '/home/patrick/goalifai/app/files/default_categories.json'} - [in /home/patrick/goalifai/app/api/v1/hybrid/categories.py:116]

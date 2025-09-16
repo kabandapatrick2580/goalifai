@@ -73,5 +73,20 @@
         "name": "Taxes",
         "category_type": "Expense",
         "description": "Income tax payments or other tax-related expenses."
+    },
+    {
+        "name": "Education",
+        "category_type": "Expense",
+        "description": "Expenses related to education, such as tuition or books."
+    },
+    {
+        "name": "Gifts & Donations",
+        "category_type": "Expense",
+        "description": "Money spent on gifts or charitable donations."
+    },
+    {
+        "name": "Miscellaneous",
+        "category_type": "Expense",
+        "description": "Other expenses that do not fit into the above categories."
     }
 ]

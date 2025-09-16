@@ -55,6 +55,9 @@ def create_user():
         current_app.logger.error(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 
+
+
+
 """List of all users"""
 @user_blueprint.route('/api/v1/users', methods=['GET'])
 def users_list():
