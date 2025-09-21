@@ -4,6 +4,7 @@ from app import db, jwt
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token
 from datetime import datetime, timedelta
 import traceback
+import os
 
 user_access_bp = Blueprint('user_access_api', __name__)
 
@@ -11,8 +12,8 @@ user_access_bp = Blueprint('user_access_api', __name__)
 def signup():
     try:
         data = request.get_json()
-        required_fields = ['email', 'password', 'first_name', 'last_name', 'country_of_residence', 'currency']
-        password = data.get('password')
+        required_fields = ['email', 'user_password', 'first_name', 'last_name', 'country_of_residence', 'currency']
+        password = data['user_password']
 
         if not password:
             return jsonify({"status": "error", "message": "'password' is required"}), 400
@@ -52,7 +53,7 @@ def signup():
             "status": "success",
             "message": "User created successfully",
             "data": {
-                "user_id": str(user.user_id),
+                "user_id": user.user_id,
                 "email": user.email,
                 "first_name": user.first_name,
                 "last_name": user.last_name,
@@ -73,13 +74,14 @@ def login():
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
-
+        cors_allowed_origins = os.getenv('CORS_ALLOWED_ORIGINS')
+        current_app.logger.info(f"CORS_ALLOWED_ORIGINS: {cors_allowed_origins}")
         if not email or not password:
             return jsonify({"status": "error", "message": "'email' and 'password' are required"}), 400
 
         user = User.get_user_by_email(email)
         if user is None or not User.check_password(user, password):
-            current_app.logger.info(f"Invalid login attempt for email {email}")
+            current_app.logger.info(f"Invalid login attempt for email {email}, password {password}")
             return jsonify({"status": "error", "message": "Invalid email or password"}), 401
 
         # Create JWT token

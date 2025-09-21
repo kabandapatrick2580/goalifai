@@ -89,27 +89,28 @@ class User(db.Model):
     
     # Password helpers
     @staticmethod
-    def set_password(self, user_password: str):
+    def set_password(user_password):
         """Hashes the password and stores it."""
-        self.password = generate_password_hash(user_password)
-    @staticmethod
-    def check_password(self, user_password: str) -> bool:
+        hashed_password = generate_password_hash(user_password)
+        return hashed_password
+    
+    def check_password(self, user_password) -> bool:
         """Verifies the given password against the stored hash."""
         return check_password_hash(self.password, user_password)
 
-    @staticmethod
-    def get_user_by_email(email):
-        return User.query.filter_by(email=email).first()
-    
+    @classmethod
+    def get_user_by_email(cls, email):
+        return cls.query.filter_by(email=email).first()
 
-    @staticmethod
-    def get_user_by_id(user_id):
-        return User.query.filter_by(user_id=user_id).first()
-    
+
+    @classmethod
+    def get_user_by_id(cls, user_id):
+        return cls.query.filter_by(user_id=user_id).first()
+
     @staticmethod
     def create_user(email, password, first_name, last_name, country_of_residence, currency):
         """Create a user authenticated via the app"""
-        hashed_pwd = User.hash_password(password)
+        hashed_pwd = User.set_password(password)
         try:
             user = User(
                 email=email, 

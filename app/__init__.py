@@ -10,10 +10,21 @@ from flask_jwt_extended import JWTManager
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app) # Enable CORS for all routes
+CORS(
+    app,
+    supports_credentials=True,
+    origins=os.getenv('CORS_ALLOWED_ORIGINS').split(',') if os.getenv('CORS_ALLOWED_ORIGINS') else []
+)
+     
 
 # Load the database URI from environment variables
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+
+# JWT Configuration
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
+
 if not app.config['SQLALCHEMY_DATABASE_URI']:
     raise RuntimeError("SQLALCHEMY_DATABASE_URI is not set")
 
@@ -47,6 +58,8 @@ from app.api.v1.client.financial_records import financial_records_blueprint
 from app.api.v1.central.goal_status import goal_status_bp
 from app.api.v1.central.goal_priorities import goal_priorities_blueprint
 from app.api.v1.central.currencies import currency_bp
+from app.api.v1.hybrid.user_access import user_access_bp
+
 # Register blueprint
 app.register_blueprint(user_blueprint)
 app.register_blueprint(goal_blueprint)
@@ -59,3 +72,4 @@ app.register_blueprint(financial_records_blueprint)
 app.register_blueprint(goal_status_bp)
 app.register_blueprint(goal_priorities_blueprint)
 app.register_blueprint(currency_bp)
+app.register_blueprint(user_access_bp)

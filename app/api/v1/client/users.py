@@ -77,7 +77,7 @@ def users_list():
                 "country_of_residence": user.country_of_residence,
                 "currency": user.currency,
                 "created_at": user.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-                "updated_at": user.updated_at.strftime("%Y-%m-%d %H:%M:%S")
+                "updated_at": user.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
             })
 
         return jsonify(
