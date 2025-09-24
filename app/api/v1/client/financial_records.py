@@ -4,9 +4,12 @@ from datetime import datetime
 from sqlalchemy.orm.exc import NoResultFound
 from app.models.client.financial import Categories
 import uuid
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 
 financial_records_blueprint = Blueprint('financial_record_api', __name__)
 @financial_records_blueprint.route('/api/v1/users/<uuid:user_id>/financial-records', methods=['POST'])
+@jwt_required()
 def create_financial_record(user_id):
     """Creates a new financial record for a specific user."""
     try:
@@ -34,13 +37,16 @@ def create_financial_record(user_id):
         )
 
         if new_record:
-            return jsonify(f"{new_record.category.name} {new_record.category.type.name} recorded successfully", 201)
-        return jsonify({"error": "Failed to create financial record"}), 500
+            message = f"{new_record.category.name} {new_record.category.type.name} recorded successfully"
+            current_app.logger.info(message)
+            return jsonify({"message": message, "status": "success"}), 201
+        return jsonify({"error": "Failed to create financial record", "status": "error"}), 500
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e), "status": "error"}), 500
 
 
 @financial_records_blueprint.route('/api/v1/financial-records/<uuid:user_id>', methods=['GET'])
+@jwt_required()
 def get_financial_records(user_id):
     """Fetch all financial records for a user."""
     try:
@@ -55,6 +61,7 @@ def get_financial_records(user_id):
 
 
 @financial_records_blueprint.route('/api/v1/financial-records/<uuid:record_id>', methods=['PUT'])
+@jwt_required()
 def update_financial_record(record_id):
     """Updates an existing financial record."""
     try:
@@ -79,6 +86,7 @@ def update_financial_record(record_id):
 
 
 @financial_records_blueprint.route('/api/v1/financial-records/<uuid:record_id>', methods=['DELETE'])
+@jwt_required()
 def delete_financial_record(record_id):
     """Deletes a financial record."""
     try:
