@@ -1,7 +1,7 @@
 from flask import request, jsonify, Blueprint, current_app
 from app.models.client.users_model import User
 from app import db, jwt
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, set_refresh_cookies
 from datetime import datetime, timedelta
 import traceback
 import os
@@ -73,6 +73,8 @@ def login():
     try:
         data = request.get_json()
         email = data.get('email')
+        if email:
+            email = email.strip()
         password = data.get('password')
         cors_allowed_origins = os.getenv('CORS_ALLOWED_ORIGINS')
         current_app.logger.info(f"CORS_ALLOWED_ORIGINS: {cors_allowed_origins}")
@@ -86,9 +88,18 @@ def login():
 
         # Create JWT token
         access_token = create_access_token(identity=str(user.user_id))
+        refresh_token = create_refresh_token(identity=str(user.user_id))
+        set_refresh_cookies(refresh_token) # Set the refresh token in a secure HttpOnly cookie
 
         current_app.logger.info(f"User {email} logged in successfully")
-        return jsonify({"status": "success", "access_token": access_token}), 200
+        return jsonify({
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "message": "Login successful",
+            "status": "success",
+            "access_token": access_token
+        }), 200
 
     except Exception as e:
         current_app.logger.error(f"An error occurred: {str(e)}")

@@ -23,6 +23,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 # JWT Configuration
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 900))  # Default to 15 minutes
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = int(os.getenv('JWT_REFRESH_TOKEN_EXPIRES', 604800))  # Default to 7 days
+app.config['JWT_COOKIE_SECURE'] = True if os.getenv('FLASK_ENV') == 'production' else False
+app.config['JWT_COOKIE_CSRF_PROTECT'] = True
+app.config['JWT_HTTPONLY'] = True
 
 
 if not app.config['SQLALCHEMY_DATABASE_URI']:
