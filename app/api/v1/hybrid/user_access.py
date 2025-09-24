@@ -89,17 +89,20 @@ def login():
         # Create JWT token
         access_token = create_access_token(identity=str(user.user_id))
         refresh_token = create_refresh_token(identity=str(user.user_id))
-        set_refresh_cookies(refresh_token) # Set the refresh token in a secure HttpOnly cookie
-
-        current_app.logger.info(f"User {email} logged in successfully")
-        return jsonify({
+        response = jsonify({
+            "status": "success", 
+            "message": "Login successful", 
+            "access_token": access_token,
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
-            "message": "Login successful",
-            "status": "success",
-            "access_token": access_token
-        }), 200
+            "user_id": user.user_id
+        })
+        set_refresh_cookies(response, refresh_token) # Set the refresh token in a secure HttpOnly cookie
+
+        current_app.logger.info(f"User {email} logged in successfully")
+        current_app.logger.info(f"Response headers: {response.headers}")
+        return response, 200
 
     except Exception as e:
         current_app.logger.error(f"An error occurred: {str(e)}")
@@ -113,6 +116,17 @@ def refresh():
         current_user_id = get_jwt_identity()
         new_access_token = create_access_token(identity=current_user_id)
         return jsonify({"status": "success", "access_token": new_access_token}), 200
+    except Exception as e:
+        current_app.logger.error(f"An error occurred: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@user_access_bp.route('/logout', methods=['POST'])
+def logout():
+    try:
+        response = jsonify({"status": "success", "message": "Logout successful"})
+        # Clear the refresh token cookie
+        response.set_cookie('refresh_token_cookie', '', expires=0, httponly=True, secure=True if os.getenv('FLASK_ENV') == 'production' else False, samesite='Lax')
+        return response, 200
     except Exception as e:
         current_app.logger.error(f"An error occurred: {str(e)}")
         return jsonify({"status": "error", "message": str(e)}), 500

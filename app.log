@@ -503,3 +503,115 @@ AttributeError: type object 'User' has no attribute 'hash_password'. Did you mea
 2025-09-24 21:32:52,655 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:90]
 2025-09-24 21:33:35,044 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:78]
 2025-09-24 21:33:35,253 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:90]
+2025-09-24 21:47:23,863 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 21:47:24,077 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:95]
+2025-09-24 21:47:24,077 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 453
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc0MzI0NCwianRpIjoiNWI1ZDUxNmItOTAwOS00MjU4LThiODEtMDU3NDNlZDEzMGEzIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NDMyNDQsImNzcmYiOiIxODc5NmNkMS03NDQ2LTRhYzMtODA3NC05ZjAxOWQxOGE1MmUiLCJleHAiOjE3NTkzNDgwNDR9.wNpd7ef48IpXmx1Te8x8H5dpnZ0gDsTlO_Efsc_Mw-M; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=18796cd1-7446-4ac3-8074-9f019d18a52e; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:96]
+2025-09-24 21:59:56,295 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 21:59:56,515 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:102]
+2025-09-24 21:59:56,516 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 534
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc0Mzk5NiwianRpIjoiNDg3ZmFiYmItODZhOS00MDEzLWI1YjEtMzgwOTgxZjc4ZTExIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NDM5OTYsImNzcmYiOiIxMmMyMDFjZS1mMTk1LTQxZTItYjI1MC1lMmEzZGQ0ZmIwMDUiLCJleHAiOjE3NTkzNDg3OTZ9.XfJRV3qK1ZMU3Ly245zZNRstEqlct3fsWW5622KCfr4; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=12c201ce-f195-41e2-b250-e2a3dd4fb005; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:103]
+2025-09-24 22:01:53,528 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 22:01:53,683 - app - INFO - Invalid login attempt for email abc@gmail.com, password Bijdad@432c - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:86]
+2025-09-24 23:14:07,087 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 23:14:07,302 - app - INFO - Invalid login attempt for email kabanda.patrick2580@gmail.com, password Bijdad@432 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:86]
+2025-09-24 23:14:20,054 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 23:14:20,238 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:102]
+2025-09-24 23:14:20,238 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 534
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc0ODQ2MCwianRpIjoiNzE0YmQwN2EtYzg5Yy00MmU4LTk1YWUtN2EyY2NmNDlmMzA5IiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NDg0NjAsImNzcmYiOiJlNWQ5MTEyYi1kOWFiLTRiZTctOGI0YS0yN2IwNjBjZTM5MjkiLCJleHAiOjE3NTkzNTMyNjB9.N-Lxbfbd_4fscgrm26EvEhNaQAAGevWJsRmfHFMedf4; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=e5d9112b-d9ab-4be7-8b4a-27b060ce3929; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:103]
+2025-09-24 23:19:16,894 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 23:19:17,061 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:102]
+2025-09-24 23:19:17,061 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 534
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc0ODc1NywianRpIjoiYTU3OTZmZTUtZWMxYy00YzZiLTliNjktNjY1ZjA5NjAzMTg3IiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NDg3NTcsImNzcmYiOiI3MWYwYzU4Ny01ODViLTQ0YjItYTJhYS05ZjQ5YjM2MjY4MzkiLCJleHAiOjE3NTkzNTM1NTd9.TsfUlip90rq66j8VEQ4gWVV5fVepX9ahZSUcuMsKKHc; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=71f0c587-585b-44b2-a2aa-9f49b3626839; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:103]
+2025-09-24 23:34:17,827 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 23:34:18,035 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:102]
+2025-09-24 23:34:18,035 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 534
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc0OTY1OCwianRpIjoiMDA0ODdkZWUtZDgzYi00NjNmLTljYmUtZDVmMTYzMTZmNzQxIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NDk2NTgsImNzcmYiOiI5OGZiZTcwNC1mNTQ1LTRmN2EtOGZjZC04YWE1MGZiMWRlMTQiLCJleHAiOjE3NTkzNTQ0NTh9.9l6RwqnfV94Wwz9ebsTIZB8rm3NPHrUJZfh4oaXW40c; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=98fbe704-f545-4f7a-8fcd-8aa50fb1de14; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:103]
+2025-09-24 23:40:11,040 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 23:40:11,299 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:102]
+2025-09-24 23:40:11,300 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 534
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc1MDAxMSwianRpIjoiZTczNjk1NzEtYzZlMy00NmQxLTkyNTQtODJhODEwMmMyZDUwIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NTAwMTEsImNzcmYiOiIwZDVkMzQ5NS02MDAxLTQ2ZDctYjA4Yi0zNjI1N2YwZGI5YjYiLCJleHAiOjE3NTkzNTQ4MTF9.FnYJD-c9rJcAGx7MsDFSocUKJ-PF-me4OiWjH8xoTSU; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=0d5d3495-6001-46d7-b08b-36257f0db9b6; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:103]
+2025-09-24 23:41:06,040 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 23:41:06,271 - app - INFO - Invalid login attempt for email abc@gmail.com, password BIjdad@432 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:86]
+2025-09-24 23:41:12,422 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 23:41:12,693 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:102]
+2025-09-24 23:41:12,693 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 534
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc1MDA3MiwianRpIjoiMTljNjc4MGEtMTY0NS00Nzk1LWI3MjQtMzIyZWY5Y2RlMThjIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NTAwNzIsImNzcmYiOiI5ZmY2YzEyYy1lMTg2LTQzNWMtYTE0ZS0xODM2MDNmN2I3MTkiLCJleHAiOjE3NTkzNTQ4NzJ9.PUNZHSYODj_7AxwIYghBz4jk0QAUoScLhmuXnCol8eM; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=9ff6c12c-e186-435c-a14e-183603f7b719; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:103]
+2025-09-24 23:41:54,371 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 23:41:54,631 - app - INFO - Invalid login attempt for email abc@gmail.com, password BIjdad@432 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:86]
+2025-09-24 23:42:00,446 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 23:42:00,600 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 23:42:00,659 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:102]
+2025-09-24 23:42:00,659 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 534
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc1MDEyMCwianRpIjoiODJkZjhhNWItOTc1Yi00NGU0LWFhN2UtNTVkOGIxY2FjOTIyIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NTAxMjAsImNzcmYiOiI5MTliMjJjMi04YzVjLTRkM2QtYmQ2My04NTg5ZWQ0M2JiY2QiLCJleHAiOjE3NTkzNTQ5MjB9.Rh6na90qD7f_l7DbO8m5CWi7N7JAX9f64XMnAfHiFbE; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=919b22c2-8c5c-4d3d-bd63-8589ed43bbcd; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:103]
+2025-09-24 23:42:00,795 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:102]
+2025-09-24 23:42:00,795 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 534
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc1MDEyMCwianRpIjoiNzBiZDNiMTItYjRlMS00YjQ0LTg2YmMtNzNjMWU0OTI0MjEwIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NTAxMjAsImNzcmYiOiJlZmNmNDAzZS04OWNhLTQ4YzgtYTE5MC1jNzk4ZjVjZGU0ZTUiLCJleHAiOjE3NTkzNTQ5MjB9.YsLwOUWRyhr4HDhqy4yzdTrAsWYVPT_wR3cX8RpUyLw; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=efcf403e-89ca-48c8-a190-c798f5cde4e5; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:103]
+2025-09-24 23:43:47,700 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-24 23:43:47,912 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:102]
+2025-09-24 23:43:47,912 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 534
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc1MDIyNywianRpIjoiM2FkZjlmYzAtMGI0OS00OTZjLWFjZjItYTQxN2YwOWJjNzFlIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NTAyMjcsImNzcmYiOiIwMDJkNTBkNS0wY2ZmLTRkNDUtYWI2ZC03YmJmNTAxODU0OTciLCJleHAiOjE3NTkzNTUwMjd9.NrPi5xtYnOznJYkqSYpMDIqRehZek_SnVCERfVhczf8; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=002d50d5-0cff-4d45-ab6d-7bbf50185497; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:103]
+2025-09-25 00:29:50,109 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-25 00:29:50,378 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:103]
+2025-09-25 00:29:50,378 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 587
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc1Mjk5MCwianRpIjoiZTA4ODNiM2UtZWQwOC00MzhjLWEyN2YtZWIyYTkyY2I2ODYwIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NTI5OTAsImNzcmYiOiI1YzFkOGFmNy1iZmU4LTQ1NjEtOTlhZS1jMzE3YTg3Njg1NmUiLCJleHAiOjE3NTkzNTc3OTB9.jLFY-JVY8EFhmeNUKH_FJbTJi0jpTkD76emWHeXXx_Y; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=5c1d8af7-bfe8-4561-99ae-c317a876856e; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:104]
+2025-09-25 00:30:13,271 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-25 00:30:13,422 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:103]
+2025-09-25 00:30:13,423 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 587
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc1MzAxMywianRpIjoiNjdlYTQzZjgtYTY4Yy00ZjQ2LTgxYzctNjg2N2RiZjIyMzZhIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NTMwMTMsImNzcmYiOiI3ZjE3ZWRjOS1mMDU4LTQyM2UtOGZkNC1iN2NmNDM0NTkzNTQiLCJleHAiOjE3NTkzNTc4MTN9.xz73TE2JJcwJk2U46OLLYtZtCNR5BV6cH5AuknXeQrE; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=7f17edc9-f058-423e-8fd4-b7cf43459354; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:104]
+2025-09-25 00:33:12,779 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-25 00:33:12,991 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:103]
+2025-09-25 00:33:12,991 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 587
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc1MzE5MiwianRpIjoiZjQwMGM0NzktM2U0NC00NjMxLWI0NmUtZjMyMGMzYzlmMjJkIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NTMxOTIsImNzcmYiOiI1N2E0YzQ3Mi0wZWEwLTQ4YjEtYmU2Yy0wYWU1MGUyM2IxY2EiLCJleHAiOjE3NTkzNTc5OTJ9.EGAUFqxg5Dx18F3MZT_P33wS4gK5e8djaGgm-dLPZ2w; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=57a4c472-0ea0-48b1-be6c-0ae50e23b1ca; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:104]
