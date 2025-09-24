@@ -26,6 +26,7 @@ class User(db.Model):
     user_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
+    refresh_token_hash = db.Column(db.String(255), nullable=True)  # Store hashed refresh token
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=False)
     date_of_birth = db.Column(Datetime, nullable=True)  # Store date of birth
@@ -34,8 +35,8 @@ class User(db.Model):
     estimated_monthly_income = db.Column(db.Numeric, nullable=True)
     estimated_monthly_expenses = db.Column(db.Numeric, nullable=True)
     savings = db.Column(db.Numeric, default=0)  # Total savings of the user
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(datetime.timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now())
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(), onupdate=lambda: datetime.now())
     is_employed = db.Column(db.Boolean, default=True, nullable=True)
     employment_status = db.Column(UUID(as_uuid=True), db.ForeignKey('employment_statuses.status_id'), nullable=True)
 
@@ -132,6 +133,24 @@ class User(db.Model):
     @staticmethod
     def get_all_users():
         return User.query.all()
+
+    @staticmethod
+    def hash_refresh_token(refresh_token):
+        """Hash the refresh token using SHA-256."""
+        hashed_token = hashlib.sha256(refresh_token.encode('utf-8')).hexdigest()
+        return hashed_token
+
+    @staticmethod
+    def set_refresh_token(user_id, refresh_token):
+        """Hash and store the refresh token for a user."""
+        user = User.get_user_by_id(user_id)
+        if not user:
+            raise NoResultFound("User not found")
+
+        hashed_token = User.hash_refresh_token(refresh_token)
+        user.refresh_token_hash = hashed_token
+        db.session.commit()
+        return True
 
 
 class UserFinancialProfile(db.Model):

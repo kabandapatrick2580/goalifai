@@ -89,6 +89,16 @@ def login():
         # Create JWT token
         access_token = create_access_token(identity=str(user.user_id))
         refresh_token = create_refresh_token(identity=str(user.user_id))
+
+        try:
+            # hash refresh token in the database
+            hashed_refresh_token = User.set_password(refresh_token)
+            # save hashed refresh token to the user record
+            save_refresh_token = User.set_refresh_token(user.user_id, refresh_token)
+        except Exception as e:
+            current_app.logger.error(f"An error occurred while saving refresh token: {str(e)}")
+            return jsonify({"status": "error", "message": "An error occurred while processing login"}), 500
+
         response = jsonify({
             "status": "success", 
             "message": "Login successful", 
@@ -114,8 +124,19 @@ def login():
 def refresh():
     try:
         current_user_id = get_jwt_identity()
-        new_access_token = create_access_token(identity=current_user_id)
-        return jsonify({"status": "success", "access_token": new_access_token}), 200
+        user = User.get_user_by_id(current_user_id)
+        if user is None:
+            return jsonify({"status": "error", "message": "User not found"}), 404
+
+        # Get existing refresh token from db
+        existing_hashed_token = user.refresh_token_hash
+        
+        if existing_hashed_token is None or user.check_password(user, request.cookies.get('refresh_token_cookie')) is False:
+            return jsonify({"status": "error", "message": "No refresh token found, please log in again"}), 401  
+        # Create new access token
+        new_access_token = create_access_token(identity=str(user.user_id))
+        response = jsonify({"status": "success", "message": "Token refreshed successfully", "access_token": new_access_token})
+        return response, 200
     except Exception as e:
         current_app.logger.error(f"An error occurred: {str(e)}")
         return jsonify({"status": "error", "message": str(e)}), 500

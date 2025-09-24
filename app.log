@@ -661,3 +661,39 @@ Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaC
 Set-Cookie: csrf_refresh_token=02120474-0720-48f7-8cff-dee8f50ac082; Path=/
 
  - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:104]
+2025-09-25 01:23:33,260 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-25 01:23:33,395 - app - ERROR - An error occurred: (builtins.AttributeError) type object 'datetime.datetime' has no attribute 'timezone'
+[SQL: UPDATE users SET refresh_token_hash=%(refresh_token_hash)s, updated_at=%(updated_at)s WHERE users.user_id = %(users_user_id)s::UUID]
+[parameters: [{'refresh_token_hash': '95f7c8f2459ef373e31b9322e90442d61671acdbbd5fc29b0850ba754a17248d', 'users_user_id': UUID('f280eb9e-063d-40ae-83f2-8c47aeb9ea3f')}]] - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:115]
+2025-09-25 01:23:34,403 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-25 01:23:34,523 - app - ERROR - An error occurred: (builtins.AttributeError) type object 'datetime.datetime' has no attribute 'timezone'
+[SQL: UPDATE users SET refresh_token_hash=%(refresh_token_hash)s, updated_at=%(updated_at)s WHERE users.user_id = %(users_user_id)s::UUID]
+[parameters: [{'refresh_token_hash': '89fb3281f601e91640b02c310d80d3798fe2ce556661fccda5a7db9738d401cd', 'users_user_id': UUID('f280eb9e-063d-40ae-83f2-8c47aeb9ea3f')}]] - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:115]
+2025-09-25 01:23:35,155 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-25 01:23:35,263 - app - ERROR - An error occurred: (builtins.AttributeError) type object 'datetime.datetime' has no attribute 'timezone'
+[SQL: UPDATE users SET refresh_token_hash=%(refresh_token_hash)s, updated_at=%(updated_at)s WHERE users.user_id = %(users_user_id)s::UUID]
+[parameters: [{'refresh_token_hash': 'a75837e2f6c469d90c5a65fd0a1ddfd806df0ff9dd4098885cb912e7c8e1ea39', 'users_user_id': UUID('f280eb9e-063d-40ae-83f2-8c47aeb9ea3f')}]] - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:115]
+2025-09-25 01:25:31,828 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-25 01:25:31,951 - app - ERROR - An error occurred while saving refresh token: (builtins.AttributeError) type object 'datetime.datetime' has no attribute 'timezone'
+[SQL: UPDATE users SET refresh_token_hash=%(refresh_token_hash)s, updated_at=%(updated_at)s WHERE users.user_id = %(users_user_id)s::UUID]
+[parameters: [{'refresh_token_hash': 'e356a48743a42c39f06916bd1181a58e9d6f710e370672c8453c636b379b6bb4', 'users_user_id': UUID('f280eb9e-063d-40ae-83f2-8c47aeb9ea3f')}]] - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:100]
+2025-09-25 01:28:28,842 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-25 01:28:28,971 - app - ERROR - An error occurred while saving refresh token: (builtins.AttributeError) type object 'datetime.datetime' has no attribute 'timezone'
+[SQL: UPDATE users SET refresh_token_hash=%(refresh_token_hash)s, updated_at=%(updated_at)s WHERE users.user_id = %(users_user_id)s::UUID]
+[parameters: [{'refresh_token_hash': 'f9a53efb35c78c169c0bce305a76f7174eb414d9432f6c3b51edb7984c4a3816', 'users_user_id': UUID('f280eb9e-063d-40ae-83f2-8c47aeb9ea3f')}]] - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:99]
+2025-09-25 01:29:50,288 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-25 01:29:50,423 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:113]
+2025-09-25 01:29:50,423 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 587
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc1NjU5MCwianRpIjoiN2JhNDQ2ODktNDA0NC00MDgxLWE0MTktZGE4MWIwMjNkOGQxIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NTY1OTAsImNzcmYiOiIwNDFkOGJhMi04YzNjLTQyY2UtOTdjNy0zMmM2NmJhNmQyMzkiLCJleHAiOjE3NTkzNjEzOTB9.NJBSHN63ItTogfhFFsimh632CM6Ms2EvUvvo_4gpxJ8; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=041d8ba2-8c3c-42ce-97c7-32c66ba6d239; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:114]
+2025-09-25 01:33:22,740 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-25 01:33:22,879 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:113]
+2025-09-25 01:33:22,880 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 587
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc1NjgwMiwianRpIjoiN2E3MWVhNTEtMTgyMy00YWJjLWJiYTAtMjE5ZDNkMWNmYjMyIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NTY4MDIsImNzcmYiOiIzMzc5Y2RkYS03MzI3LTQ0ZDMtODZlNi1jNTMzZTdlZThjYTQiLCJleHAiOjE3NTkzNjE2MDJ9.wz5Kkg9UUVkFI5VOli5J8b6wbGFNY5ogDqEC5joJWHc; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=3379cdda-7327-44d3-86e6-c533e7ee8ca4; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:114]
