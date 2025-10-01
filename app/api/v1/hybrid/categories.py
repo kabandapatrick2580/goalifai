@@ -205,3 +205,16 @@ def update_category_record(category_id):
     except Exception as e:
         current_app.logger.error(f"An unexpected error occurred: {str(e)}")
         return jsonify({"error": "An unexpected error occurred", "status":"error"}), 500
+
+@categories_blueprint.route('/api/v1/categories/all_categories', methods=['GET'])
+def get_all_categories():
+    """Fetch all categories."""
+    try:
+        categories = Categories.get_all_categories()
+        if not categories:
+            return jsonify({"data": {"categories": []}, "message": "No categories found", "status":"success"}), 200
+        return jsonify({"data": {"categories": [category.to_dict() for category in categories]}, 
+                        "message": "Categories retrieved successfully", "status":"success"}), 200
+    except Exception as e:
+        current_app.logger.error(f"An unexpected error occurred: {str(e)}")
+        return jsonify({"error": "An unexpected error occurred", "status":"error"}), 500

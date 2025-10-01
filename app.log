@@ -697,3 +697,43 @@ Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaC
 Set-Cookie: csrf_refresh_token=3379cdda-7327-44d3-86e6-c533e7ee8ca4; Path=/
 
  - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:114]
+2025-09-25 01:49:36,890 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-25 01:49:37,119 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:113]
+2025-09-25 01:49:37,119 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 587
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODc1Nzc3NywianRpIjoiM2FhNTkxYWEtZTc1Zi00MjU3LTllODItYWM0NzRjNTMwZjc5IiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTg3NTc3NzcsImNzcmYiOiJiZDMwNGFiYi00ODM5LTQ2MGItOTQ5Yy1kMjdlZTkyMTg3YTIiLCJleHAiOjE3NTkzNjI1Nzd9.FSReyGclzf_LtiXUIqrtZlcgYKYYzl_M9bKFsw6O8F0; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=bd304abb-4839-460b-949c-d27ee92187a2; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:114]
+2025-09-29 18:29:53,894 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-29 18:29:54,350 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:113]
+2025-09-29 18:29:54,350 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 587
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1OTE2MzM5NCwianRpIjoiMDQ0MjYyNjktZWZjNS00NjhmLThhZTYtNTkxYzIyNTAwMTQyIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTkxNjMzOTQsImNzcmYiOiJiYTU2YmYzNC0xMThkLTQyNGItOWVkYy02ZTk0MDQ0NDljYzciLCJleHAiOjE3NTk3NjgxOTR9.v_dEjhUif_Ouk_IkP7roVdRTF6XtaGQwbKW9R9ofh9c; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=ba56bf34-118d-424b-9edc-6e9404449cc7; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:114]
+2025-09-29 18:38:00,616 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-29 18:38:00,988 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:113]
+2025-09-29 18:38:00,988 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 587
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1OTE2Mzg4MCwianRpIjoiOGNjOTJkNGMtNzM2Ny00YjFlLWE1YzUtNzc1NDU3YWU3MjI1IiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTkxNjM4ODAsImNzcmYiOiJkNWM5ZGUwYy01ODUzLTRkYmQtYjhjYy04ZDQyY2VmODQwNWMiLCJleHAiOjE3NTk3Njg2ODB9.Zink4LbOnRkJBj4tN5lk8nn1sOOZ72XrrnJG170bxwM; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=d5c9de0c-5853-4dbd-b8cc-8d42cef8405c; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:114]
+2025-09-29 18:39:52,413 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-29 18:39:52,794 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:113]
+2025-09-29 18:39:52,794 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 587
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1OTE2Mzk5MiwianRpIjoiZjAzNGUwMzItMTliNy00OTFlLTlkMjMtMTU3ZmFiMzQ3M2YwIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTkxNjM5OTIsImNzcmYiOiIzYWQzNDE4Ny00MzUwLTQ2OTMtODUwNi0yZWI1NDA0NDg2MGUiLCJleHAiOjE3NTk3Njg3OTJ9.eCN64j8aOcd65IVrbxED5TIJaw1Ya4O2C_jtMhwPjPk; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=3ad34187-4350-4693-8506-2eb54044860e; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:114]
+2025-09-29 18:41:27,718 - app - INFO - CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173 - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:80]
+2025-09-29 18:41:28,104 - app - INFO - User abc@gmail.com logged in successfully - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:113]
+2025-09-29 18:41:28,104 - app - INFO - Response headers: Content-Type: application/json
+Content-Length: 587
+Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1OTE2NDA4NywianRpIjoiY2Y5MThmZmYtNDVkMi00ZmRlLTgzMWQtMWYyNGI2ZGQ0OGY2IiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJmMjgwZWI5ZS0wNjNkLTQwYWUtODNmMi04YzQ3YWViOWVhM2YiLCJuYmYiOjE3NTkxNjQwODcsImNzcmYiOiI3M2VmOWRjYS1hNzJkLTQ2MjgtYWY2Yy0xY2M3MTA1MzdmYjUiLCJleHAiOjE3NTk3Njg4ODd9.eIGOHkLEa0zX9bf-9PSZuEteaKYpbH6oVKJIu5E5vIA; HttpOnly; Path=/
+Set-Cookie: csrf_refresh_token=73ef9dca-a72d-4628-af6c-1cc710537fb5; Path=/
+
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:114]
