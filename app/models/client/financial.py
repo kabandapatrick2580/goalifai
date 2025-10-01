@@ -13,7 +13,8 @@ from app import db
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import datetime
-from flask import jsonify 
+from flask import jsonify
+from sqlalchemy import func
 
 
 
@@ -293,12 +294,15 @@ class FinancialRecord(db.Model):
     amount = db.Column(db.Numeric(12, 2), nullable=False, default=0.00)
     description = db.Column(db.String(255), nullable=True)
     recorded_at = db.Column(db.DateTime, nullable=False)  # The date the transaction happened
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = db.Column(db.DateTime(timezone=True), default=func.now(), onupdate=func.now(), nullable=True)
+    currency = db.Column(UUID(as_uuid=True), db.ForeignKey("currencies.id"), nullable=True)
+    expected_transaction = db.Column(db.Boolean, default=True, nullable=False)  # True if expected, False if actual
 
     # Relationships
     user = db.relationship("User", back_populates="financial_records")
     category = db.relationship("Categories", back_populates="financial_records")
+    currency_rel = db.relationship("Currency", backref="financial_records", lazy=True)
 
     def __repr__(self):
         return f"<FinancialRecord(user_id={self.user_id}, record_type={self.record_type}, amount={self.amount}, expected={self.expected})>"
@@ -316,6 +320,9 @@ class FinancialRecord(db.Model):
             "recorded_at": self.recorded_at.isoformat(),
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
+            "currency": str(self.currency) if self.currency else None,
+            "currency_code": self.currency_rel.code if self.currency_rel else None,
+            "expected_transaction": self.expected_transaction,
         }
 
     @staticmethod

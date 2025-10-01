@@ -5,6 +5,8 @@ from sqlalchemy.orm.exc import NoResultFound
 from app.models.client.financial import Categories
 import uuid
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from decimal import Decimal, InvalidOperation
+
 
 
 financial_records_blueprint = Blueprint('financial_record_api', __name__)
@@ -12,6 +14,9 @@ financial_records_blueprint = Blueprint('financial_record_api', __name__)
 @jwt_required()
 def create_financial_record(user_id):
     """Creates a new financial record for a specific user."""
+    current_user_id = get_jwt_identity()
+    if str(current_user_id) != str(user_id):
+        return jsonify({"status": "error", "error": "Unauthorized access"}), 403
     try:
         data = request.get_json()
         required_fields = ['category_id', 'amount', 'recorded_at']
@@ -26,7 +31,7 @@ def create_financial_record(user_id):
 
         if category_id_uuid not in categories:
             print("Invalid category ID")
-            return jsonify({"error": "Invalid category ID"}), 400
+            return jsonify({"status": "error", "error": "Invalid category"}), 400
 
         new_record = FinancialRecord.create_record(
             user_id=user_id,
