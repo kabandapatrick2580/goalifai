@@ -737,3 +737,8 @@ Set-Cookie: refresh_token_cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaC
 Set-Cookie: csrf_refresh_token=73ef9dca-a72d-4628-af6c-1cc710537fb5; Path=/
 
  - [in /home/patrick/goalifai/app/api/v1/hybrid/user_access.py:114]
+2025-10-01 09:17:18,013 - app - ERROR - Error creating financial record: cannot access local variable 'currency_id' where it is not associated with a value - [in /home/patrick/goalifai/app/api/v1/client/financial_records.py:108]
+2025-10-01 09:18:31,403 - app - ERROR - Error creating financial record: cannot access local variable 'currency_id' where it is not associated with a value - [in /home/patrick/goalifai/app/api/v1/client/financial_records.py:108]
+2025-10-01 09:20:09,809 - app - ERROR - Error creating financial record: cannot access local variable 'currency_id' where it is not associated with a value - [in /home/patrick/goalifai/app/api/v1/client/financial_records.py:108]
+2025-10-01 09:22:06,239 - app - ERROR - Error creating financial record: cannot access local variable 'currency_id' where it is not associated with a value - [in /home/patrick/goalifai/app/api/v1/client/financial_records.py:108]
+2025-10-01 09:22:44,533 - app - ERROR - Error creating financial record: cannot access local variable 'currency_id' where it is not associated with a value - [in /home/patrick/goalifai/app/api/v1/client/financial_records.py:108]

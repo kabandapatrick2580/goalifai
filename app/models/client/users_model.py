@@ -87,7 +87,12 @@ class User(db.Model):
             'created_at': self.created_at,
             'updated_at': self.updated_at
         }
-    
+
+    @staticmethod
+    def get_user_by_id(user_id):
+        user = User.query.filter_by(user_id=user_id).first()
+        return user.to_dict() if user else None
+
     # Password helpers
     @staticmethod
     def set_password(user_password):
@@ -102,11 +107,6 @@ class User(db.Model):
     @classmethod
     def get_user_by_email(cls, email):
         return cls.query.filter_by(email=email).first()
-
-
-    @classmethod
-    def get_user_by_id(cls, user_id):
-        return cls.query.filter_by(user_id=user_id).first()
 
     @staticmethod
     def create_user(email, password, first_name, last_name, country_of_residence, currency):
@@ -396,8 +396,14 @@ class GoalPriority(db.Model):
     __tablename__ = 'goal_priorities'
 
     priority_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=True)  # Nullable for system-wide priorities
     name = db.Column(db.String(50), nullable=False, unique=True)
 
+    # relationships
+    goals = db.relationship("Goal", back_populates="priority", lazy=True)
+
+
+    
     def __repr__(self):
         return f"<GoalPriority(name='{self.name}')>"
 

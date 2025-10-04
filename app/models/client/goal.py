@@ -33,12 +33,12 @@ class Goal(db.Model):
 
     # Financial details
     target_amount = db.Column(NUMERIC(12, 2), nullable=False)
-    current_amount = db.Column(NUMERIC(12, 2), nullable=False, default=0)
-    monthly_contribution = db.Column(NUMERIC(12, 2), nullable=False, default=0)
+    current_amount = db.Column(NUMERIC(12, 2), nullable=True, default=0)
+    monthly_contribution = db.Column(NUMERIC(12, 2), nullable=True, default=0)
 
     # Priority & Deadline (via FK)
     priority_id = db.Column(UUID(as_uuid=True), db.ForeignKey('goal_priorities.priority_id'), nullable=True)
-    due_date = db.Column(db.DateTime, nullable=False)
+    due_date = db.Column(db.DateTime, nullable=True)
     expected_completion_date = db.Column(db.DateTime, nullable=True)
 
     # Feasibility Tracking

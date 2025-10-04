@@ -6,48 +6,108 @@ from app.models.client.financial import Categories
 import uuid
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from decimal import Decimal, InvalidOperation
-
+from app.models.central.central import Currency
+from app.models.client.users_model import User
+# Validate amount
+from decimal import Decimal, InvalidOperation
 
 
 financial_records_blueprint = Blueprint('financial_record_api', __name__)
 @financial_records_blueprint.route('/api/v1/users/<uuid:user_id>/financial-records', methods=['POST'])
-@jwt_required()
+#@jwt_required()
 def create_financial_record(user_id):
     """Creates a new financial record for a specific user."""
+
+    """ Validate user authorization
     current_user_id = get_jwt_identity()
     if str(current_user_id) != str(user_id):
         return jsonify({"status": "error", "error": "Unauthorized access"}), 403
+    """
+    # Fetch user + preferred currency
+    user = User.get_user_by_id(user_id)
+    if not user:
+        return jsonify({"status": "error", "error": "User not found"}), 404
+
+    user_currency_id = None
+    if user.get("currency"):
+        preffered_currency = Currency.get_currency_by_code(user["currency"])
+        if preffered_currency:
+            user_currency_id = preffered_currency.id
+            
+
     try:
         data = request.get_json()
-        required_fields = ['category_id', 'amount', 'recorded_at']
+        required_fields = ["category_id", "amount", "recorded_at", currency_id]
 
         for field in required_fields:
             if field not in data:
-                return jsonify({"error": f"{field} is required"}), 400
+                return jsonify({"status": "error", "error": f"{field} is required"}), 400
 
-        categories = [cat.category_id for cat in Categories.get_all_categories()]
-        category_id_uuid = uuid.UUID(data['category_id'])
+        # Validate category UUID exists
+        try:
+            category_id_uuid = uuid.UUID(data["category_id"])
+        except ValueError:
+            return jsonify({"status": "error", "error": "Invalid category_id format"}), 400
 
-
-        if category_id_uuid not in categories:
-            print("Invalid category ID")
+        category = Categories.query.get(category_id_uuid)
+        if not category:
             return jsonify({"status": "error", "error": "Invalid category"}), 400
 
+
+        try:
+            amount = Decimal(str(data["amount"])).quantize(Decimal("0.01"))
+        except (InvalidOperation, ValueError):
+            return jsonify({"status": "error", "error": "Invalid amount format"}), 400
+
+        if amount <= 0:
+            return jsonify({"status": "error", "error": "Amount must be positive"}), 400
+
+        # Resolve currency
+        currency_id = None
+        if data.get("currency_id"):
+            try:
+                currency_uuid = uuid.UUID(data["currency_id"])
+            except ValueError:
+                return jsonify({"status": "error", "error": "Invalid currency format"}), 400
+
+            currency = Currency.get_currency_by_id(currency_uuid)
+            if not currency:
+                return jsonify({"status": "error", "error": "Invalid currency"}), 400
+            currency_id = currency.id
+        elif user_currency_id:
+            currency_id = user_currency_id
+        else:
+            return jsonify({"status": "error", "error": "Currency is required"}), 400
+
+        # Create record
         new_record = FinancialRecord.create_record(
             user_id=user_id,
-            category_id=data['category_id'],
-            amount=data['amount'],
-            recorded_at= datetime.fromisoformat(data['recorded_at']),
-            description= data['description']
+            category_id=category_id_uuid,
+            amount=amount,
+            recorded_at=datetime.fromisoformat(data["recorded_at"]),
+            description=data.get("description"),
+            currency=currency_id if currency_id else None,
+            expected_transaction=data.get("expected_transaction", False)
         )
 
         if new_record:
-            message = f"{new_record.category.name} {new_record.category.type.name} recorded successfully"
+            message = f"{category.name} {category.type.name if hasattr(category, 'type') else ''} recorded successfully"
             current_app.logger.info(message)
-            return jsonify({"message": message, "status": "success"}), 201
-        return jsonify({"error": "Failed to create financial record", "status": "error"}), 500
+            return jsonify({
+                "message": message,
+                "status": "success",
+                "record_id": str(new_record.record_id),
+                "amount": str(new_record.amount),
+                "currency": str(new_record.currency),
+                "recorded_at": new_record.recorded_at.isoformat()
+            }), 201
+
+        return jsonify({"status": "error", "error": "Failed to create financial record"}), 500
+
     except Exception as e:
-        return jsonify({"error": str(e), "status": "error"}), 500
+        current_app.logger.error(f"Error creating financial record: {str(e)}")
+        return jsonify({"status": "error", "error": str(e)}), 500
+
 
 
 @financial_records_blueprint.route('/api/v1/financial-records/<uuid:user_id>', methods=['GET'])

@@ -274,7 +274,14 @@ class Currency(db.Model):
             "symbol": self.symbol,
             "code": self.code,
         }
-    
+
+    @staticmethod
+    def get_currency_by_code(code):
+        try:
+            return Currency.query.filter_by(code=code).one()
+        except NoResultFound:
+            return None
+
     @staticmethod
     def create_currency(name, symbol, code):
         try:

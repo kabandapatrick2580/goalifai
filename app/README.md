@@ -24,3 +24,8 @@ next:
 implementation of financial records
     1. User profile has to be one per user
 implementation of categories
+
+
+implementation of financial recording
+1. Fetch the currencies to populate the dropdown
+2. fetch the categories to populate the dropdown
