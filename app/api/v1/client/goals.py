@@ -102,17 +102,16 @@ def delete_goal(goal_id):
         return jsonify({"status": "error", "message": str(e)}), 400
     
 
-@goal_blueprint.route('/all_goals', methods=['GET'])
-def get_all_goals():
+@goal_blueprint.route('/all_goals/<uuid:user_id>', methods=['GET'])
+def get_all_goals(user_id):
     try:
-        user_id = request.args.get("user_id")  # optional
         goals = Goal.get_all_goals(user_id)
-        return jsonify({"data": goals}), 200
-
+        return jsonify({"status":"success", "message":"Goals fetched successfully", "data": goals})
+    
     except Exception as e:
-        current_app.logger.error(f"Error fetching goals: {traceback.format_exc()}")
-        return jsonify({"status": "error", "message": str(e)}), 500
-
+        current_app.logger.error(f"An error occured while fetching goals {e}")
+        return jsonify({"status":"error", "message":"something went wrong, try again"}), 500
+    
 
 
     

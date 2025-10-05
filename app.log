@@ -942,3 +942,37 @@ KeyError: 'due_date'
  - [in /home/patrick/goalifai/app/api/v1/client/goals.py:45]
 2025-10-05 20:17:30,587 - app - ERROR - Error creating goal: 'Goal' object has no attribute 'category' - [in /home/patrick/goalifai/app/models/client/goal.py:97]
 2025-10-05 20:17:30,587 - app - INFO - Goal Plot of a land created successfully - [in /home/patrick/goalifai/app/api/v1/client/goals.py:49]
+2025-10-05 20:30:21,411 - app - ERROR - Error fetching goals: 'Goal' object has no attribute 'category' - [in /home/patrick/goalifai/app/models/client/goal.py:196]
+2025-10-05 20:30:21,422 - app - ERROR - Error fetching goals: Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/goals.py", line 109, in get_all_goals
+    return jsonify({"data": goals}), 200
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/flask/json/__init__.py", line 170, in jsonify
+    return current_app.json.response(*args, **kwargs)  # type: ignore[return-value]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/flask/json/provider.py", line 214, in response
+    f"{self.dumps(obj, **dump_args)}\n", mimetype=self.mimetype
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/flask/json/provider.py", line 179, in dumps
+    return json.dumps(obj, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/usr/lib/python3.12/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.12/json/encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/flask/json/provider.py", line 121, in _default
+    raise TypeError(f"Object of type {type(o).__name__} is not JSON serializable")
+TypeError: Object of type AttributeError is not JSON serializable
+ - [in /home/patrick/goalifai/app/api/v1/client/goals.py:112]
+2025-10-05 22:46:40,202 - app - ERROR - Error fetching goals: 'Goal' object has no attribute 'category' - [in /home/patrick/goalifai/app/models/client/goal.py:195]
+2025-10-05 22:46:40,203 - app - ERROR - An error occured while fetching goals Object of type set is not JSON serializable - [in /home/patrick/goalifai/app/api/v1/client/goals.py:112]
+2025-10-05 22:48:09,228 - app - ERROR - An error occured while fetching goals unhashable type: 'list' - [in /home/patrick/goalifai/app/api/v1/client/goals.py:112]

@@ -69,7 +69,7 @@ class Goal(db.Model):
             "user_id": str(self.user_id),
             "title": self.title,
             "description": self.description,
-            "category": self.category,
+            "category_id": self.goal_category,
             "target_amount": float(self.target_amount),
             "current_amount": float(self.current_amount),
             "monthly_contribution": float(self.monthly_contribution),
@@ -168,8 +168,32 @@ class Goal(db.Model):
         except Exception as e:
             current_app.logger.error(f"Error fetching completed goals: {e}")
             return jsonify({"error": str(e)}), 500
-        
 
+    @staticmethod
+    def get_incomplete_goals(user_id):
+        """Fetch all incomplete goals for a user."""
+        try:
+            goals = Goal.query.filter_by(user_id=user_id, is_completed=False).all()
+            return jsonify({
+                "message": "Incomplete goals retrieved successfully",
+                "status": "success",
+                "goals": [goal.to_dict() for goal in goals]
+            }), 200
+        except Exception as e:
+            current_app.logger.error(f"Error fetching incomplete goals: {e}")
+            return jsonify({"error": str(e)}), 500
+        
+    @staticmethod
+    def get_all_goals(user_id):
+        """Fetch all goals, optionally filtered by user."""
+        try:
+            goals = Goal.query.filter_by(user_id=user_id).all()
+            if not goals:
+                return None
+            return [goal.to_dict() for goal in goals]
+        except Exception as e:
+            current_app.logger.error(f"Error fetching goals: {e}")
+            return e
 
     
 class GoalCategories(db.Model):
