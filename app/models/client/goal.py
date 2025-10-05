@@ -29,7 +29,7 @@ class Goal(db.Model):
     # Goal details
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    category = db.Column(UUID(as_uuid=True), db.ForeignKey('goal_categories.category_id'), nullable=True)
+    goal_category = db.Column(UUID(as_uuid=True), db.ForeignKey('goal_categories.category_id'), nullable=True)
 
     # Financial details
     target_amount = db.Column(NUMERIC(12, 2), nullable=False)
@@ -331,56 +331,102 @@ class GoalPriority(db.Model):
     priority_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=True)  # Nullable for system-wide priorities
     name = db.Column(db.String(50), nullable=False, unique=True)
-
+    percentage = db.Column(db.Integer, nullable=True)  # Optional percentage field
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
     # relationships
     goals = db.relationship("Goal", back_populates="priority", lazy=True)
-
+    users = db.relationship("User", back_populates="goal_priorities")
 
     
     def __repr__(self):
-        return f"<GoalPriority(name='{self.name}')>"
-
+        return f"<GoalPriority(name='{self.name}', user_id='{self.user_id}')>"
+    
     def to_dict(self):
         return {
             "priority_id": str(self.priority_id),
-            "name": self.name
+            "user_id": str(self.user_id) if self.user_id else None,
+            "name": self.name,
+            "percentage": self.percentage,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat()
         }
-
+    
     @staticmethod
-    def create_priority(name):
+    def create_priority(name, user_id=None, percentage=None):
         """Create a new goal priority."""
         try:
-            priority = GoalPriority(name=name)
+            priority = GoalPriority(name=name, user_id=user_id, percentage=percentage)
             db.session.add(priority)
             db.session.commit()
             return priority.to_dict()
         except IntegrityError as e:
             db.session.rollback()
-            current_app.logger.error(f"Integrity error creating priority: {e.orig}")
-            return {"error": "Priority already exists"}, 400
-        except Exception as e:
-            db.session.rollback()
-            current_app.logger.error(f"Error creating priority: {e}")
-            return {"error": "An unexpected error occurred"}, 500
+            current_app.logger.error(f"Error creating goal priority: {e}")
+            return e
         
     @staticmethod
-    def update_priority(priority_id):
-        """Update an existing goal priority."""
+    def get_priority_by_id(priority_id):
         priority = GoalPriority.query.filter_by(priority_id=priority_id).first()
         if not priority:
-            return {"error": "Priority not found"}, 404
-        
+            return None
+        return priority.to_dict()
+    
+    @staticmethod
+    def get_priorities_by_user(user_id):
+        """Fetch all default priorities and user-defined priorities for a specific user."""
         try:
+            priorities = GoalPriority.query.filter((GoalPriority.user_id == user_id) & (GoalPriority.user_id.is_(None))).all()
+            return [priority.to_dict() for priority in priorities]
+        except Exception as e: 
+            current_app.logger.error(f"Error fetching priorities for user {user_id}: {e}")
+            return e
+        
+    @staticmethod
+    def delete_user_defined_priority(priority_id, user_id):
+        """Delete a user-defined priority. System-wide priorities cannot be deleted."""
+        try:
+            priority = GoalPriority.query.filter_by(priority_id=priority_id, user_id=user_id).first()
+            if not priority:
+                return None
+            db.session.delete(priority)
             db.session.commit()
             return priority.to_dict()
-        except IntegrityError as e:
-            db.session.rollback()
-            current_app.logger.error(f"Integrity error updating priority: {e.orig}")
-            return {"error": "Priority already exists"}, 400
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f"Error updating priority: {e}")
-            return {"error": "An unexpected error occurred"}, 500
+            current_app.logger.error(f"Error deleting goal priority: {e}")
+            return e
+        
+    @staticmethod
+    def update_priority(priority_id, user_id=None, is_admin=False, **kwargs):
+        """
+        Update an existing goal priority.
+        - Admins can update system priorities (user_id=None).
+        - Users can only update their own priorities.
+        """
+        try:
+            priority = GoalPriority.query.filter_by(priority_id=priority_id).first()
+            if not priority:
+                return None
+
+            # Check permissions
+            if priority.user_id is None and not is_admin:
+                return {"error": "You are not allowed to update system priorities."}
+            if priority.user_id is not None and priority.user_id != user_id and not is_admin:
+                return {"error": "You can only update your own priorities."}
+
+            # Apply updates
+            for key, value in kwargs.items():
+                if hasattr(priority, key) and value is not None:
+                    setattr(priority, key, value)
+
+            db.session.commit()
+            return priority.to_dict()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error updating goal priority: {e}")
+            return {"error": str(e)}
+        
 
 
 class GoalStatus(db.Model):
@@ -472,4 +518,56 @@ class GoalStatus(db.Model):
             return status.to_dict()
         except Exception as e:
             current_app.logger.error(f"Error fetching goal status by name: {e}")
+            return None
+
+class MonthlyGoalAllocation(db.Model):
+    """Tracks monthly allocation of funds to each goal for each user."""
+    __tablename__ = "monthly_goal_allocations"
+
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=False)
+    goal_id = db.Column(UUID(as_uuid=True), db.ForeignKey('goals.goal_id'), nullable=False)
+
+    # Financial tracking
+    month = db.Column(db.String(7), nullable=False)  # Format: YYYY-MM
+    allocated_amount = db.Column(NUMERIC(12, 2), nullable=False, default=0)
+    # Metadata
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+
+    # Relationships
+    goal = db.relationship("Goal", backref=db.backref("allocations", lazy=True))
+    user = db.relationship("User", backref=db.backref("goal_allocations", lazy=True))
+
+    def __repr__(self):
+        return f"<MonthlyGoalAllocation(goal_id='{self.goal_id}', month='{self.month}', allocated='{self.allocated_amount}')>"
+
+    def to_dict(self):
+        return {
+            "allocation_id": str(self.allocation_id),
+            "user_id": str(self.user_id),
+            "goal_id": str(self.goal_id),
+            "month": self.month,
+            "allocated_amount": float(self.allocated_amount or 0),
+            "actual_spent": float(self.actual_spent or 0),
+            "difference": float(self.difference or 0),
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+        }
+    
+    @staticmethod
+    def reallocate_funds(user_id, goal_id, month, allocated_amount):
+        """Create or update a monthly goal allocation."""
+        try:
+            allocation = MonthlyGoalAllocation.query.filter_by(user_id=user_id, goal_id=goal_id, month=month).first()
+            if allocation:
+                allocation.allocated_amount = allocated_amount
+            else:
+                allocation = MonthlyGoalAllocation(user_id=user_id, goal_id=goal_id, month=month, allocated_amount=allocated_amount)
+                db.session.add(allocation)
+            db.session.commit()
+            return allocation.to_dict()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error reallocating funds: {e}")
             return None

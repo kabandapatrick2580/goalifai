@@ -7,30 +7,35 @@ import traceback
 from sqlalchemy.orm.exc import NoResultFound
 
 
-goal_blueprint = Blueprint('goal_api', __name__)
-@goal_blueprint.route('/api/v1/define_goal', methods=['POST'])
+goal_blueprint = Blueprint('goal_api', __name__, url_prefix='/api/v1/goals')
+@goal_blueprint.route('/define_goal', methods=['POST'])
 def create_goal():
     try:
         data = request.get_json()
-        required_fields = ['user_id', 'title', 'target_amount', 'due_date']
+        required_fields = ['user_id', 'title', 'target_amount','goal_category_id']
 
         # Validate required fields
         for field in required_fields:
             if field not in data:
-                return jsonify({"error": f"'{field}' is required"}), 400
+                return jsonify({"status":"error","message": f"'{field}' is required"}), 400
             
         # Check if user exists
         existing_user = User.get_user_by_id(data['user_id'])
         if existing_user is None:
             current_app.logger.info(f"User with id {data['user_id']} does not exist")
-            return jsonify({"error": "User does not exist"}), 400
+            return jsonify({"status":"error","message": "User does not exist"}), 400
         
         # Create goal
         goal = Goal.create_goal(
             user_id=data['user_id'],
             title=data['title'],
             target_amount=data['target_amount'],
-            due_date=datetime.strptime(data['due_date'], "%Y-%m-%d")
+            due_date=datetime.strptime(data['due_date'], "%Y-%m-%d"),
+            description=data.get('description', None),
+            category=data['goal_category_id'],
+            priority_id=data.get('priority_id', None),
+            goal_status_id=data.get('goal_status_id', None)
+
         )
         if goal is None:
             current_app.logger.error(f"An error occurred while creating the goal")
@@ -47,7 +52,7 @@ def create_goal():
     }), 201
 
 """Update goal"""
-@goal_blueprint.route('/api/v1/goals/update/<uuid:goal_id>', methods=['PUT'])
+@goal_blueprint.route('/update/<uuid:goal_id>', methods=['PUT'])
 def update_goal(goal_id):
     try:
         # Ensure request contains JSON data
@@ -73,7 +78,7 @@ def update_goal(goal_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@goal_blueprint.route('/api/v1/goals/list/<uuid:goal_id>', methods=['GET'])
+@goal_blueprint.route('/list/<uuid:goal_id>', methods=['GET'])
 def get_goal(goal_id):
     try:
         goals = Goal.get_goal_by_id(goal_id)
@@ -86,7 +91,7 @@ def get_goal(goal_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     
-@goal_blueprint.route('/api/v1/goals/delete/<uuid:goal_id>', methods=['DELETE'])
+@goal_blueprint.route('/delete/<uuid:goal_id>', methods=['DELETE'])
 def delete_goal(goal_id):
     try:
         response = Goal.delete_goal(goal_id)
@@ -97,15 +102,6 @@ def delete_goal(goal_id):
         return jsonify({"error": str(e)}), 400    
 
 
-@goal_blueprint.route('/api/v1/goals_list', methods=['GET'])
-def list_all_goals():
-    try:
-        goals = Goal.get_all_goals()
-        return jsonify(goals), 200
-    except Exception as e:
-        current_app.logger.error(f"An error occurred: {str(e)}")
-        current_app.logger.error(traceback.format_exc())
-        return jsonify({"error": str(e)}), 500
 
     
     
