@@ -1,4 +1,6 @@
-[
+{
+
+    "transaction_categories": [
     {
         "name": "Salary",
         "category_type": "Income",
@@ -89,4 +91,5 @@
         "category_type": "Expense",
         "description": "Other expenses that do not fit into the above categories."
     }
-]
+    ]
+}

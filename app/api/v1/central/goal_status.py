@@ -65,3 +65,31 @@ def delete_goal_status(status_id):
     except Exception as e:
         current_app.logger.error(f"Error while deleting goal status: {e}")
         return jsonify({"status": "error", "message": "Error while deleting goal status"}), 500
+    
+@goal_status_bp.route('/api/v1/goal_status/bulk_create', methods=['POST'])
+def bulk_create_goal_statuses():
+    try:
+        data = request.get_json()
+        if not data or 'goal_statuses' not in data or not isinstance(data['goal_statuses'], list):
+            return jsonify({"status": "error", "message": "Invalid input, expected a list of statuses"}), 400
+        
+        created_statuses = []
+        for status_data in data['goal_statuses']:
+            name = status_data.get('name', '').strip().lower()
+            if not is_valid_string(name):
+                continue  # skip invalid names
+            existing_status = GoalStatus.get_status_by_name(name)
+            if existing_status:
+                continue  # skip duplicates
+            status = GoalStatus.create_goal_status(name)
+            if status:
+                created_statuses.append(status)
+        
+        return jsonify({
+            "status": "success",
+            "message": f"{len(created_statuses)} goal statuses created successfully",
+            "data": [status for status in created_statuses]
+        }), 201
+    except Exception as e:
+        current_app.logger.error(f"Error during bulk creation of goal statuses: {e}")
+        return jsonify({"status": "error", "message": "Error during bulk creation of goal statuses"}), 500

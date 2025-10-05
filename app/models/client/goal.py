@@ -460,3 +460,16 @@ class GoalStatus(db.Model):
             db.session.rollback()
             current_app.logger.error(f"Error deleting goal status: {e}")
             return None
+        
+    @staticmethod
+    def get_status_by_name(name):
+        """Fetch a goal status by name."""
+        try:
+            status = GoalStatus.query.filter_by(name=name).first()
+            if not status:
+                current_app.logger.error(f"Goal status with name '{name}' not found.")
+                return None
+            return status.to_dict()
+        except Exception as e:
+            current_app.logger.error(f"Error fetching goal status by name: {e}")
+            return None

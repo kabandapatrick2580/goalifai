@@ -40,7 +40,7 @@ class User(db.Model):
     is_employed = db.Column(db.Boolean, default=True, nullable=True)
     employment_status = db.Column(UUID(as_uuid=True), db.ForeignKey('employment_statuses.status_id'), nullable=True)
     
-     # Auth-related extras
+    # Auth-related extras
     is_active = db.Column(db.Boolean, default=True)       # can be used to disable login
     is_admin = db.Column(db.Boolean, default=False)       # optional role control
     last_login = db.Column(db.DateTime, nullable=True)   # track last login time

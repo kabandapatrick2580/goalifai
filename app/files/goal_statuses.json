@@ -1,0 +1,24 @@
+{
+    "goal_statuses": [
+        {
+            "name": "Not Started",
+            "description": "The goal has not been started yet."
+        },
+        {
+            "name": "In Progress",
+            "description": "The goal is currently being worked on."
+        },
+        {
+            "name": "Completed",
+            "description": "The goal has been completed successfully."
+        },
+        {
+            "name": "On Hold",
+            "description": "The goal is temporarily on hold."
+        },
+        {
+            "name": "Cancelled",
+            "description": "The goal has been cancelled and will not be pursued further."
+        }
+    ]
+}
