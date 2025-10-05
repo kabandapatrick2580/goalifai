@@ -1,10 +1,8 @@
 from flask import request, jsonify, Blueprint, current_app
-from app.models.client.users_model import GoalPriority
+from app.models.client.goal import GoalPriority
 from app import db
-import json
 
 from sqlalchemy.exc import IntegrityError
-
 goal_priorities_blueprint = Blueprint('goal_priorities_api', __name__)
 @goal_priorities_blueprint.route('/api/v1/goal_priorities/create', methods=['POST'])
 def create_goal_priority():

@@ -742,3 +742,179 @@ Set-Cookie: csrf_refresh_token=73ef9dca-a72d-4628-af6c-1cc710537fb5; Path=/
 2025-10-01 09:20:09,809 - app - ERROR - Error creating financial record: cannot access local variable 'currency_id' where it is not associated with a value - [in /home/patrick/goalifai/app/api/v1/client/financial_records.py:108]
 2025-10-01 09:22:06,239 - app - ERROR - Error creating financial record: cannot access local variable 'currency_id' where it is not associated with a value - [in /home/patrick/goalifai/app/api/v1/client/financial_records.py:108]
 2025-10-01 09:22:44,533 - app - ERROR - Error creating financial record: cannot access local variable 'currency_id' where it is not associated with a value - [in /home/patrick/goalifai/app/api/v1/client/financial_records.py:108]
+2025-10-04 14:51:07,654 - app - ERROR - Error in bulk create: Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/hybrid/goal_categories.py", line 140, in bulk_create_categories
+    category = GoalCategories.create_category(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/app/models/client/goal.py", line 207, in create_category
+    category = GoalCategories(name=name, user_id=user_id, description=description)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 4, in __init__
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/state.py", line 566, in _initialize_instance
+    manager.dispatch.init(self, args, kwargs)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/event/attr.py", line 497, in __call__
+    fn(*args, **kw)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4410, in _event_on_init
+    instrumenting_mapper._check_configure()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2401, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4218, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4259, in _do_configure_registries
+    mapper._post_configure_properties()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2418, in _post_configure_properties
+    prop.init()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/interfaces.py", line 595, in init
+    self.do_init()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 1660, in do_init
+    self._generate_backref()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 2086, in _generate_backref
+    raise sa_exc.ArgumentError(
+sqlalchemy.exc.ArgumentError: Error creating backref 'goals' on relationship 'Goal.priority': property of that name exists on mapper 'Mapper[GoalPriority(goal_priorities)]'
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/goal_categories.py:154]
+2025-10-04 14:56:37,242 - app - ERROR - Error in bulk create: Traceback (most recent call last):
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2522, in get_property
+    return self._props[key]
+           ~~~~~~~~~~~^^^^^
+KeyError: 'goals'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/hybrid/goal_categories.py", line 140, in bulk_create_categories
+    category = GoalCategories.create_category(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/app/models/client/goal.py", line 207, in create_category
+    category = GoalCategories(name=name, user_id=user_id, description=description)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 4, in __init__
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/state.py", line 566, in _initialize_instance
+    manager.dispatch.init(self, args, kwargs)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/event/attr.py", line 497, in __call__
+    fn(*args, **kw)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4410, in _event_on_init
+    instrumenting_mapper._check_configure()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2401, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4218, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4259, in _do_configure_registries
+    mapper._post_configure_properties()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2418, in _post_configure_properties
+    prop.init()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/interfaces.py", line 595, in init
+    self.do_init()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 1660, in do_init
+    self._generate_backref()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 2144, in _generate_backref
+    self._add_reverse_property(self.back_populates)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 1591, in _add_reverse_property
+    other = self.mapper.get_property(key, _configure_mappers=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2524, in get_property
+    raise sa_exc.InvalidRequestError(
+sqlalchemy.exc.InvalidRequestError: Mapper 'Mapper[GoalStatus(goal_statuses)]' has no property 'goals'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called.
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/goal_categories.py:154]
+2025-10-04 14:59:11,024 - app - ERROR - Error in bulk create: Traceback (most recent call last):
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2522, in get_property
+    return self._props[key]
+           ~~~~~~~~~~~^^^^^
+KeyError: 'goal_categories'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/hybrid/goal_categories.py", line 140, in bulk_create_categories
+    category = GoalCategories.create_category(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/app/models/client/goal.py", line 207, in create_category
+    category = GoalCategories(name=name, user_id=user_id, description=description)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 4, in __init__
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/state.py", line 566, in _initialize_instance
+    manager.dispatch.init(self, args, kwargs)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/event/attr.py", line 497, in __call__
+    fn(*args, **kw)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4410, in _event_on_init
+    instrumenting_mapper._check_configure()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2401, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4218, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4259, in _do_configure_registries
+    mapper._post_configure_properties()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2418, in _post_configure_properties
+    prop.init()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/interfaces.py", line 595, in init
+    self.do_init()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 1660, in do_init
+    self._generate_backref()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 2144, in _generate_backref
+    self._add_reverse_property(self.back_populates)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 1591, in _add_reverse_property
+    other = self.mapper.get_property(key, _configure_mappers=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2524, in get_property
+    raise sa_exc.InvalidRequestError(
+sqlalchemy.exc.InvalidRequestError: Mapper 'Mapper[User(users)]' has no property 'goal_categories'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called.
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/goal_categories.py:154]
+2025-10-04 14:59:59,827 - app - ERROR - Error in bulk create: Traceback (most recent call last):
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 2434, in _determine_joins
+    self.primaryjoin = join_condition(
+                       ^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/sql/util.py", line 121, in join_condition
+    return Join._join_condition(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/sql/selectable.py", line 1444, in _join_condition
+    raise exc.NoForeignKeysError(
+sqlalchemy.exc.NoForeignKeysError: Can't find any foreign key relationships between 'goal_categories' and 'goals'.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/hybrid/goal_categories.py", line 140, in bulk_create_categories
+    category = GoalCategories.create_category(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/app/models/client/goal.py", line 207, in create_category
+    category = GoalCategories(name=name, user_id=user_id, description=description)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 4, in __init__
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/state.py", line 566, in _initialize_instance
+    manager.dispatch.init(self, args, kwargs)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/event/attr.py", line 497, in __call__
+    fn(*args, **kw)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4410, in _event_on_init
+    instrumenting_mapper._check_configure()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2401, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4218, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4259, in _do_configure_registries
+    mapper._post_configure_properties()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2418, in _post_configure_properties
+    prop.init()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/interfaces.py", line 595, in init
+    self.do_init()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 1657, in do_init
+    self._setup_join_conditions()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 1895, in _setup_join_conditions
+    self._join_condition = jc = JoinCondition(
+                                ^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 2321, in __init__
+    self._determine_joins()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 2455, in _determine_joins
+    raise sa_exc.NoForeignKeysError(
+sqlalchemy.exc.NoForeignKeysError: Could not determine join condition between parent/child tables on relationship GoalCategories.goals - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/goal_categories.py:154]
+2025-10-05 08:56:49,521 - app - ERROR - Error in bulk create: Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/hybrid/goal_categories.py", line 146, in bulk_create_categories
+    created_categories.append(category.to_dict())
+                              ^^^^^^^^^^^^^^^^
+AttributeError: 'dict' object has no attribute 'to_dict'
+ - [in /home/patrick/goalifai/app/api/v1/hybrid/goal_categories.py:154]
+2025-10-05 09:00:13,059 - app - ERROR - Integrity error in bulk create: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "goal_categories_name_key"
+DETAIL:  Key (name)=(housing) already exists.
+
+[SQL: INSERT INTO goal_categories (category_id, name, user_id, description, created_at, updated_at) VALUES (%(category_id)s::UUID, %(name)s, %(user_id)s::UUID, %(description)s, %(created_at)s, %(updated_at)s)]
+[parameters: {'category_id': UUID('7fe5f63c-848e-46ea-a74b-40f8ce12075b'), 'name': 'housing', 'user_id': None, 'description': 'Save for buying, building, or renting a home.', 'created_at': datetime.datetime(2025, 10, 5, 7, 0, 13, 58012, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2025, 10, 5, 7, 0, 13, 58016, tzinfo=datetime.timezone.utc)}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj) - [in /home/patrick/goalifai/app/api/v1/hybrid/goal_categories.py:150]

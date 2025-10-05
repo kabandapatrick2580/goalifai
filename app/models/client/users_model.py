@@ -39,7 +39,7 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(), onupdate=lambda: datetime.now())
     is_employed = db.Column(db.Boolean, default=True, nullable=True)
     employment_status = db.Column(UUID(as_uuid=True), db.ForeignKey('employment_statuses.status_id'), nullable=True)
-
+    
      # Auth-related extras
     is_active = db.Column(db.Boolean, default=True)       # can be used to disable login
     is_admin = db.Column(db.Boolean, default=False)       # optional role control
@@ -53,7 +53,7 @@ class User(db.Model):
     financial_records = db.relationship('FinancialRecord', back_populates='user', cascade='all, delete')
     employment_statuses = db.relationship('EmploymentStatus', back_populates='users', cascade='all, delete')
     currencies = db.relationship('Currency', back_populates='users')
-
+    goal_categories = db.relationship('GoalCategories', back_populates='user', cascade='all, delete')
     def __repr__(self):
         return f"""
         user_id: {self.user_id}
@@ -385,68 +385,4 @@ class Education(db.Model):
         """Get all education records for a user."""
         return Education.query.filter_by(user_id=user_id).all()
     
-
-class GoalPriority(db.Model):
-    """Model for goal priorities.
-        - It defines the priority levels for goals, such as 'High', 'Medium', 'Low'.
-        - Initial priorities are created by the system upon user registration with default values.
-        - later on can be updated by the user or admin.
-        
-    """
-    __tablename__ = 'goal_priorities'
-
-    priority_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=True)  # Nullable for system-wide priorities
-    name = db.Column(db.String(50), nullable=False, unique=True)
-
-    # relationships
-    goals = db.relationship("Goal", back_populates="priority", lazy=True)
-
-
-    
-    def __repr__(self):
-        return f"<GoalPriority(name='{self.name}')>"
-
-    def to_dict(self):
-        return {
-            "priority_id": str(self.priority_id),
-            "name": self.name
-        }
-
-    @staticmethod
-    def create_priority(name):
-        """Create a new goal priority."""
-        try:
-            priority = GoalPriority(name=name)
-            db.session.add(priority)
-            db.session.commit()
-            return priority.to_dict()
-        except IntegrityError as e:
-            db.session.rollback()
-            current_app.logger.error(f"Integrity error creating priority: {e.orig}")
-            return {"error": "Priority already exists"}, 400
-        except Exception as e:
-            db.session.rollback()
-            current_app.logger.error(f"Error creating priority: {e}")
-            return {"error": "An unexpected error occurred"}, 500
-        
-    @staticmethod
-    def update_priority(priority_id):
-        """Update an existing goal priority."""
-        priority = GoalPriority.query.filter_by(priority_id=priority_id).first()
-        if not priority:
-            return {"error": "Priority not found"}, 404
-        
-        try:
-            db.session.commit()
-            return priority.to_dict()
-        except IntegrityError as e:
-            db.session.rollback()
-            current_app.logger.error(f"Integrity error updating priority: {e.orig}")
-            return {"error": "Priority already exists"}, 400
-        except Exception as e:
-            db.session.rollback()
-            current_app.logger.error(f"Error updating priority: {e}")
-            return {"error": "An unexpected error occurred"}, 500
-
 

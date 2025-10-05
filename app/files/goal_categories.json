@@ -1,0 +1,60 @@
+{
+  "categories": [
+    {
+      "name": "housing",
+      "description": "Save for buying, building, or renting a home."
+    },
+    {
+      "name": "wedding",
+      "description": "Plan and save for wedding expenses."
+    },
+    {
+      "name": "education",
+      "description": "Cover tuition fees, courses, or children’s education."
+    },
+    {
+      "name": "health",
+      "description": "Set aside funds for healthcare, insurance, or medical emergencies."
+    },
+    {
+      "name": "career",
+      "description": "Invest in certifications, training, or professional development."
+    },
+    {
+      "name": "business",
+      "description": "Save capital to start or expand a business."
+    },
+    {
+      "name": "travel",
+      "description": "Budget for vacations, trips, or relocation."
+    },
+    {
+      "name": "retirement",
+      "description": "Plan for life after work with retirement savings."
+    },
+    {
+      "name": "investment",
+      "description": "Allocate money to stocks, real estate, or other investment opportunities."
+    },
+    {
+      "name": "emergency",
+      "description": "Build an emergency fund for unexpected life events."
+    },
+    {
+      "name": "personal_development",
+      "description": "Save for self-improvement like books, training, or hobbies."
+    },
+    {
+      "name": "family",
+      "description": "Plan for family-related needs such as childcare or dependents."
+    },
+    {
+      "name": "debt_repayment",
+      "description": "Pay off loans, mortgages, or credit card debt."
+    },
+    {
+      "name": "savings",
+      "description": "General savings for unspecified or flexible goals."
+    }
+  ]
+}

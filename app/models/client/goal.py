@@ -29,7 +29,7 @@ class Goal(db.Model):
     # Goal details
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    category = db.Column(db.String(100), nullable=True)  # e.g., Education, Finance, Travel
+    category = db.Column(UUID(as_uuid=True), db.ForeignKey('goal_categories.category_id'), nullable=True)
 
     # Financial details
     target_amount = db.Column(NUMERIC(12, 2), nullable=False)
@@ -56,8 +56,8 @@ class Goal(db.Model):
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
     # Optional relationships (backrefs)
-    priority = db.relationship("GoalPriority", backref="goals", lazy=True)
-    status = db.relationship("GoalStatus", backref="goals", lazy=True)
+    priority = db.relationship("GoalPriority", back_populates="goals", lazy=True)
+    status = db.relationship("GoalStatus", back_populates="goals", lazy=True)
     user = db.relationship("User", back_populates="goals")
 
     def __repr__(self):
@@ -172,3 +172,291 @@ class Goal(db.Model):
 
 
     
+class GoalCategories(db.Model):
+    """Model for goal categories."""
+    __tablename__ = 'goal_categories'
+
+    category_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False, unique=True)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=True)  # Nullable for system-wide categories
+    description = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+
+    # relationships
+    user = db.relationship("User", back_populates="goal_categories")
+    goals = db.relationship("Goal", backref="category_ref", lazy=True)
+
+    def __repr__(self):
+        return f"<GoalCategory(name='{self.name}')>"
+    
+    def to_dict(self):
+        return {
+            "category_id": str(self.category_id),
+            "name": self.name,
+            "description": self.description,
+            "user_id": str(self.user_id) if self.user_id else None,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat()
+        }
+    
+    @staticmethod
+    def create_category(name, user_id=None, description=None):
+        """Create a new goal category."""
+        try:
+            category = GoalCategories(name=name, user_id=user_id, description=description)
+            db.session.add(category)
+            db.session.commit()
+            return category.to_dict()
+        except IntegrityError as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error creating goal category: {e}")
+            return e
+        
+    @staticmethod
+    def get_category_by_id(category_id):
+        category = GoalCategories.query.filter_by(category_id=category_id).first()
+        if not category:
+            return None
+        return category.to_dict()
+
+    @staticmethod
+    def get_categories_by_user(user_id):
+        """Fetch all categories for a specific user."""
+        try:
+            categories = GoalCategories.query.filter_by(user_id=user_id).all()
+            return [category.to_dict() for category in categories]
+        except Exception as e:
+            current_app.logger.error(f"Error fetching categories for user {user_id}: {e}")
+            return e
+        
+    @staticmethod
+    def get_goal_category_by_name(name, user_id=None):
+        """Fetch a goal category by name, optionally filtered by user."""
+        try:
+            if user_id:
+                category = GoalCategories.query.filter_by(name=name, user_id=user_id).first()
+            else:
+                category = GoalCategories.query.filter_by(name=name, user_id=None).first()
+            if not category:
+                return None
+            return category.to_dict()
+        except Exception as e:
+            current_app.logger.error(f"Error fetching goal category by name: {e}")
+            return e
+
+    @staticmethod
+    def get_all_categories(user_id=None):
+        """Fetch all goal categories, optionally filtered by user."""
+        try:
+            if user_id:
+                categories = GoalCategories.query.filter((GoalCategories.user_id == user_id) | (GoalCategories.user_id.is_(None))).all()
+            else:
+                categories = GoalCategories.query.all()
+            return [category.to_dict() for category in categories]
+        except Exception as e:
+            current_app.logger.error(f"Error fetching goal categories: {e}")
+            return e
+    
+    @staticmethod
+    def update_category(category_id, user_id=None, is_admin=False, **kwargs):
+        """
+        Update an existing goal category.
+        - Admins can update system categories (user_id=None).
+        - Users can only update their own categories.
+        """
+        try:
+            category = GoalCategories.query.filter_by(category_id=category_id).first()
+            if not category:
+                return None
+
+            # Check permissions
+            if category.user_id is None and not is_admin:
+                return {"error": "You are not allowed to update system categories."}
+            if category.user_id is not None and category.user_id != user_id and not is_admin:
+                return {"error": "You can only update your own categories."}
+
+            # Apply updates
+            for key, value in kwargs.items():
+                if hasattr(category, key) and value is not None:
+                    setattr(category, key, value)
+
+            db.session.commit()
+            return category.to_dict()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error updating goal category: {e}")
+            return {"error": str(e)}
+        
+    @staticmethod
+    def delete_category(category_id, user_id=None, is_admin=False):
+        """
+        Delete a goal category.
+        - Admins can delete system-wide categories (user_id=None).
+        - Users can only delete their own categories.
+        - If a category has linked goals, you may want to prevent deletion or cascade.
+        """
+        try:
+            category = GoalCategories.query.filter_by(category_id=category_id).first()
+            if not category:
+                return {"error": "Category not found."}
+
+            # Permission check
+            if category.user_id is None and not is_admin:
+                return {"error": "You are not allowed to delete system categories."}
+            if category.user_id is not None and category.user_id != user_id and not is_admin:
+                return {"error": "You can only delete your own categories."}
+
+            # Optional: check if goals exist under this category
+            if category.goals and not is_admin:
+                return {"error": "This category has existing goals. Remove them first."}
+
+            db.session.delete(category)
+            db.session.commit()
+            return {"message": f"Category '{category.name}' deleted successfully."}
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error deleting goal category: {e}")
+            return {"error": str(e)}
+
+class GoalPriority(db.Model):
+    """Model for goal priorities.
+        - It defines the priority levels for goals, such as 'High', 'Medium', 'Low'.
+        - Initial priorities are created by the system upon user registration with default values.
+        - later on can be updated by the user or admin.
+        
+    """
+    __tablename__ = 'goal_priorities'
+
+    priority_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=True)  # Nullable for system-wide priorities
+    name = db.Column(db.String(50), nullable=False, unique=True)
+
+    # relationships
+    goals = db.relationship("Goal", back_populates="priority", lazy=True)
+
+
+    
+    def __repr__(self):
+        return f"<GoalPriority(name='{self.name}')>"
+
+    def to_dict(self):
+        return {
+            "priority_id": str(self.priority_id),
+            "name": self.name
+        }
+
+    @staticmethod
+    def create_priority(name):
+        """Create a new goal priority."""
+        try:
+            priority = GoalPriority(name=name)
+            db.session.add(priority)
+            db.session.commit()
+            return priority.to_dict()
+        except IntegrityError as e:
+            db.session.rollback()
+            current_app.logger.error(f"Integrity error creating priority: {e.orig}")
+            return {"error": "Priority already exists"}, 400
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error creating priority: {e}")
+            return {"error": "An unexpected error occurred"}, 500
+        
+    @staticmethod
+    def update_priority(priority_id):
+        """Update an existing goal priority."""
+        priority = GoalPriority.query.filter_by(priority_id=priority_id).first()
+        if not priority:
+            return {"error": "Priority not found"}, 404
+        
+        try:
+            db.session.commit()
+            return priority.to_dict()
+        except IntegrityError as e:
+            db.session.rollback()
+            current_app.logger.error(f"Integrity error updating priority: {e.orig}")
+            return {"error": "Priority already exists"}, 400
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error updating priority: {e}")
+            return {"error": "An unexpected error occurred"}, 500
+
+
+class GoalStatus(db.Model):
+    """example: 'Active', 'Completed', 'Cancelled', 'In Progress'"""
+    __tablename__ = 'goal_statuses'
+
+    status_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+
+    # relationships
+    goals = db.relationship("Goal", back_populates="status", lazy=True)
+
+    def __repr__(self):
+        return f"<GoalStatus(name='{self.name}')>"
+
+    def to_dict(self):
+        return {
+            "status_id": str(self.status_id),
+            "name": self.name
+        }
+
+    @staticmethod
+    def create_goal_status(name):
+        """Create goal statuses"""
+        try:
+            goal_status = GoalStatus(name=name)
+            db.session.add(goal_status)
+            db.session.commit()
+            return goal_status.to_dict()
+        except Exception as e:
+            current_app.logger.info(f"Error while adding goal status {e}")
+            return  None
+
+    @staticmethod
+    def get_all_statuses():
+        """Fetch all goal statuses ex:ample: 'Active', 'Completed', 'Cancelled', 'In Progress'."""
+        try:
+            statuses = GoalStatus.query.all()
+            return statuses
+        except Exception as e:
+            current_app.logger.error(f"Error fetching goal statuses: {e}")
+            return None   
+    @staticmethod
+    def update_status(status_id, name):
+        """Update a goal status."""
+        try:
+            status = GoalStatus.query.filter_by(status_id=status_id).first()
+            if not status:
+                current_app.logger.error(f"Goal status with ID {status_id} not found.")
+                return None
+            
+            status.name = name
+            db.session.commit()
+            return status.to_dict()
+        except IntegrityError as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error updating goal status: {e}")
+            return None
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Unexpected error updating goal status: {e}")
+            return None
+        
+    @staticmethod
+    def delete_status(status_id):
+        """Delete a goal status."""
+        try:
+            status = GoalStatus.query.filter_by(status_id=status_id).first()
+            if not status:
+                current_app.logger.error(f"Goal status with ID {status_id} not found.")
+                return None
+            
+            db.session.delete(status)
+            db.session.commit()
+            return status.to_dict()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error deleting goal status: {e}")
+            return None
