@@ -29,3 +29,8 @@ implementation of categories
 implementation of financial recording
 1. Fetch the currencies to populate the dropdown
 2. fetch the categories to populate the dropdown
+
+Goal funds reallocation
+1. Track the total income and total expense from the financial records table or financial profile
+
+2. the user_id and the current month as well as the goal priorities to calculate the goal weights and funds

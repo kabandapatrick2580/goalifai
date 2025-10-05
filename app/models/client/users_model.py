@@ -54,6 +54,8 @@ class User(db.Model):
     employment_statuses = db.relationship('EmploymentStatus', back_populates='users', cascade='all, delete')
     currencies = db.relationship('Currency', back_populates='users')
     goal_categories = db.relationship('GoalCategories', back_populates='user', cascade='all, delete')
+    goal_priorities = db.relationship('GoalPriority', back_populates='users', cascade='all, delete')
+
     def __repr__(self):
         return f"""
         user_id: {self.user_id}

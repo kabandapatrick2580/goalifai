@@ -924,3 +924,21 @@ DETAIL:  Key (name)=(housing) already exists.
 2025-10-05 09:19:08,068 - app - ERROR - Goal status with name 'completed' not found. - [in /home/patrick/goalifai/app/models/client/goal.py:470]
 2025-10-05 09:19:08,071 - app - ERROR - Goal status with name 'on hold' not found. - [in /home/patrick/goalifai/app/models/client/goal.py:470]
 2025-10-05 09:19:08,074 - app - ERROR - Goal status with name 'cancelled' not found. - [in /home/patrick/goalifai/app/models/client/goal.py:470]
+2025-10-05 20:04:00,641 - app - ERROR - Error creating goal priorities: Mapper 'Mapper[User(users)]' has no property 'goal_priorities'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called. - [in /home/patrick/goalifai/app/api/v1/central/goal_priorities.py:67]
+2025-10-05 20:05:02,081 - app - ERROR - Error creating goal priorities: Mapper 'Mapper[GoalPriority(goal_priorities)]' has no property 'user'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called. - [in /home/patrick/goalifai/app/api/v1/central/goal_priorities.py:67]
+2025-10-05 20:06:19,857 - app - ERROR - Error creating goal priorities: (psycopg2.errors.UndefinedColumn) column "percentage" of relation "goal_priorities" does not exist
+LINE 1: ...INTO goal_priorities (priority_id, user_id, name, percentage...
+                                                             ^
+
+[SQL: INSERT INTO goal_priorities (priority_id, user_id, name, percentage, created_at, updated_at) VALUES (%(priority_id)s::UUID, %(user_id)s::UUID, %(name)s, %(percentage)s, %(created_at)s, %(updated_at)s)]
+[parameters: {'priority_id': UUID('b54df03e-fe0c-4111-a39c-01543a6d75ce'), 'user_id': None, 'name': 'critical', 'percentage': 100, 'created_at': datetime.datetime(2025, 10, 5, 18, 6, 19, 855494, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2025, 10, 5, 18, 6, 19, 855499, tzinfo=datetime.timezone.utc)}]
+(Background on this error at: https://sqlalche.me/e/20/f405) - [in /home/patrick/goalifai/app/api/v1/central/goal_priorities.py:67]
+2025-10-05 20:15:23,307 - app - ERROR - An error occurred: 'due_date' - [in /home/patrick/goalifai/app/api/v1/client/goals.py:44]
+2025-10-05 20:15:23,308 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/goals.py", line 33, in create_goal
+    due_date=datetime.strptime(data['due_date'], "%Y-%m-%d"),
+                               ~~~~^^^^^^^^^^^^
+KeyError: 'due_date'
+ - [in /home/patrick/goalifai/app/api/v1/client/goals.py:45]
+2025-10-05 20:17:30,587 - app - ERROR - Error creating goal: 'Goal' object has no attribute 'category' - [in /home/patrick/goalifai/app/models/client/goal.py:97]
+2025-10-05 20:17:30,587 - app - INFO - Goal Plot of a land created successfully - [in /home/patrick/goalifai/app/api/v1/client/goals.py:49]
