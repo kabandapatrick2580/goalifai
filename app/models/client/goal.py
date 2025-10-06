@@ -73,7 +73,11 @@ class Goal(db.Model):
             "target_amount": float(self.target_amount),
             "current_amount": float(self.current_amount),
             "monthly_contribution": float(self.monthly_contribution),
-            "priority": self.priority.name if self.priority else None,
+            "priority": {
+                "priority_id": str(self.priority.priority_id) if self.priority else None,
+                "name": self.priority.name if self.priority else None,
+                "percentage": float(self.priority.percentage) if self.priority and self.priority.percentage else 0
+            },
             "due_date": self.due_date.isoformat() if self.due_date else None,
             "expected_completion_date": self.expected_completion_date.isoformat() if self.expected_completion_date else None,
             "funding_gap": float(self.funding_gap) if self.funding_gap else 0,
@@ -81,7 +85,7 @@ class Goal(db.Model):
             "is_completed": self.is_completed,
             "is_active": self.is_active,
             "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat()
+            "updated_at": self.updated_at.isoformat(),
         }
     
     @staticmethod
@@ -150,7 +154,7 @@ class Goal(db.Model):
         """Fetch all active goals for a user."""
         try:
             goals = Goal.query.filter_by(user_id=user_id, is_active=True).all()
-            return goals.to_dict()
+            return [goal.to_dict() for goal in goals]
         except Exception as e:
             current_app.logger.error(f"Error fetching active goals: {e}")
             return e
@@ -545,10 +549,10 @@ class GoalStatus(db.Model):
             return None
 
 class MonthlyGoalAllocation(db.Model):
-    """Tracks monthly allocation of funds to each goal for each user."""
+    """Tracks monthly allocation of funds to each goal for each user as per net income."""
     __tablename__ = "monthly_goal_allocations"
 
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
+    allocation_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=False)
     goal_id = db.Column(UUID(as_uuid=True), db.ForeignKey('goals.goal_id'), nullable=False)
 
@@ -573,8 +577,6 @@ class MonthlyGoalAllocation(db.Model):
             "goal_id": str(self.goal_id),
             "month": self.month,
             "allocated_amount": float(self.allocated_amount or 0),
-            "actual_spent": float(self.actual_spent or 0),
-            "difference": float(self.difference or 0),
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
@@ -587,7 +589,12 @@ class MonthlyGoalAllocation(db.Model):
             if allocation:
                 allocation.allocated_amount = allocated_amount
             else:
-                allocation = MonthlyGoalAllocation(user_id=user_id, goal_id=goal_id, month=month, allocated_amount=allocated_amount)
+                allocation = MonthlyGoalAllocation(
+                    user_id=(user_id),
+                    goal_id=(goal_id),
+                    month=month,
+                    allocated_amount=allocated_amount
+                )
                 db.session.add(allocation)
             db.session.commit()
             return allocation.to_dict()

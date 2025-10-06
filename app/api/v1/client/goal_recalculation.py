@@ -34,6 +34,7 @@ def recalculate_allocations():
         current_month = datetime.now().strftime("%Y-%m")
 
         if net_income <= 0:
+            
             return jsonify({
                 "message": "No allocations made. User spent more than earned this month.",
                 "net_income": float(net_income)
@@ -41,40 +42,46 @@ def recalculate_allocations():
 
         # Fetch user's active goals with priority
         goals = Goal.get_active_goals(user_id)
-
+        current_app.logger.info(f"All goals for user {user_id}: {goals}")
         if not goals:
+            current_app.logger.info(f"No active goals found for user {user_id}")
             return jsonify({"message": "No active goals found for user."}), 200
 
         # Sum all priority percentages (to normalize if needed)
-        total_priority = sum(float(g.priority.percentage) for g in goals if g.priority and g.priority.percentage)
+        total_priority = sum(float(g['priority']['percentage']) for g in goals if g['priority'] and g['priority']['percentage'])
 
         allocations_summary = []
 
         for goal in goals:
-            if not goal.priority or not goal.priority.percentage:
+            if not goal["priority"] or not goal["priority"]["percentage"]:
                 continue
             # Calculate proportional allocation
-            weight = float(goal.priority.percentage) / total_priority
+            weight = float(goal["priority"]["percentage"]) / total_priority
             allocated_amount = net_income * Decimal(str(weight))
 
             # Record allocation
-            allocation = GoalAllocation.reallocate_funds(
-                user_id=user_id,
-                goal_id=goal.goal_id,
-                month=current_month,
-                allocated_amount=allocated_amount
-            )
-            if allocation:
-                allocations_summary.append({
-                    "goal_id": str(goal.goal_id),
-                    "goal_title": goal.title,
-                    "allocated_amount": float(allocated_amount)
-                })
-                current_app.logger.info(f"Allocated {allocated_amount} to goal {goal.title} for user {user_id}")
-            else:
-                current_app.logger.error(f"Failed to allocate funds to goal {goal.title} for user {user_id}")
-                return jsonify({"status": "error", "message": f"Failed to allocate funds to goal {goal.title}"}), 500
-            
+            try:
+                allocation = GoalAllocation.reallocate_funds(
+                    user_id=user_id,
+                    goal_id=goal["goal_id"],
+                    month=current_month,
+                    allocated_amount=allocated_amount
+                )
+                if allocation:
+                    allocations_summary.append({
+                        "goal_id": str(goal["goal_id"]),
+                        "goal_title": goal["title"],
+                        "allocated_amount": float(allocated_amount)
+                    })
+                    current_app.logger.info(f"Allocated {allocated_amount} to goal {goal['title']} for user {user_id}")
+                else:
+                    current_app.logger.error(f"Failed to allocate funds to goal {goal['title']} for user {user_id}")
+                    return jsonify({"status": "error", "message": f"Failed to allocate funds to goal {goal['title']}"}), 500
+            except Exception as e:
+                current_app.logger.error(f"Error allocating funds to goal {goal['title']}: {str(e)}")
+                current_app.logger.error(traceback.format_exc())
+                return jsonify({"status": "error", "message": "Internal server error"}), 500
+        current_app.logger.info(f"Allocation summary for user {user_id}: {allocations_summary}")
         return jsonify({
             "status": "success",
             "message": "Allocations recalculated successfully",

@@ -66,6 +66,7 @@ from app.api.v1.central.goal_priorities import goal_priorities_blueprint
 from app.api.v1.central.currencies import currency_bp
 from app.api.v1.hybrid.user_access import user_access_bp
 from app.api.v1.hybrid.goal_categories import goal_categories_blueprint
+from app.api.v1.client.goal_recalculation import allocations_blueprint
 
 # Register blueprint
 app.register_blueprint(user_blueprint)
@@ -81,3 +82,4 @@ app.register_blueprint(goal_priorities_blueprint)
 app.register_blueprint(currency_bp)
 app.register_blueprint(user_access_bp)
 app.register_blueprint(goal_categories_blueprint)
+app.register_blueprint(allocations_blueprint)

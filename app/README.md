@@ -34,3 +34,6 @@ Goal funds reallocation
 1. Track the total income and total expense from the financial records table or financial profile
 
 2. the user_id and the current month as well as the goal priorities to calculate the goal weights and funds
+3. When the income is super high, regulate to avoid allocating more funds than what are required
+4. and also when the income is lower than the expense
+5. THe structure of funds after the financial month closes to secure the allocated funds
