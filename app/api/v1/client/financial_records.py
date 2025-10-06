@@ -12,8 +12,8 @@ from app.models.client.users_model import User
 from decimal import Decimal, InvalidOperation
 
 
-financial_records_blueprint = Blueprint('financial_record_api', __name__)
-@financial_records_blueprint.route('/api/v1/users/<uuid:user_id>/financial-records', methods=['POST'])
+financial_records_blueprint = Blueprint('financial_record_api', __name__, url_prefix='/api/v1/financial_records')
+@financial_records_blueprint.route('/create/<uuid:user_id>/financial-records', methods=['POST'])
 #@jwt_required()
 def create_financial_record(user_id):
     """Creates a new financial record for a specific user."""
@@ -37,7 +37,7 @@ def create_financial_record(user_id):
 
     try:
         data = request.get_json()
-        required_fields = ["category_id", "amount", "recorded_at", currency_id]
+        required_fields = ["category_id", "amount", "recorded_at", 'currency_id']
 
         for field in required_fields:
             if field not in data:
@@ -86,7 +86,7 @@ def create_financial_record(user_id):
             amount=amount,
             recorded_at=datetime.fromisoformat(data["recorded_at"]),
             description=data.get("description"),
-            currency=currency_id if currency_id else None,
+            currency_id=currency_id if currency_id else None,
             expected_transaction=data.get("expected_transaction", False)
         )
 
@@ -110,8 +110,8 @@ def create_financial_record(user_id):
 
 
 
-@financial_records_blueprint.route('/api/v1/financial-records/<uuid:user_id>', methods=['GET'])
-@jwt_required()
+@financial_records_blueprint.route('/all/<uuid:user_id>', methods=['GET'])
+#@jwt_required()
 def get_financial_records(user_id):
     """Fetch all financial records for a user."""
     try:
@@ -125,8 +125,8 @@ def get_financial_records(user_id):
         return jsonify({"error": str(e)}), 500
 
 
-@financial_records_blueprint.route('/api/v1/financial-records/<uuid:record_id>', methods=['PUT'])
-@jwt_required()
+@financial_records_blueprint.route('/financial-records/<uuid:record_id>', methods=['PUT'])
+#@jwt_required()
 def update_financial_record(record_id):
     """Updates an existing financial record."""
     try:
@@ -150,8 +150,8 @@ def update_financial_record(record_id):
         return jsonify({"error": str(e)}), 500
 
 
-@financial_records_blueprint.route('/api/v1/financial-records/<uuid:record_id>', methods=['DELETE'])
-@jwt_required()
+@financial_records_blueprint.route('/financial-records/<uuid:record_id>', methods=['DELETE'])
+#@jwt_required()
 def delete_financial_record(record_id):
     """Deletes a financial record."""
     try:
@@ -160,5 +160,25 @@ def delete_financial_record(record_id):
         return jsonify({"error": "Failed to delete financial record"}), 500
     except NoResultFound:
         return jsonify({"error": "Financial record not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@financial_records_blueprint.route('/monthly_summary/<uuid:user_id>', methods=['GET'])
+#@jwt_required()
+def get_monthly_summary(user_id):
+    """Fetch monthly summary of financial records for a user."""
+    try:
+        data = request.get_json() or {}
+        year = data.get("year")
+        month = data.get("month")
+        current_app.logger.info(f"Fetching monthly summary for user {user_id} for {year}-{month}")
+        monthly_summary = FinancialRecord.get_monthly_summary(user_id, year, month)
+        if not monthly_summary:
+            return jsonify({"message": "No financial records found for the specified month."}), 200
+        return jsonify({
+            "message": "Monthly summary fetched successfully",
+            "data": monthly_summary,
+            "status": "success"
+        }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

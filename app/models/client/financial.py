@@ -326,15 +326,18 @@ class FinancialRecord(db.Model):
         }
 
     @staticmethod
-    def create_record(user_id, category_id, amount, recorded_at, expected=False, description=None):
+    def create_record(user_id, category_id, amount, recorded_at, expected_transaction=False, description=None, currency_id=None):
         """Creates a new financial record (either expected or actual)."""
         try:
             new_record = FinancialRecord(
                 user_id=user_id,
                 category_id=category_id,
                 amount=amount,
+                expected_transaction=expected_transaction,
+                currency=currency_id if currency_id else None,
                 recorded_at=recorded_at,
                 description=description.strip() if description else None,
+                created_at=datetime.now(timezone.utc)
             )
             db.session.add(new_record)
             db.session.commit()
@@ -389,4 +392,25 @@ class FinancialRecord(db.Model):
         db.session.delete(record)
         db.session.commit()
         return True
+    
+    @staticmethod
+    def get_monthly_summary(user_id, year, month):
+        """Get a summary of income and expenses for a given month."""
+        from datetime import datetime
+
+        start_date = datetime(year, month, 1)
+        if month == 12:
+            end_date = datetime(year + 1, 1, 1)
+        else:
+            end_date = datetime(year, month + 1, 1)
+
+        # Query records within that month
+        records = FinancialRecord.query.filter(
+            FinancialRecord.user_id == user_id,
+            FinancialRecord.recorded_at >= start_date,
+            FinancialRecord.recorded_at < end_date
+        ).order_by(FinancialRecord.recorded_at.asc()).all()
+        if not records:
+            return None
+        return [record.to_dict() for record in records]
 
