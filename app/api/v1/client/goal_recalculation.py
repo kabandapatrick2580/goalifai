@@ -133,7 +133,7 @@ def finalize_allocations(month):
             # Update goal's current amount once per goal
             goal.current_amount += total_allocated_for_goal
             if goal.current_amount >= goal.target_amount:
-                goal.is_active = False  # Mark goal as completed
+                goal.is_completed = True
             db.session.add(goal)
 
         db.session.commit()
