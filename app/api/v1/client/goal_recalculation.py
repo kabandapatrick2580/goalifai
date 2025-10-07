@@ -33,13 +33,6 @@ def recalculate_allocations():
         net_income = total_income - total_expense
         current_month = datetime.now().strftime("%Y-%m")
 
-        if net_income <= 0:
-            
-            return jsonify({
-                "message": "No allocations made. User spent more than earned this month.",
-                "net_income": float(net_income)
-            }), 200
-
         # Fetch user's active goals with priority
         goals = Goal.get_active_goals(user_id)
         current_app.logger.info(f"All goals for user {user_id}: {goals}")
@@ -52,12 +45,13 @@ def recalculate_allocations():
 
         allocations_summary = []
 
-        for goal in goals:
+        for goal in goals:                
             if not goal["priority"] or not goal["priority"]["percentage"]:
                 continue
             # Calculate proportional allocation
             weight = float(goal["priority"]["percentage"]) / total_priority
-            allocated_amount = net_income * Decimal(str(weight))
+            amt_to_allocate = net_income * Decimal(str(weight))
+            allocated_amount = amt_to_allocate if amt_to_allocate > 0 else Decimal('0.00') # No negative allocations
 
             # Record allocation
             try:

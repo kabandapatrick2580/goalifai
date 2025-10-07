@@ -562,7 +562,8 @@ class MonthlyGoalAllocation(db.Model):
     # Metadata
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
-
+    is_finalized = db.Column(db.Boolean, default=False)
+    is_deficit = db.Column(db.Boolean, default=False)
     # Relationships
     goal = db.relationship("Goal", backref=db.backref("allocations", lazy=True))
     user = db.relationship("User", backref=db.backref("goal_allocations", lazy=True))
@@ -601,4 +602,51 @@ class MonthlyGoalAllocation(db.Model):
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Error reallocating funds: {e}")
+            return None
+        
+    @staticmethod
+    def record_deficit(user_id, month):
+        """Record a deficit month where no allocations are made."""
+        try:
+            # Check if a deficit record already exists
+            existing_deficit = MonthlyGoalAllocation.query.filter_by(user_id=user_id, goal_id=None, month=month).first()
+            if existing_deficit:
+                return existing_deficit.to_dict()
+
+            deficit_record = MonthlyGoalAllocation(
+                user_id=user_id,
+                goal_id=None,  # No specific goal for deficit
+                month=month,
+                allocated_amount=0
+            )
+            db.session.add(deficit_record)
+            db.session.commit()
+            return deficit_record.to_dict()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error recording deficit: {e}")
+            return None
+        
+    @staticmethod
+    def finalize_monthly_allocations(month):
+        allocations = MonthlyGoalAllocation.query.filter_by(month=month, is_finalized=False).all()
+        if not allocations:
+            return None
+        try:
+            for allocation in allocations:
+                goal = Goal.query.get(allocation.goal_id)
+                if goal:
+                    goal.current_amount += allocation.allocated_amount
+                    goal.funding_gap = Goal.calculate_funding_gap(goal.target_amount, goal.current_amount)
+                    if goal.funding_gap == 0:
+                        goal.is_completed = True
+                        goal.is_active = False
+                    db.session.add(goal)
+                allocation.is_finalized = True
+                db.session.add(allocation)
+            db.session.commit()
+            return [allocation.to_dict() for allocation in allocations]
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error finalizing monthly allocations: {e}")
             return None
