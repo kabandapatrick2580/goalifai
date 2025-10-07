@@ -650,3 +650,34 @@ class MonthlyGoalAllocation(db.Model):
             db.session.rollback()
             current_app.logger.error(f"Error finalizing monthly allocations: {e}")
             return None
+        
+    @staticmethod
+    def get_allocations_by_month(month):
+        allocations = MonthlyGoalAllocation.query.filter_by(month=month).all()
+        if not allocations:
+            return None
+
+        result = {}
+        for allocation in allocations:
+            goal_id = str(allocation.goal_id)
+            if goal_id not in result:
+                result[goal_id] = {
+                    "goal_name": allocation.goal.title if allocation.goal else None,
+                    "total_allocated": 0,
+                    "allocations": []
+                }
+
+            result[goal_id]["allocations"].append({
+                "allocation_id": str(allocation.allocation_id),
+                "user_id": str(allocation.user_id),
+                "month": allocation.month,
+                "allocated_amount": float(allocation.allocated_amount or 0),
+                "created_at": allocation.created_at.isoformat(),
+                "updated_at": allocation.updated_at.isoformat(),
+                "is_finalized": allocation.is_finalized,
+                "is_deficit": allocation.is_deficit,
+            })
+
+            result[goal_id]["total_allocated"] += float(allocation.allocated_amount or 0)
+
+        return result

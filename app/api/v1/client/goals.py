@@ -113,7 +113,6 @@ def get_all_goals(user_id):
         return jsonify({"status":"error", "message":"something went wrong, try again"}), 500
     
 
-
     
     
 
