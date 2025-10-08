@@ -6,8 +6,8 @@ import traceback
 from sqlalchemy.orm.exc import NoResultFound
 import json
 
-categories_blueprint = Blueprint('categories_api', __name__)
-@categories_blueprint.route('/api/v1/categories/create', methods=['POST'])
+categories_blueprint = Blueprint('categories_api', __name__, url_prefix='/api/v1/categories')
+@categories_blueprint.route('/  create', methods=['POST'])
 def create_category():
     try:
         data = request.get_json()
@@ -44,8 +44,8 @@ def create_category():
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-@categories_blueprint.route('/api/v1/categories/update/<uuid:category_id>', methods=['PUT'])
+
+@categories_blueprint.route('/update/<uuid:category_id>', methods=['PUT'])
 def update_category(category_id):
     try:
         # Ensure request contains JSON data
@@ -79,7 +79,7 @@ def update_category(category_id):
     except Exception as e:
         return jsonify({"error": str(e), "status": "error"}), 500
 
-@categories_blueprint.route('/api/v1/categories/list', methods=['GET'])
+@categories_blueprint.route('/list', methods=['GET'])
 def get_categories():
     try:
         categories = Categories.get_all_categories()
@@ -94,7 +94,7 @@ def get_categories():
 
     
 
-@categories_blueprint.route('/api/v1/categories/load', methods=['POST'])
+@categories_blueprint.route('/load', methods=['POST'])
 def load_categories():
     """Load categories from a JSON file."""
     def load_categories_from_file(file_path):
@@ -126,8 +126,8 @@ def load_categories():
         return jsonify({"message": "Categories loaded successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-@categories_blueprint.route('/api/v1/categories/category_type/<category_type_name>', methods=['GET'])
+
+@categories_blueprint.route('/category_type/<category_type_name>', methods=['GET'])
 def get_categories_by_category_type(category_type_name):
     """Fetch a category by its ID."""
     try:
@@ -138,8 +138,8 @@ def get_categories_by_category_type(category_type_name):
         return jsonify({"data": {"categories": category}, "message": "Categories retrieved successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-@categories_blueprint.route('/api/v1/categories/<uuid:category_id>', methods=['GET'])
+
+@categories_blueprint.route('/<uuid:category_id>', methods=['GET'])
 def get_category_by_id(category_id):
     """Fetch a category by its ID."""
     try:
@@ -152,8 +152,8 @@ def get_category_by_id(category_id):
         return jsonify({"error": "Category not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-@categories_blueprint.route('/api/v1/categories/delete/<uuid:category_id>', methods=['DELETE'])
+
+@categories_blueprint.route('/delete/<uuid:category_id>', methods=['DELETE'])
 def delete_category(category_id):
     """Delete a category by its ID."""
     try:
@@ -169,7 +169,7 @@ def delete_category(category_id):
     except Exception as e:
         current_app.logger.error(f"An error occurred while deleting the category: {str(e)}")
         return jsonify({"error": str(e), "status": "error"}), 500
-@categories_blueprint.route('/api/v1/categories/update/<uuid:category_id>', methods=['PUT'])
+@categories_blueprint.route('/update/<uuid:category_id>', methods=['PUT'])
 def update_category_record(category_id):
     """Update the status of a category."""
     try:
@@ -206,7 +206,7 @@ def update_category_record(category_id):
         current_app.logger.error(f"An unexpected error occurred: {str(e)}")
         return jsonify({"error": "An unexpected error occurred", "status":"error"}), 500
 
-@categories_blueprint.route('/api/v1/categories/all_categories', methods=['GET'])
+@categories_blueprint.route('/all_categories', methods=['GET'])
 def get_all_categories():
     """Fetch all categories."""
     try:
@@ -215,6 +215,44 @@ def get_all_categories():
             return jsonify({"data": {"categories": []}, "message": "No categories found", "status":"success"}), 200
         return jsonify({"data": {"categories": [category.to_dict() for category in categories]}, 
                         "message": "Categories retrieved successfully", "status":"success"}), 200
+    except Exception as e:
+        current_app.logger.error(f"An unexpected error occurred: {str(e)}")
+        return jsonify({"error": "An unexpected error occurred", "status":"error"}), 500
+
+@categories_blueprint.route('/bulk_create', methods=['POST'])
+def bulk_create_categories():
+    """Bulk create categories."""
+    try:
+        data = request.get_json()
+        if not data or 'transaction_categories' not in data:
+            return jsonify({"error": "No categories data provided"}), 400
+
+        categories_data = data['transaction_categories']
+        if not isinstance(categories_data, list) or not categories_data:
+            return jsonify({"error": "Categories data must be a non-empty list"}), 400
+        
+        skipped_categories = []
+        created_categories = []
+        # Validate each category entry
+        for category in categories_data:
+            if 'name' not in category or 'category_type' not in category:
+                current_app.logger.info(f"Skipping invalid category entry: {category}")
+                skipped_categories.append(category)
+                continue
+            # Check if category already exists (case-insensitive)
+            existing_category = Categories.get_category_by_name(category['name'])
+            if existing_category:
+                current_app.logger.info(f"Category {category['name']} already exists. Skipping.")
+                skipped_categories.append(category)
+                continue
+            # Create new category
+            new_category = Categories.create_category(**category)
+            if new_category:
+                created_categories.append(new_category)
+        return jsonify({"message": "Bulk category creation completed", 
+                        "created_categories": [cat.to_dict() for cat in created_categories],
+                        "skipped_categories": len(skipped_categories),
+                        "status":"success"}), 201
     except Exception as e:
         current_app.logger.error(f"An unexpected error occurred: {str(e)}")
         return jsonify({"error": "An unexpected error occurred", "status":"error"}), 500

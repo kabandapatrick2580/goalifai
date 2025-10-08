@@ -188,8 +188,11 @@ class Categories(db.Model):
     @staticmethod
     def get_category_by_name(name):
         """get category by name"""
-        return Categories.query.filter_by(name=name).first()
-    
+        category = Categories.query.filter(
+                db.func.lower(Categories.name) == db.func.lower(name.strip())
+            ).first()
+        return category.to_dict() if category else None
+
     @staticmethod
     def get_all_categories():
         """Get all categories"""

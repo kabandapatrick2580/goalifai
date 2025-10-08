@@ -653,10 +653,10 @@ class MonthlyGoalAllocation(db.Model):
         
     @staticmethod
     def get_allocations_by_month(month):
+        """ Fetch all allocations for a specific month, grouped by goal."""
         allocations = MonthlyGoalAllocation.query.filter_by(month=month).all()
         if not allocations:
             return None
-
         result = {}
         for allocation in allocations:
             goal_id = str(allocation.goal_id)
