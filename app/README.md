@@ -40,3 +40,4 @@ Goal funds reallocation
 6. The monthly allocated funds are added to the goals' current amount
 7. making sure that the allocated goal funds are sealed not changeable at the next reallocation
 8. The expense and income have to reflect to monthly funds allocation and being able to handle the funds allocated earlier in other months
+9. the solution is to record the surplus as income or deficit as an expense at the end of the month which will be based on the next month, before goal funds allocation.

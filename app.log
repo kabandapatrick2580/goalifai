@@ -238,3 +238,14 @@ TypeError: unsupported operand type(s) for +=: 'decimal.Decimal' and 'float'
 2025-10-08 11:14:29,080 - app - INFO - Category Miscellaneous already exists. Skipping. - [in /home/patrick/goalifai/app/api/v1/hybrid/categories.py:245]
 2025-10-08 11:14:29,081 - app - INFO - Category Surplus already exists. Skipping. - [in /home/patrick/goalifai/app/api/v1/hybrid/categories.py:245]
 2025-10-08 11:14:29,083 - app - INFO - Category Deficit already exists. Skipping. - [in /home/patrick/goalifai/app/api/v1/hybrid/categories.py:245]
+2025-10-08 18:32:27,239 - app - INFO - Finalizing allocations for month 2025-10: {'78704e65-4079-4496-a482-871ce01d38ba': {'goal_name': 'Trip to Kbuye', 'total_allocated': 50000.0, 'allocations': [{'allocation_id': '10bb5e9a-3887-4aa6-b98b-838698063bae', 'user_id': 'f280eb9e-063d-40ae-83f2-8c47aeb9ea3f', 'month': '2025-10', 'allocated_amount': 50000.0, 'created_at': '2025-10-07T22:43:28.572595', 'updated_at': '2025-10-07T22:43:52.992638', 'is_finalized': True, 'is_deficit': False}]}, 'e81c3366-a6ba-43b1-9be3-9042fe420576': {'goal_name': 'Plot of a land', 'total_allocated': 119280.0, 'allocations': [{'allocation_id': '62af914a-dd28-4515-855b-63bf6c4f2a23', 'user_id': 'f280eb9e-063d-40ae-83f2-8c47aeb9ea3f', 'month': '2025-10', 'allocated_amount': 119280.0, 'created_at': '2025-10-07T22:43:28.587913', 'updated_at': '2025-10-07T22:43:52.998095', 'is_finalized': True, 'is_deficit': False}]}} - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:110]
+2025-10-08 18:32:27,244 - app - INFO - Allocation 10bb5e9a-3887-4aa6-b98b-838698063bae already finalized. Skipping. - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:125]
+2025-10-08 18:32:27,248 - app - INFO - Allocation 62af914a-dd28-4515-855b-63bf6c4f2a23 already finalized. Skipping. - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:125]
+2025-10-08 18:43:45,071 - app - ERROR - An error occurred: 'dict' object has no attribute 'to_dict' - [in /home/patrick/goalifai/app/api/v1/client/goals.py:157]
+2025-10-08 18:43:45,073 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/goals.py", line 147, in bulk_create_goals
+    created_goals.append(goal.to_dict())
+                         ^^^^^^^^^^^^
+AttributeError: 'dict' object has no attribute 'to_dict'
+ - [in /home/patrick/goalifai/app/api/v1/client/goals.py:158]
+2025-10-08 18:45:52,545 - app - INFO - 2 goals created successfully - [in /home/patrick/goalifai/app/api/v1/client/goals.py:149]
