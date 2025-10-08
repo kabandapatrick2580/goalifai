@@ -4,17 +4,16 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm.exc import NoResultFound
 import uuid
 from datetime import datetime
-from bcrypt import hashpw, gensalt, checkpw
-import hashlib
 from datetime import datetime, timezone
 from flask import current_app
-from sqlalchemy import DateTime as Datetime
 from app import db
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import datetime
 from flask import jsonify
 from sqlalchemy import func
+from sqlalchemy import extract
+from decimal import Decimal
 
 
 
@@ -394,7 +393,7 @@ class FinancialRecord(db.Model):
         return True
     
     @staticmethod
-    def get_monthly_summary(user_id, year, month):
+    def get_monthly_summary_list(user_id, year, month):
         """Get a summary of income and expenses for a given month."""
         from datetime import datetime
 
@@ -414,3 +413,38 @@ class FinancialRecord(db.Model):
             return None
         return [record.to_dict() for record in records]
 
+    @staticmethod
+    def get_monthly_summary_totals(user_id, year, month):
+        """
+        Aggregates income and expenses for a given user and month.
+        Returns totals for income, expense, and net balance.
+        """
+        income_sum = (
+            db.session.query(func.coalesce(func.sum(FinancialRecord.amount), 0))
+            .filter(
+                FinancialRecord.user_id == user_id,
+                extract('year', FinancialRecord.recorded_at) == year,
+                extract('month', FinancialRecord.recorded_at) == month,
+                FinancialRecord.category.has(type='Income'),
+                FinancialRecord.expected_transaction == False
+            )
+            .scalar()
+        )
+
+        expense_sum = (
+            db.session.query(func.coalesce(func.sum(FinancialRecord.amount), 0))
+            .filter(
+                FinancialRecord.user_id == user_id,
+                extract('year', FinancialRecord.recorded_at) == year,
+                extract('month', FinancialRecord.recorded_at) == month,
+                FinancialRecord.category.has(type='Expense'),
+                FinancialRecord.expected_transaction == False
+            )
+            .scalar()
+        )
+
+        return {
+            "total_income": Decimal(income_sum),
+            "total_expense": Decimal(expense_sum),
+            "net_income": Decimal(income_sum) - Decimal(expense_sum)
+        }

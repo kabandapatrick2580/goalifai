@@ -37,3 +37,6 @@ Goal funds reallocation
 3. When the income is super high, regulate to avoid allocating more funds than what are required
 4. and also when the income is lower than the expense
 5. THe structure of funds after the financial month closes to secure the allocated funds
+6. The monthly allocated funds are added to the goals' current amount
+7. making sure that the allocated goal funds are sealed not changeable at the next reallocation
+8. The expense and income have to reflect to monthly funds allocation and being able to handle the funds allocated earlier in other months
