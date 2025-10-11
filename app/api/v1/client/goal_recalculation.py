@@ -6,127 +6,271 @@ from decimal import Decimal
 import traceback
 from flask import current_app
 from app.models.client.financial import FinancialRecord, Categories as FC
+from app.models.client.users_model import UserFinancialProfile as FinancialProfile
+from app.helpers.financials import quantize, ensure_profile_balances
 
 allocations_blueprint = Blueprint('allocations_api', __name__, url_prefix='/api/v1/allocations')
-
 
 @allocations_blueprint.route('/recalculate/<uuid:user_id>', methods=['POST'])
 def recalculate_allocations(user_id):
     """
-    Recalculate goal allocations for the user based on current income, expenses, and goal priorities.
+    Recalculate allocations for the given user's financial profile:
+    - Handles repayment or recording of deficits
+    - Allocates available funds to active goals by priority
+    - Records any remaining funds as saving
     """
-
     try:
-        if not user_id:
-            return jsonify({"error": "user_id is required"}), 400
+        # 1. Get financial profile
+        profile = FinancialProfile.get_financial_profile_by_user_id(user_id)
+        if not profile:
+            return jsonify({"status": "error", "message": "Financial profile not found"}), 404
 
-        data = FinancialRecord.get_monthly_summary_totals(user_id=user_id)
-        total_income = Decimal(str(data.get("total_income", 0)))
-        total_expense = Decimal(str(data.get("total_expense", 0)))
-        net_income = total_income - total_expense
+        ensure_profile_balances(profile)
+
+        # 2. Fetch monthly totals
+        now = datetime.now(timezone.utc)
+        year, month = now.year, now.month
+
+        totals = FinancialRecord.get_monthly_summary_totals(user_id=user_id, year=year, month=month)
+        current_app.logger.info(f"Monthly totals for user {user_id} for {year}-{month}: {totals}")
+        if not totals:
+            current_app.logger.info(f"This user has no financial records for {year}-{month}. Nothing to allocate.")
+            expected_totals = FinancialProfile.get_expected_totals(user_id)
+            if expected_totals:
+                totals = {
+                    "total_income": Decimal(str(expected_totals.get("expected_monthly_income", 0))),
+                    "total_expense": Decimal(str(expected_totals.get("expected_monthly_expenses", 0)))
+                }
+            else:
+                totals = {"total_income": Decimal('0.00'), "total_expense": Decimal('0.00')}
+
+        total_income = quantize(Decimal(str(totals.get("total_income", 0))))
+        total_expense = quantize(Decimal(str(totals.get("total_expense", 0))))
+        raw_net = quantize(total_income - total_expense)
 
         current_app.logger.info(
-            f"User {user_id}: Income={total_income}, Expense={total_expense}, Net={net_income}"
+            f"[alloc] user={user_id} income={total_income} expense={total_expense} net={raw_net}"
         )
 
-        current_month = datetime.now().strftime("%Y-%m")
+        # 3. Calculate available funds
+        base_rate = Decimal(str(profile.base_allocation_rate or 0.10))
+        base_allocation_amount = quantize(total_income * base_rate)
 
-        # ---- Handle deficit ----
-        if net_income <= 0:
-            deficit_cat = FC.get_category_by_name("Deficit")
-            FinancialRecord.create_record(
-                user_id=user_id,
-                amount=abs(net_income),
-                category_id=deficit_cat.get("category_id"),
-                expected_transaction=False,
-                description="Monthly deficit - no allocations made",
-                recorded_at=datetime.now(timezone.utc),
-            )
+        include_savings_in_alloc = getattr(profile, "include_savings_in_alloc", False)
+        pre_existing_savings = quantize(profile.savings_balance or Decimal('0.00')) if include_savings_in_alloc else Decimal('0.00')
+
+        available_funds = total_income + pre_existing_savings
+
+        current_app.logger.info(
+            f"[alloc] profile={profile.id} available_funds={available_funds} base_allocation={base_allocation_amount}"
+        )
+
+        # 4. Handle deficit repayment first
+        if profile.deficit_balance > 0:
+            if available_funds >= profile.deficit_balance:
+                paid = profile.deficit_balance
+                available_funds -= paid
+                profile.deficit_balance = Decimal('0.00')
+
+                # Record repayment
+                def_cat = FC.get_category_by_name("Deficit")
+                if def_cat:
+                    FinancialRecord.create_record(
+                        user_id=user_id,
+                        amount=paid,
+                        category_id=def_cat["id"],
+                        expected_transaction=False,
+                        description="Deficit repayment from current funds",
+                        recorded_at=datetime.now(timezone.utc),
+                    )
+            else:
+                # Partial repayment only
+                paid = available_funds
+                profile.deficit_balance -= paid
+                available_funds = Decimal('0.00')
+                db.session.commit()
+                return jsonify({
+                    "status": "deficit_partial",
+                    "message": "Partial deficit repayment made; no allocations available.",
+                    "remaining_deficit": float(profile.deficit_balance)
+                }), 200
+
+        # 5. If deficit after repayment still negative (spent more than earned)
+        if raw_net < 0 and available_funds == 0:
+            new_deficit = abs(raw_net)
+            profile.deficit_balance += new_deficit
+
+            def_cat = FC.get_category_by_name("Deficit")
+            if def_cat:
+                FinancialRecord.create_record(
+                    user_id=user_id,
+                    amount=new_deficit,
+                    category_id=def_cat["id"],
+                    expected_transaction=False,
+                    description="Recorded monthly deficit (expenses exceeded income)",
+                    recorded_at=datetime.now(timezone.utc),
+                )
+
+            db.session.commit()
             return jsonify({
-                "status": "success",
-                "message": f"Deficit recorded. No allocations made for user {user_id}.",
-                "net_income": float(net_income)
+                "status": "deficit_recorded",
+                "message": "No available funds, deficit recorded and carried forward.",
+                "deficit_balance": float(profile.deficit_balance)
             }), 200
 
-        # ---- If surplus, try allocating ----
+        # 6. Fetch active goals
         goals = Goal.get_active_goals(user_id)
         if not goals:
-            current_app.logger.info(f"No active goals found for user {user_id}.")
-            return jsonify({"message": "No active goals found for user."}), 200
+            # No active goals, treat all available funds as savings
+            if available_funds > 0:
+                profile.savings_balance += available_funds
+                save_cat = FC.get_category_by_name("Saving")
+                if save_cat:
+                    FinancialRecord.create_record(
+                        user_id=user_id,
+                        amount=available_funds,
+                        category_id=save_cat["category_id"],
+                        expected_transaction=False,
+                        description="No active goals — funds saved.",
+                        recorded_at=datetime.now(timezone.utc),
+                    )
+            db.session.commit()
+            return jsonify({
+                "status": "saved",
+                "message": "No active goals. Funds saved.",
+                "savings_balance": float(profile.savings_balance)
+            }), 200
 
-        total_priority = sum(
-            float(g['priority']['percentage'])
-            for g in goals if g.get('priority') and g['priority'].get('percentage')
-        )
+        # 7. Compute goal gaps and priorities
+        total_gap = Decimal('0.00')
+        total_priority = Decimal('0.00')
 
-        if total_priority == 0:
-            return jsonify({"message": "No valid goal priorities found for allocation."}), 400
+        for g in goals:
+            gap = Decimal(str(g.get("target_amount", 0))) - Decimal(str(g.get("current_amount", 0)))
+            if gap > 0:
+                total_gap += gap
+            total_priority += Decimal(str(g.get("priority", {}).get("percentage", 0)))
 
+        if total_gap <= 0 or total_priority <= 0:
+            # Nothing to allocate
+            profile.savings_balance += available_funds
+            db.session.commit()
+            return jsonify({
+                "status": "saved",
+                "message": "All goals fully funded or invalid priority; funds saved.",
+                "savings_balance": float(profile.savings_balance)
+            }), 200
+
+        # 8. Allocate funds proportionally by priority
+        allocatable_pool = min(available_funds, total_gap)
         total_allocated = Decimal('0.00')
         allocations_summary = []
 
-        for goal in goals:
-            if not goal.get("priority") or not goal["priority"].get("percentage"):
+        for g in goals:
+            pct = Decimal(str(g.get("priority", {}).get("percentage", 0)))
+            if pct <= 0:
                 continue
 
-            weight = float(goal["priority"]["percentage"]) / total_priority
-            amt_to_allocate = net_income * Decimal(str(weight))
-            remaining_need = goal["target_amount"] - goal["current_amount"]
-            allocated_amount = min(amt_to_allocate, remaining_need) # Cap allocation to remaining need
+            share = (pct / total_priority)
+            proposed = quantize(allocatable_pool * share)
+            gap = Decimal(str(g.get("target_amount", 0))) - Decimal(str(g.get("current_amount", 0)))
+            allocate_amt = min(proposed, gap)
 
-            if allocated_amount <= 0:
+            if allocate_amt <= 0:
                 continue
 
-            GoalAllocation.reallocate_funds(
+            alloc = GoalAllocation.reallocate_funds(
                 user_id=user_id,
-                goal_id=goal["goal_id"],
-                month=current_month,
-                allocated_amount=allocated_amount
+                goal_id=g["goal_id"],
+                month=now.strftime("%Y-%m"),
+                allocated_amount=allocate_amt
             )
 
-            total_allocated += allocated_amount
-            allocations_summary.append({
-                "goal_id": str(goal["goal_id"]),
-                "goal_title": goal["title"],
-                "allocated_amount": float(allocated_amount)
-            })
+            if alloc:
+                total_allocated += allocate_amt
+                allocations_summary.append({
+                    "goal_id": str(g["goal_id"]),
+                    "goal_title": g.get("title"),
+                    "allocated_amount": float(allocate_amt)
+                })
 
-        # ---- Calculate remaining surplus (after allocations) ----
-        remaining_surplus = net_income - total_allocated
-        if remaining_surplus > 0:
-            surplus_cat = FC.get_category_by_name("Surplus")
-            FinancialRecord.create_record(
-                user_id=user_id,
-                amount=remaining_surplus,
-                category_id=surplus_cat.get("category_id"),
-                expected_transaction=False,
-                description="Remaining funds after all goal allocations.",
-                recorded_at=datetime.now(timezone.utc),
-            )
-            current_app.logger.info(
-                f"Recorded {remaining_surplus} as surplus for user {user_id} after allocations."
-            )
-            # Autocarry surplus into next month's allocations could be implemented here
-            FinancialRecord.carry_over_surplus(
-                user_id,
-                remaining_surplus,
-                current_month
-            )
+        # 9. Save remaining funds (if any)
+        remaining_balance = quantize(available_funds - total_allocated)
+        if remaining_balance > 0:
+            profile.savings_balance += remaining_balance
+            save_cat = FC.get_category_by_name("Saving")
+            if save_cat:
+                FinancialRecord.create_record(
+                    user_id=user_id,
+                    amount=remaining_balance,
+                    category_id=save_cat["id"],
+                    expected_transaction=False,
+                    description="Remaining funds after allocations saved.",
+                    recorded_at=datetime.now(timezone.utc),
+                )
+
+        db.session.add(profile)
+        db.session.commit()
 
         return jsonify({
             "status": "success",
             "message": "Allocations recalculated successfully.",
-            "net_income": float(net_income),
-            "allocated": float(total_allocated),
-            "remaining_surplus": float(remaining_surplus),
-            "allocations": allocations_summary
+            "allocations": allocations_summary,
+            "total_allocated": float(total_allocated),
+            "remaining_savings_balance": float(profile.savings_balance),
+            "deficit_balance": float(profile.deficit_balance)
         }), 200
 
-    except Exception as e:
-        current_app.logger.error(f"Error during allocation recalculation: {str(e)}")
+    except Exception as exc:
+        db.session.rollback()
+        current_app.logger.error(f"Error recalculating allocations: {exc}")
         current_app.logger.error(traceback.format_exc())
         return jsonify({"status": "error", "message": "Internal server error"}), 500
 
+
+@allocations_blueprint.route('/user/<uuid:user_id>', methods=['GET'])
+def get_user_allocations(user_id):
+    """
+    Get all goal allocations for a specific user, grouped by month.
+    """
+    try:
+        allocations = GoalAllocation.get_allocations_by_user(user_id)
+        if not allocations:
+            return jsonify({"status": "error", "message": "No allocations found for this user."}), 404
+
+        return jsonify({
+            "status": "success",
+            "user_id": str(user_id),
+            "allocations": allocations
+        }), 200
+
+    except Exception as e:
+        current_app.logger.error(f"Error fetching allocations for user {user_id}: {str(e)}")
+        current_app.logger.error(traceback.format_exc())
+        return jsonify({"status": "error", "message": "Internal server error"}), 500
+
+
+@allocations_blueprint.route('/all', methods=['GET'])
+def get_all_allocations():
+    """
+    Get all goal allocations for a specific month across all users.
+    """
+    try:
+        allocations = GoalAllocation.get_all_allocations()
+        print(f"Allocations: {allocations}")
+        if allocations:
+            return jsonify({
+                "status": "success",
+                "allocations": allocations
+            }), 200
+        else:
+            return jsonify({"status": "error", "message": "No allocations found."}), 404
+            
+
+    except Exception as e:
+        current_app.logger.error(f"Error fetching allocations for month {month}: {str(e)}")
+        current_app.logger.error(traceback.format_exc())
+        return jsonify({"status": "error", "message": "Internal server error"}), 500
 
 @allocations_blueprint.route('/finalize/<string:month>', methods=['POST'])
 def finalize_allocations(month):

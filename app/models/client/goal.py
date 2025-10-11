@@ -681,3 +681,44 @@ class MonthlyGoalAllocation(db.Model):
             result[goal_id]["total_allocated"] += float(allocation.allocated_amount or 0)
 
         return result
+    
+    @staticmethod
+    def get_allocations_by_user(user_id):
+        """Fetch all allocations for a specific user, grouped by month."""
+        allocations = MonthlyGoalAllocation.query.filter_by(user_id=user_id).all()
+        print(f"Allocations for user {user_id}: {allocations}")
+        if not allocations:
+            return None
+        result = {}
+        for allocation in allocations:
+            month = allocation.month
+            if month not in result:
+                result[month] = {
+                    "total_allocated": 0,
+                    "allocations": []
+                }
+
+            result[month]["allocations"].append({
+                "allocation_id": str(allocation.allocation_id),
+                "goal_id": str(allocation.goal_id),
+                "goal_name": allocation.goal.title if allocation.goal else None,
+                "allocated_amount": float(allocation.allocated_amount or 0),
+                "created_at": allocation.created_at.isoformat(),
+                "updated_at": allocation.updated_at.isoformat(),
+                "is_finalized": allocation.is_finalized,
+                "is_deficit": allocation.is_deficit,
+            })
+
+            result[month]["total_allocated"] += float(allocation.allocated_amount or 0)
+
+        return result
+    
+    @staticmethod
+    def get_all_allocations():
+        """Fetch all allocations in the system."""
+        allocations = MonthlyGoalAllocation.query.all()
+        current_app.logger.info(f"All allocations: {allocations}")
+        if not allocations:
+            return None
+        return [allocation.to_dict() for allocation in allocations]
+

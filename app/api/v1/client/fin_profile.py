@@ -5,9 +5,9 @@ from datetime import datetime
 import traceback 
 from sqlalchemy.orm.exc import NoResultFound
 
-fin_profile = Blueprint('financial_profile', __name__)
+fin_profile = Blueprint('financial_profile', __name__, url_prefix='/api/v1/financial_profile')
 
-@fin_profile.route('/api/v1/financial_profile/create/<uuid:user_id>', methods=['POST'])
+@fin_profile.route('/create/<uuid:user_id>', methods=['POST'])
 def create_profile(user_id):
     """API endpoint to create a financial profile.
     Example:
@@ -20,9 +20,11 @@ def create_profile(user_id):
     data = request.get_json()
     expected_monthly_income = data.get('expected_monthly_income')
     expected_monthly_expenses = data.get('expected_monthly_expenses')
+    base_allocation_percentage = data.get('base_allocation_percentage', 50)  # Default to 50% if not provided
     existing_profile = UserFinancialProfile.get_financial_profile_by_user_id(user_id)
     if existing_profile:
-        return jsonify({"status": "error", "message": "Profile already exists for this user"}), 400
+        current_app.logger.error("Financial profile already exists for this user")
+        return None
     missing_fields = [field for field, value in {
         "user_id": user_id,
         "expected_monthly_income": expected_monthly_income,
@@ -34,13 +36,13 @@ def create_profile(user_id):
 
 
     profile = UserFinancialProfile.create_financial_profile(
-        user_id, expected_monthly_income, expected_monthly_expenses)
+        user_id, expected_monthly_income, expected_monthly_expenses, base_allocation_percentage)
     
     if profile:
         return jsonify({"message": "Financial profile created successfully", "profile": profile.id}), 201
     return jsonify({"status": "error", "message": "Failed to create financial profile"}), 500
 
-@fin_profile.route('/api/v1/financial_profile/<uuid:profile_id>', methods=['GET'])
+@fin_profile.route('/<uuid:profile_id>', methods=['GET'])
 def get_profile(profile_id):
     """API endpoint to get a financial profile by ID."""
     profile = UserFinancialProfile.get_financial_profile_by_id(profile_id)
@@ -59,30 +61,21 @@ def get_profile(profile_id):
         "actual_monthly_savings": profile.actual_monthly_income - profile.actual_monthly_expenses
     }), 200
 
-@fin_profile.route('/api/v1/financial_profile/user/<user_id>', methods=['GET'])
+@fin_profile.route('/user/<user_id>', methods=['GET'])
 def get_profile_by_user(user_id):
     """API endpoint to get a financial profile by user ID."""
     profile = UserFinancialProfile.get_financial_profile_by_user_id(user_id)
-    
+    profile_data = profile.to_dict() if profile else None
     if not profile:
         return jsonify({"error": "Profile not found"}), 404
     
     return jsonify({
-        "data": {
-            "id": profile.id,
-            "user_id": profile.user_id,
-            "expected_monthly_income": profile.expected_monthly_income if profile.expected_monthly_income else 0,
-            "expected_monthly_expenses": profile.expected_monthly_expenses if profile.expected_monthly_expenses else 0,
-                "expected_monthly_savings": profile.expected_monthly_income - profile.expected_monthly_expenses if profile.expected_monthly_income and profile.expected_monthly_expenses else 0,
-                "actual_monthly_income": profile.actual_monthly_income if profile.actual_monthly_income else 0,
-                "actual_monthly_expenses": profile.actual_monthly_expenses if profile.actual_monthly_expenses else 0,
-                "actual_monthly_savings": profile.actual_monthly_income - profile.actual_monthly_expenses if profile.actual_monthly_income and profile.actual_monthly_expenses else 0
-            },
         "message": "Profile fetched successfully",
-        "status": "success"
+        "status": "success",
+        "data": profile_data
     }), 200
 
-@fin_profile.route('/api/v1/financial_profile/<profile_id>', methods=['PUT'])
+@fin_profile.route('/<uuid:profile_id>', methods=['PUT'])
 def update_profile(profile_id):
     """API endpoint to update a financial profile."""
     data = request.get_json()
@@ -105,7 +98,7 @@ def update_profile(profile_id):
         current_app.logger.error(traceback.format_exc())
         return jsonify({"error": "Internal server error"}), 500
 
-@fin_profile.route('/api/v1/financial_profile/<profile_id>', methods=['DELETE'])
+@fin_profile.route('/<uuid:profile_id>', methods=['DELETE'])
 def delete_profile(profile_id):
     """API endpoint to delete a financial profile."""
     profile = UserFinancialProfile.get_financial_profile_by_id(profile_id)

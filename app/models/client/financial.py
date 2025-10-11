@@ -428,7 +428,7 @@ class FinancialRecord(db.Model):
                 FinancialRecord.user_id == user_id,
                 extract('year', FinancialRecord.recorded_at) == year,
                 extract('month', FinancialRecord.recorded_at) == month,
-                FinancialRecord.category.has(type='Income'),
+                FinancialRecord.category.has(Categories.category_type == 'Income'),
                 FinancialRecord.expected_transaction == False
             )
             .scalar()
@@ -440,7 +440,7 @@ class FinancialRecord(db.Model):
                 FinancialRecord.user_id == user_id,
                 extract('year', FinancialRecord.recorded_at) == year,
                 extract('month', FinancialRecord.recorded_at) == month,
-                FinancialRecord.category.has(type='Expense'),
+                FinancialRecord.category.has(Categories.category_type == 'Expense'),
                 FinancialRecord.expected_transaction == False
             )
             .scalar()

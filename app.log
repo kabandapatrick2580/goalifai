@@ -249,3 +249,193 @@ TypeError: unsupported operand type(s) for +=: 'decimal.Decimal' and 'float'
 AttributeError: 'dict' object has no attribute 'to_dict'
  - [in /home/patrick/goalifai/app/api/v1/client/goals.py:158]
 2025-10-08 18:45:52,545 - app - INFO - 2 goals created successfully - [in /home/patrick/goalifai/app/api/v1/client/goals.py:149]
+2025-10-11 14:21:58,253 - app - ERROR - Error creating financial profile:(psycopg2.errors.ForeignKeyViolation) insert or update on table "user_financial_profiles" violates foreign key constraint "user_financial_profiles_user_id_fkey"
+DETAIL:  Key (user_id)=(ff36b7d1-76c0-410c-abbc-71aa0bc2f357) is not present in table "users".
+
+[SQL: INSERT INTO user_financial_profiles (id, user_id, deficit_balance, savings_balance, base_allocation_rate, expected_monthly_income, expected_monthly_expenses, actual_monthly_income, actual_monthly_expenses, created_at, updated_at) VALUES (%(id)s::UUID, %(user_id)s::UUID, %(deficit_balance)s, %(savings_balance)s, %(base_allocation_rate)s, %(expected_monthly_income)s, %(expected_monthly_expenses)s, %(actual_monthly_income)s, %(actual_monthly_expenses)s, %(created_at)s, %(updated_at)s)]
+[parameters: {'id': UUID('886f292c-ed7c-4968-a1a4-3ff40bd4d28a'), 'user_id': UUID('ff36b7d1-76c0-410c-abbc-71aa0bc2f357'), 'deficit_balance': Decimal('0.00'), 'savings_balance': Decimal('0.00'), 'base_allocation_rate': Decimal('0.299999999999999988897769753748434595763683319091796875'), 'expected_monthly_income': 500000, 'expected_monthly_expenses': 300000, 'actual_monthly_income': None, 'actual_monthly_expenses': None, 'created_at': datetime.datetime(2025, 10, 11, 12, 21, 58, 251365, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2025, 10, 11, 12, 21, 58, 251368, tzinfo=datetime.timezone.utc)}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj) - [in /home/patrick/goalifai/app/models/client/users_model.py:262]
+2025-10-11 14:21:58,259 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.ForeignKeyViolation: insert or update on table "user_financial_profiles" violates foreign key constraint "user_financial_profiles_user_id_fkey"
+DETAIL:  Key (user_id)=(ff36b7d1-76c0-410c-abbc-71aa0bc2f357) is not present in table "users".
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/models/client/users_model.py", line 258, in create_financial_profile
+    db.session.commit()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4345, in flush
+    self._flush(objects)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4480, in _flush
+    with util.safe_reraise():
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4441, in _flush
+    flush_context.execute()
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.ForeignKeyViolation) insert or update on table "user_financial_profiles" violates foreign key constraint "user_financial_profiles_user_id_fkey"
+DETAIL:  Key (user_id)=(ff36b7d1-76c0-410c-abbc-71aa0bc2f357) is not present in table "users".
+
+[SQL: INSERT INTO user_financial_profiles (id, user_id, deficit_balance, savings_balance, base_allocation_rate, expected_monthly_income, expected_monthly_expenses, actual_monthly_income, actual_monthly_expenses, created_at, updated_at) VALUES (%(id)s::UUID, %(user_id)s::UUID, %(deficit_balance)s, %(savings_balance)s, %(base_allocation_rate)s, %(expected_monthly_income)s, %(expected_monthly_expenses)s, %(actual_monthly_income)s, %(actual_monthly_expenses)s, %(created_at)s, %(updated_at)s)]
+[parameters: {'id': UUID('886f292c-ed7c-4968-a1a4-3ff40bd4d28a'), 'user_id': UUID('ff36b7d1-76c0-410c-abbc-71aa0bc2f357'), 'deficit_balance': Decimal('0.00'), 'savings_balance': Decimal('0.00'), 'base_allocation_rate': Decimal('0.299999999999999988897769753748434595763683319091796875'), 'expected_monthly_income': 500000, 'expected_monthly_expenses': 300000, 'actual_monthly_income': None, 'actual_monthly_expenses': None, 'created_at': datetime.datetime(2025, 10, 11, 12, 21, 58, 251365, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2025, 10, 11, 12, 21, 58, 251368, tzinfo=datetime.timezone.utc)}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ - [in /home/patrick/goalifai/app/models/client/users_model.py:263]
+2025-10-11 14:31:03,754 - app - ERROR - Error recalculating allocations: Mapped instance expected for relationship comparison to object.   Classes, queries and other SQL elements are not accepted in this context; for comparison with a subquery, use Categories.type.has(**criteria). - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:226]
+2025-10-11 14:31:03,765 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/goal_recalculation.py", line 34, in recalculate_allocations
+    totals = FinancialRecord.get_monthly_summary_totals(user_id=user_id, year=year, month=month)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/app/models/client/financial.py", line 431, in get_monthly_summary_totals
+    FinancialRecord.category.has(type='Income'),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/interfaces.py", line 979, in has
+    return self.operate(PropComparator.has_op, criterion, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/attributes.py", line 453, in operate
+    return op(self.comparator, *other, **kwargs)  # type: ignore[no-any-return]  # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/interfaces.py", line 859, in _has_op
+    return left.has(other, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 963, in has
+    return self._criterion_exists(criterion, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 822, in _criterion_exists
+    crit = getattr(self.property.mapper.class_, k) == kwargs[k]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/sql/operators.py", line 584, in __eq__
+    return self.operate(eq, other)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/attributes.py", line 453, in operate
+    return op(self.comparator, *other, **kwargs)  # type: ignore[no-any-return]  # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 765, in __eq__
+    self.property._optimized_compare(
+  File "/home/patrick/goalifai/local-env/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 1198, in _optimized_compare
+    raise sa_exc.ArgumentError(
+sqlalchemy.exc.ArgumentError: Mapped instance expected for relationship comparison to object.   Classes, queries and other SQL elements are not accepted in this context; for comparison with a subquery, use Categories.type.has(**criteria).
+ - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:227]
+2025-10-11 14:38:51,289 - app - INFO - Monthly totals for user f280eb9e-063d-40ae-83f2-8c47aeb9ea3f for 2025-10: {'total_income': Decimal('0'), 'total_expense': Decimal('600000.00'), 'net_income': Decimal('-600000.00')} - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:35]
+2025-10-11 14:38:51,289 - app - INFO - [alloc] user=f280eb9e-063d-40ae-83f2-8c47aeb9ea3f income=0.00 expense=600000.00 net=-600000.00 - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:51]
+2025-10-11 14:38:51,289 - app - INFO - [alloc] profile=55e1b1b3-289a-4ede-aee1-098cb5a210a4 available_funds=0.00 base_allocation=0.00 - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:64]
+2025-10-11 14:38:51,295 - app - ERROR - Error recalculating allocations: 'category_id' - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:226]
+2025-10-11 14:38:51,296 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/goal_recalculation.py", line 108, in recalculate_allocations
+    category_id=def_cat["category_id"],
+                ~~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'category_id'
+ - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:227]
+2025-10-11 14:44:02,569 - app - INFO - Salary Income recorded successfully - [in /home/patrick/goalifai/app/api/v1/client/financial_records.py:95]
+2025-10-11 14:44:26,130 - app - INFO - Monthly totals for user f280eb9e-063d-40ae-83f2-8c47aeb9ea3f for 2025-10: {'total_income': Decimal('0'), 'total_expense': Decimal('600000.00'), 'net_income': Decimal('-600000.00')} - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:35]
+2025-10-11 14:44:26,130 - app - INFO - [alloc] user=f280eb9e-063d-40ae-83f2-8c47aeb9ea3f income=0.00 expense=600000.00 net=-600000.00 - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:51]
+2025-10-11 14:44:26,130 - app - INFO - [alloc] profile=55e1b1b3-289a-4ede-aee1-098cb5a210a4 available_funds=0.00 base_allocation=0.00 - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:64]
+2025-10-11 14:44:26,132 - app - ERROR - Error recalculating allocations: 'category_id' - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:226]
+2025-10-11 14:44:26,133 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/goal_recalculation.py", line 108, in recalculate_allocations
+    category_id=def_cat["category_id"],
+                ~~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'category_id'
+ - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:227]
+2025-10-11 14:46:25,103 - app - INFO - Monthly totals for user f280eb9e-063d-40ae-83f2-8c47aeb9ea3f for 2025-10: {'total_income': Decimal('0'), 'total_expense': Decimal('600000.00'), 'net_income': Decimal('-600000.00')} - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:35]
+2025-10-11 14:46:25,103 - app - INFO - [alloc] user=f280eb9e-063d-40ae-83f2-8c47aeb9ea3f income=0.00 expense=600000.00 net=-600000.00 - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:51]
+2025-10-11 14:46:25,104 - app - INFO - [alloc] profile=55e1b1b3-289a-4ede-aee1-098cb5a210a4 available_funds=0.00 base_allocation=0.00 - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:64]
+2025-10-11 14:46:25,110 - app - ERROR - Error recalculating allocations: 'category_id' - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:226]
+2025-10-11 14:46:25,111 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/goal_recalculation.py", line 108, in recalculate_allocations
+    category_id=def_cat["category_id"],
+                ~~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'category_id'
+ - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:227]
+2025-10-11 14:47:04,535 - app - INFO - Monthly totals for user f280eb9e-063d-40ae-83f2-8c47aeb9ea3f for 2025-10: {'total_income': Decimal('0'), 'total_expense': Decimal('600000.00'), 'net_income': Decimal('-600000.00')} - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:35]
+2025-10-11 14:47:04,536 - app - INFO - [alloc] user=f280eb9e-063d-40ae-83f2-8c47aeb9ea3f income=0.00 expense=600000.00 net=-600000.00 - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:51]
+2025-10-11 14:47:04,536 - app - INFO - [alloc] profile=55e1b1b3-289a-4ede-aee1-098cb5a210a4 available_funds=0.00 base_allocation=0.00 - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:64]
+2025-10-11 14:47:04,540 - app - ERROR - Error recalculating allocations: 'category_id' - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:226]
+2025-10-11 14:47:04,540 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/goal_recalculation.py", line 108, in recalculate_allocations
+    category_id=def_cat["category_id"],
+                ~~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'category_id'
+ - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:227]
+2025-10-11 14:47:35,746 - app - INFO - Monthly totals for user f280eb9e-063d-40ae-83f2-8c47aeb9ea3f for 2025-10: {'total_income': Decimal('0'), 'total_expense': Decimal('600000.00'), 'net_income': Decimal('-600000.00')} - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:35]
+2025-10-11 14:47:35,746 - app - INFO - [alloc] user=f280eb9e-063d-40ae-83f2-8c47aeb9ea3f income=0.00 expense=600000.00 net=-600000.00 - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:51]
+2025-10-11 14:47:35,746 - app - INFO - [alloc] profile=55e1b1b3-289a-4ede-aee1-098cb5a210a4 available_funds=0.00 base_allocation=0.00 - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:64]
+2025-10-11 14:53:20,578 - app - ERROR - Error fetching allocations for user f280eb9e-063d-40ae-83f2-8c47aeb9ea3f: object of type 'NoneType' has no len() - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:249]
+2025-10-11 14:53:20,578 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/goal_recalculation.py", line 238, in get_user_allocations
+    current_app.logger.info(f"Found {len(allocations)} allocations for user {user_id}")
+                                     ^^^^^^^^^^^^^^^^
+TypeError: object of type 'NoneType' has no len()
+ - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:250]
+2025-10-11 14:54:04,347 - app - INFO - Found 0 allocations for user f280eb9e-063d-40ae-83f2-8c47aeb9ea3f - [in /home/patrick/goalifai/app/models/client/goal.py:689]
+2025-10-11 14:54:04,347 - app - ERROR - Error fetching allocations for user f280eb9e-063d-40ae-83f2-8c47aeb9ea3f: object of type 'NoneType' has no len() - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:249]
+2025-10-11 14:54:04,348 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/goal_recalculation.py", line 238, in get_user_allocations
+    current_app.logger.info(f"Found {len(allocations)} allocations for user {user_id}")
+                                     ^^^^^^^^^^^^^^^^
+TypeError: object of type 'NoneType' has no len()
+ - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:250]
+2025-10-11 14:55:21,266 - app - ERROR - Error fetching allocations for user f280eb9e-063d-40ae-83f2-8c47aeb9ea3f: object of type 'NoneType' has no len() - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:249]
+2025-10-11 14:55:21,267 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/goal_recalculation.py", line 238, in get_user_allocations
+    current_app.logger.info(f"Found {len(allocations)} allocations for user {user_id}")
+                                     ^^^^^^^^^^^^^^^^
+TypeError: object of type 'NoneType' has no len()
+ - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:250]
+2025-10-11 14:55:37,081 - app - ERROR - Error fetching allocations for user f280eb9e-063d-40ae-83f2-8c47aeb9ea3f: object of type 'NoneType' has no len() - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:249]
+2025-10-11 14:55:37,082 - app - ERROR - Traceback (most recent call last):
+  File "/home/patrick/goalifai/app/api/v1/client/goal_recalculation.py", line 238, in get_user_allocations
+    current_app.logger.info(f"Found {len(allocations)} allocations for user {user_id}")
+                                     ^^^^^^^^^^^^^^^^
+TypeError: object of type 'NoneType' has no len()
+ - [in /home/patrick/goalifai/app/api/v1/client/goal_recalculation.py:250]
+2025-10-11 15:03:10,143 - app - INFO - All allocations: [] - [in /home/patrick/goalifai/app/models/client/goal.py:720]

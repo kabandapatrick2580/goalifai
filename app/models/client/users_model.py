@@ -203,6 +203,10 @@ class UserFinancialProfile(db.Model):
             'user_id': str(self.user_id),
             'expected_monthly_income': float(self.expected_monthly_income),
             'expected_monthly_expenses': float(self.expected_monthly_expenses),
+            'expected_monthly_savings': float(self.expected_monthly_income - self.expected_monthly_expenses),
+            'base_allocation_rate': float(self.base_allocation_rate) * 100,  # Convert to percentage
+            'deficit_balance': float(self.deficit_balance),
+            'savings_balance': float(self.savings_balance),
             'actual_monthly_income': float(self.actual_monthly_income) if self.actual_monthly_income is not None else None,
             'actual_monthly_expenses': float(self.actual_monthly_expenses) if self.actual_monthly_expenses is not None else None,
             'monthly_income': float(self.monthly_income),  # Fallback applied here
