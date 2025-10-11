@@ -451,3 +451,35 @@ class FinancialRecord(db.Model):
             "total_expense": Decimal(expense_sum),
             "net_income": Decimal(income_sum) - Decimal(expense_sum)
         }
+    
+    @staticmethod
+    def carry_over_surplus(user_id, surplus_amount, from_month):
+        """
+        Carry over surplus to the next month as income.
+        """
+        if surplus_amount <= 0:
+            return None
+
+        # Compute next month (e.g. from "2025-10" to "2025-11")
+        year, month = map(int, from_month.split('-'))
+        if month == 12:
+            next_month = f"{year + 1}-01"
+        else:
+            next_month = f"{year}-{month + 1:02d}"
+
+        carried_over_cat = Categories.get_category_by_name("Carried Over Surplus")
+
+        new_record = FinancialRecord.create_record(
+            user_id=user_id,
+            amount=surplus_amount,
+            category_id=carried_over_cat.get("category_id"),
+            expected_transaction=False,
+            description=f"Carried over surplus from {from_month}",
+            recorded_at=datetime.now(timezone.utc),
+        )
+
+        current_app.logger.info(
+            f"Carried over {surplus_amount} surplus from {from_month} to {next_month} for user {user_id}"
+        )
+
+        return new_record

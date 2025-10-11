@@ -17,7 +17,7 @@ import traceback
 from app.models.central.central import Degree
 from uuid import uuid4
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from decimal import Decimal
 
 
 class User(db.Model):
@@ -165,7 +165,9 @@ class UserFinancialProfile(db.Model):
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=False)
-    
+    deficit_balance = db.Column(db.Numeric(12, 2), default=Decimal('0.00'))
+    savings_balance = db.Column(db.Numeric(12, 2), default=Decimal('0.00'))
+    base_allocation_rate = db.Column(db.Numeric(5, 4), default=Decimal('0.00'))  # e.g., 0.10 for 10%
     # Expected financial values (User's planned budget)
     expected_monthly_income = db.Column(db.Numeric(12, 2), nullable=False, default=0)
     expected_monthly_expenses = db.Column(db.Numeric(12, 2), nullable=False, default=0)
@@ -243,13 +245,14 @@ class UserFinancialProfile(db.Model):
         return profile
     
     @classmethod
-    def create_financial_profile(cls, user_id, expected_monthly_income, expected_monthly_expenses):
+    def create_financial_profile(cls, user_id, expected_monthly_income, expected_monthly_expenses, base_allocation_percentage):
         """Create a user's financial profile."""
         try:
             financial_profile = cls(
                 user_id=user_id,
                 expected_monthly_income=expected_monthly_income,
                 expected_monthly_expenses=expected_monthly_expenses,
+                base_allocation_rate=Decimal(base_allocation_percentage / 100)  # Convert percentage to decimal
             )
             db.session.add(financial_profile)
             db.session.commit()
@@ -269,6 +272,16 @@ class UserFinancialProfile(db.Model):
         return cls.query.filter_by(user_id=user_id).first()
     
 
+    @staticmethod
+    def get_expected_totals(user_id):
+        """Get expected income, expenses, and savings for a user."""
+        profile = UserFinancialProfile.query.filter_by(user_id=user_id).first()
+        if not profile:
+            return None
+        return {
+            'expected_monthly_income': float(profile.expected_monthly_income),
+            'expected_monthly_expenses': float(profile.expected_monthly_expenses)
+            }
 class Education(db.Model):
     __tablename__ = 'education'
 
