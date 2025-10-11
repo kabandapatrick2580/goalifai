@@ -124,6 +124,19 @@ def get_financial_records(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@financial_records_blueprint.route('/income/<uuid:user_id>', methods=['GET'])
+#@jwt_required()
+def get_income_records(user_id):
+    """Fetch all income financial records for a user."""
+    try:
+        records = FinancialRecord.get_income_records_by_user(user_id)
+        return jsonify({
+            "message": "Income financial records fetched successfully",
+            "data":[record.to_dict() for record in records],
+            "status": "success"
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @financial_records_blueprint.route('/financial-records/<uuid:record_id>', methods=['PUT'])
 #@jwt_required()

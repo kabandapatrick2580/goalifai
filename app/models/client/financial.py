@@ -483,3 +483,14 @@ class FinancialRecord(db.Model):
         )
 
         return new_record
+    
+    @staticmethod
+    def get_income_records_by_user(user_id):
+        """Fetch all income financial records for a user."""
+        records = FinancialRecord.query.filter(
+            FinancialRecord.user_id == user_id,
+            FinancialRecord.category.has(Categories.category_type == 'Income')
+        ).all()
+        if not records:
+            return None
+        return records
