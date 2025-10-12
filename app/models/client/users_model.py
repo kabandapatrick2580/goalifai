@@ -248,6 +248,29 @@ class UserFinancialProfile(db.Model):
         db.session.commit()
         return profile
     
+    @staticmethod
+    def update_financial_profile_by_user(user_id, **kwargs):
+        """
+        Update the user's financial profile while maintaining fallback logic.
+        Only valid attributes will be updated.
+        """
+        profile = UserFinancialProfile.query.filter_by(user_id=user_id).first()
+
+        if not profile:
+            raise NoResultFound("Financial profile not found")
+
+        # Update attributes dynamically
+        allowed_fields = {'expected_monthly_income', 'expected_monthly_expenses', 'actual_monthly_income', 'actual_monthly_expenses', 'base_allocation_rate'}
+        for key, value in kwargs.items():
+            if key in allowed_fields and value is not None:
+                if key == 'base_allocation_rate':
+                    # Convert percentage to decimal
+                    value = Decimal(value / 100)
+                setattr(profile, key, value)
+
+        db.session.commit()
+        return profile
+
     @classmethod
     def create_financial_profile(cls, user_id, expected_monthly_income, expected_monthly_expenses, base_allocation_percentage):
         """Create a user's financial profile."""

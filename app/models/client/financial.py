@@ -494,3 +494,26 @@ class FinancialRecord(db.Model):
         if not records:
             return None
         return records
+    
+    @staticmethod
+    def get_expense_records_by_user(user_id):
+        """Fetch all expense financial records for a user."""
+        records = FinancialRecord.query.filter(
+            FinancialRecord.user_id == user_id,
+            FinancialRecord.category.has(Categories.category_type == 'Expense')
+        ).all()
+        if not records:
+            return None
+        return records
+
+    @staticmethod
+    def get_records_by_user_and_month(user_id, year, month):
+        """Fetch all financial records for a user in a specific month."""
+        records = FinancialRecord.query.filter(
+            FinancialRecord.user_id == user_id,
+            extract('year', FinancialRecord.recorded_at) == year,
+            extract('month', FinancialRecord.recorded_at) == month
+        ).all()
+        if not records:
+            return None
+        return records

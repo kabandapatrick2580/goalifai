@@ -75,7 +75,7 @@ def get_profile_by_user(user_id):
         "data": profile_data
     }), 200
 
-@fin_profile.route('/<uuid:profile_id>', methods=['PUT'])
+@fin_profile.route('/update/<uuid:profile_id>', methods=['PUT'])
 def update_profile(profile_id):
     """API endpoint to update a financial profile."""
     data = request.get_json()
@@ -87,7 +87,8 @@ def update_profile(profile_id):
             "id": profile.id,
             "expected_monthly_income": profile.expected_monthly_income,
             "expected_monthly_expenses": profile.expected_monthly_expenses,
-            "expected_monthly_savings": profile.expected_monthly_savings
+            "expected_monthly_savings": profile.expected_monthly_savings,
+            "base_allocation_percentage": profile.base_allocation_percentage,
         }), 200
     except NoResultFound:
         return jsonify({"error": "Profile not found"}), 404
@@ -98,7 +99,26 @@ def update_profile(profile_id):
         current_app.logger.error(traceback.format_exc())
         return jsonify({"error": "Internal server error"}), 500
 
-@fin_profile.route('/<uuid:profile_id>', methods=['DELETE'])
+@fin_profile.route('/update_user/<uuid:user_id>', methods=['PUT'])
+def update_profile_by_user(user_id):
+    """API endpoint to update a financial profile by user ID."""
+    data = request.get_json()
+    try:
+        profile = UserFinancialProfile.update_financial_profile_by_user(user_id, **data)
+        if profile:
+            profile_data = profile.to_dict()
+            return jsonify({
+                "message": "Profile updated successfully",
+                "status": "success",
+                "data": profile_data
+            }), 200
+        return jsonify({"message": "Profile not found", "status": "error"}), 404
+    except ValueError as e:
+        current_app.logger.error(f"Something went wrong while updating profile for user {user_id}: {str(e)}")
+        return jsonify({"message": "something went wrong, check your entries and try again later", "status": "error"}), 400
+
+
+@fin_profile.route('/delete/<uuid:profile_id>', methods=['DELETE'])
 def delete_profile(profile_id):
     """API endpoint to delete a financial profile."""
     profile = UserFinancialProfile.get_financial_profile_by_id(profile_id)

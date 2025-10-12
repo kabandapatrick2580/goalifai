@@ -702,6 +702,8 @@ class MonthlyGoalAllocation(db.Model):
                 "allocation_id": str(allocation.allocation_id),
                 "goal_id": str(allocation.goal_id),
                 "goal_name": allocation.goal.title if allocation.goal else None,
+                "current_goal_amount": float(allocation.goal.current_amount) if allocation.goal and allocation.goal.current_amount else 0,
+                "target_goal_amount": float(allocation.goal.target_amount) if allocation.goal and allocation.goal.target_amount else 0,
                 "allocated_amount": float(allocation.allocated_amount or 0),
                 "created_at": allocation.created_at.isoformat(),
                 "updated_at": allocation.updated_at.isoformat(),

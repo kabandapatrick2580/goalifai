@@ -138,6 +138,55 @@ def get_income_records(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@financial_records_blueprint.route('/expense/<uuid:user_id>', methods=['GET'])
+#@jwt_required()
+def get_expense_records(user_id):
+    """Fetch all expense financial records for a user."""
+    try:
+        records = FinancialRecord.get_expense_records_by_user(user_id)
+        return jsonify({
+            "message": "Expense financial records fetched successfully",
+            "data":[record.to_dict() for record in records],
+            "total": sum(record.amount for record in records),
+            "count": len(records),
+            "status": "success"
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@financial_records_blueprint.route('/monthly_records/<uuid:user_id>/<month_year>', methods=['GET'])
+#@jwt_required()
+def get_financial_records_by_month(user_id, month_year):
+    """Fetch financial records for a user by month and year."""
+    try:
+        year, month = map(int, month_year.split('-'))
+        records = FinancialRecord.get_records_by_user_and_month(user_id, year, month)
+
+        # separate income and expenses
+        income_records = [record.to_dict() for record in records if record.category.type.name.lower() == 'income']
+        expense_records = [record.to_dict() for record in records if record.category.type.name.lower() == 'expense']
+        
+        total_income = sum(record['amount'] for record in income_records)
+        total_expenses = sum(record['amount'] for record in expense_records)
+
+        return jsonify({
+            "message": "Financial records fetched successfully",
+            "total_income": total_income,
+            "total_expenses": total_expenses,
+            "net_amount": total_income - total_expenses,
+            "income_count": len(income_records),
+            "expense_count": len(expense_records),
+            "data": {
+                "income": income_records,
+                "expenses": expense_records
+            },
+            "status": "success"
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @financial_records_blueprint.route('/financial-records/<uuid:record_id>', methods=['PUT'])
 #@jwt_required()
 def update_financial_record(record_id):
