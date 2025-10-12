@@ -54,12 +54,12 @@ def recalculate_allocations(user_id):
 
         # 3. Calculate available funds
         base_rate = Decimal(str(profile.base_allocation_rate or 0.10))
-        base_allocation_amount = quantize(total_income * base_rate)
+        base_allocation_amount = quantize(raw_net * base_rate if raw_net > 0 else Decimal('0.00'))
 
         include_savings_in_alloc = getattr(profile, "include_savings_in_alloc", False)
         pre_existing_savings = quantize(profile.savings_balance or Decimal('0.00')) if include_savings_in_alloc else Decimal('0.00')
 
-        available_funds = total_income + pre_existing_savings
+        available_funds = raw_net + pre_existing_savings
 
         current_app.logger.info(
             f"[alloc] profile={profile.id} available_funds={available_funds} base_allocation={base_allocation_amount}"
@@ -141,7 +141,7 @@ def recalculate_allocations(user_id):
                 "savings_balance": float(profile.savings_balance)
             }), 200
 
-        # 7. Compute goal gaps and priorities
+        # 7. Compute goal gaps and priorities for the purpose of allocation
         total_gap = Decimal('0.00')
         total_priority = Decimal('0.00')
 
@@ -153,8 +153,8 @@ def recalculate_allocations(user_id):
 
         if total_gap <= 0 or total_priority <= 0:
             # Nothing to allocate
-            profile.savings_balance += available_funds
-            db.session.commit()
+            #profile.savings_balance += available_funds
+            #db.session.commit()
             return jsonify({
                 "status": "saved",
                 "message": "All goals fully funded or invalid priority; funds saved.",
