@@ -187,7 +187,7 @@ def get_financial_records_by_month(user_id, month_year):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@financial_records_blueprint.route('/financial-records/<uuid:record_id>', methods=['PUT'])
+@financial_records_blueprint.route('/update/<uuid:record_id>', methods=['PUT'])
 #@jwt_required()
 def update_financial_record(record_id):
     """Updates an existing financial record."""
@@ -211,19 +211,18 @@ def update_financial_record(record_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-@financial_records_blueprint.route('/financial-records/<uuid:record_id>', methods=['DELETE'])
+@financial_records_blueprint.route('/delete/<uuid:record_id>', methods=['DELETE'])
 #@jwt_required()
 def delete_financial_record(record_id):
     """Deletes a financial record."""
     try:
         if FinancialRecord.delete_record(record_id):
-            return jsonify({"message": "Financial record deleted successfully"}), 200
-        return jsonify({"error": "Failed to delete financial record"}), 500
+            return jsonify({"message": "Financial record deleted successfully", "status": "success"}), 200
+        return jsonify({"error": "Failed to delete financial record", "status": "error"}), 500
     except NoResultFound:
-        return jsonify({"error": "Financial record not found"}), 404
+        return jsonify({"error": "Financial record not found", "status": "error"}), 404
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e), "status": "error"}), 500
 
 @financial_records_blueprint.route('/monthly_summary/<uuid:user_id>', methods=['GET'])
 #@jwt_required()
