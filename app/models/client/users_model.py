@@ -176,6 +176,13 @@ class UserFinancialProfile(db.Model):
     actual_monthly_income = db.Column(db.Numeric(12, 2), nullable=True)  # Nullable, as user might not enter yet
     actual_monthly_expenses = db.Column(db.Numeric(12, 2), nullable=True)
 
+    # Financial deltas
+    total_expense_snapshot = db.Column(db.Numeric(12, 2), nullable=True)  # recent expenses available
+    total_income_snapshot = db.Column(db.Numeric(12, 2), nullable=True)  # recent income available
+
+    # time snapshots
+
+
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
@@ -260,7 +267,7 @@ class UserFinancialProfile(db.Model):
             raise NoResultFound("Financial profile not found")
 
         # Update attributes dynamically
-        allowed_fields = {'expected_monthly_income', 'expected_monthly_expenses', 'actual_monthly_income', 'actual_monthly_expenses', 'base_allocation_rate'}
+        allowed_fields = {'expected_monthly_income', 'expected_monthly_expenses', 'actual_monthly_income', 'actual_monthly_expenses', 'base_allocation_rate', 'deficit_balance', 'savings_balance'}
         for key, value in kwargs.items():
             if key in allowed_fields and value is not None:
                 if key == 'base_allocation_rate':
@@ -309,6 +316,8 @@ class UserFinancialProfile(db.Model):
             'expected_monthly_income': float(profile.expected_monthly_income),
             'expected_monthly_expenses': float(profile.expected_monthly_expenses)
             }
+    
+
 class Education(db.Model):
     __tablename__ = 'education'
 

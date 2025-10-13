@@ -99,7 +99,7 @@ def update_profile(profile_id):
         current_app.logger.error(traceback.format_exc())
         return jsonify({"error": "Internal server error"}), 500
 
-@fin_profile.route('/update_user/<uuid:user_id>', methods=['PUT'])
+@fin_profile.route('/update_financial_profile/<uuid:user_id>', methods=['PUT'])
 def update_profile_by_user(user_id):
     """API endpoint to update a financial profile by user ID."""
     data = request.get_json()

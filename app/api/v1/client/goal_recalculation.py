@@ -34,7 +34,7 @@ def recalculate_allocations(user_id):
         totals = FinancialRecord.get_monthly_summary_totals(user_id=user_id, year=year, month=month)
         current_app.logger.info(f"Monthly totals for user {user_id} for {year}-{month}: {totals}")
         if not totals:
-            current_app.logger.info(f"This user has no financial records for {year}-{month}. Nothing to allocate.")
+            current_app.logger.info(f"This user has no financial records for {year}-{month}")
             expected_totals = FinancialProfile.get_expected_totals(user_id)
             if expected_totals:
                 totals = {
