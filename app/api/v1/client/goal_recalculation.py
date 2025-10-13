@@ -98,8 +98,9 @@ def recalculate_allocations(user_id):
         # 5. If deficit after repayment still negative (spent more than earned)
         if raw_net < 0 and available_funds == 0:
             new_deficit = abs(raw_net)
+            current_app.logger.info(f"Recording new deficit of {new_deficit} for user {user_id}")
             profile.deficit_balance += new_deficit
-
+            db.session.add(profile)
             def_cat = FC.get_category_by_name("Deficit")
             if def_cat:
                 FinancialRecord.create_record(
@@ -109,6 +110,16 @@ def recalculate_allocations(user_id):
                     expected_transaction=False,
                     description="Recorded monthly deficit (expenses exceeded income)",
                     recorded_at=datetime.now(timezone.utc),
+                )
+
+            # Update all goals to have zero allocation for this month
+            goals = Goal.get_active_goals(user_id)
+            for g in goals:
+                GoalAllocation.reallocate_funds(
+                    user_id=user_id,
+                    goal_id=g.get("goal_id"),
+                    month=now.strftime("%Y-%m"),
+                    allocated_amount=Decimal('0.00')
                 )
 
             db.session.commit()
@@ -181,7 +192,7 @@ def recalculate_allocations(user_id):
 
             alloc = GoalAllocation.reallocate_funds(
                 user_id=user_id,
-                goal_id=g["goal_id"],
+                goal_id=g.get("goal_id"),
                 month=now.strftime("%Y-%m"),
                 allocated_amount=allocate_amt
             )
@@ -193,6 +204,13 @@ def recalculate_allocations(user_id):
                     "goal_title": g.get("title"),
                     "allocated_amount": float(allocate_amt)
                 })
+
+                update_g = Goal.update_goal(goal_id=g.get("goal_id"), current_amount=allocate_amt)
+                if not update_g:
+                    current_app.logger.error(f"Failed to update goal {g.get('goal_id')} after allocation.")
+
+            else:
+                current_app.logger.error(f"Failed to create/update allocation for goal {g.get('goal_id')}")
 
         # 9. Save remaining funds (if any)
         remaining_balance = quantize(available_funds - total_allocated)
@@ -268,7 +286,7 @@ def get_all_allocations():
             
 
     except Exception as e:
-        current_app.logger.error(f"Error fetching allocations for month {month}: {str(e)}")
+        current_app.logger.error(f"Error fetching allocations for month: {str(e)}")
         current_app.logger.error(traceback.format_exc())
         return jsonify({"status": "error", "message": "Internal server error"}), 500
 

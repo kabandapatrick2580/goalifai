@@ -41,4 +41,8 @@ Goal funds reallocation
 7. making sure that the allocated goal funds are sealed not changeable at the next reallocation
 8. The expense and income have to reflect to monthly funds allocation and being able to handle the funds allocated earlier in other months
 9. the solution is to record the surplus as income or deficit as an expense at the end of the month which will be based on the next month, before goal funds allocation.
-10. Auto carry over the surplus.
+10. update the user financial profile to record savings balance and deficit balance.
+11. Updated the user financial profile to record the funds allocation rate in order to allocate only the portion of the available funds and the remaining are saved in savings(surplus). and if the calculations happens and the expense happen to exceed the income, record a deficit balance instead of a savings balance.
+
+12. Update the goal current amount
+13. Reallocate funds on recalculation, update the financial record where expense called deficit was recorded, and income where savings were recorded.

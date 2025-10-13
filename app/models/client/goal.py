@@ -109,18 +109,29 @@ class Goal(db.Model):
         return max(0, target_amount - current_amount)
 
     @staticmethod
-    def update_goal(self, **kwargs):
-        for field, value in kwargs.items():
-            setattr(self, field, value)
+    def update_goal(goal_id, **kwargs):
+        goal = Goal.query.filter_by(goal_id=goal_id).first()
+        if not goal:
+            return None
         try:
-            self.updated_at = datetime.now(timezone.utc)
-            self.funding_gap = self.calculate_funding_gap(self.target_amount, self.current_amount)
+            for key, value in kwargs.items():
+                if hasattr(goal, key) and value is not None:
+                    setattr(goal, key, value)
+
+            # Recalculate funding gap if amounts are updated
+            if 'target_amount' in kwargs or 'current_amount' in kwargs:
+                goal.funding_gap = Goal.calculate_funding_gap(goal.target_amount, goal.current_amount)
+                if goal.funding_gap == 0:
+                    goal.is_completed = True
+                    goal.is_active = False
+
             db.session.commit()
-            return self.to_dict()
-        except IntegrityError as e:
+            return goal.to_dict()
+        except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Error updating goal: {e}")
             return e
+        
     @staticmethod
     def get_goals_by_user(user_id):
         goals = Goal.query.filter_by(user_id=user_id).all()
