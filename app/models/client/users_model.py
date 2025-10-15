@@ -172,15 +172,13 @@ class UserFinancialProfile(db.Model):
     expected_monthly_income = db.Column(db.Numeric(12, 2), nullable=False, default=0)
     expected_monthly_expenses = db.Column(db.Numeric(12, 2), nullable=False, default=0)
 
-    # Actual financial values (Recorded real data)
-    actual_monthly_income = db.Column(db.Numeric(12, 2), nullable=True)  # Nullable, as user might not enter yet
-    actual_monthly_expenses = db.Column(db.Numeric(12, 2), nullable=True)
-
     # Financial deltas
     total_expense_snapshot = db.Column(db.Numeric(12, 2), nullable=True)  # recent expenses available
     total_income_snapshot = db.Column(db.Numeric(12, 2), nullable=True)  # recent income available
 
     # time snapshots
+    last_calculated_at = db.Column(db.DateTime, nullable=True)  # last time funds were allocated
+
 
 
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
@@ -188,21 +186,7 @@ class UserFinancialProfile(db.Model):
 
     user = db.relationship("User", back_populates="financial_profile")
     
-    @property
-    def monthly_income(self):
-        """Return actual income if available, otherwise fallback to expected."""
-        return self.actual_monthly_income if self.actual_monthly_income is not None else self.expected_monthly_income
-
-    @property
-    def monthly_expenses(self):
-        """Return actual expenses if available, otherwise fallback to expected."""
-        return self.actual_monthly_expenses if self.actual_monthly_expenses is not None else self.expected_monthly_expenses
-
-    @property
-    def monthly_savings(self):
-        """Calculate savings dynamically as income minus expenses."""
-        return self.monthly_income - self.monthly_expenses
-
+    
     def to_dict(self):
         """Convert financial profile to dictionary format."""
         return {
@@ -214,13 +198,12 @@ class UserFinancialProfile(db.Model):
             'base_allocation_rate': float(self.base_allocation_rate) * 100,  # Convert to percentage
             'deficit_balance': float(self.deficit_balance),
             'savings_balance': float(self.savings_balance),
-            'actual_monthly_income': float(self.actual_monthly_income) if self.actual_monthly_income is not None else None,
-            'actual_monthly_expenses': float(self.actual_monthly_expenses) if self.actual_monthly_expenses is not None else None,
-            'monthly_income': float(self.monthly_income),  # Fallback applied here
-            'monthly_expenses': float(self.monthly_expenses),  # Fallback applied here
-            'monthly_savings': float(self.monthly_savings),  # Auto-calculated
             'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
+            'updated_at': self.updated_at.isoformat(),
+            'last_calculated_at': self.last_calculated_at.isoformat() if self.last_calculated_at else None,
+            'total_income_snapshot': float(self.total_income_snapshot) if self.total_income_snapshot is not None else None,
+            'total_expense_snapshot': float(self.total_expense_snapshot) if self.total_expense_snapshot is not None else None,
+            'last_calculated_at': self.last_calculated_at.isoformat() if self.last_calculated_at else None
         }
 
     def __repr__(self):
@@ -229,8 +212,6 @@ class UserFinancialProfile(db.Model):
             user_id={self.user_id}, 
             expected_monthly_income={self.expected_monthly_income}, 
             expected_monthly_expenses={self.expected_monthly_expenses}, 
-            actual_monthly_income={self.actual_monthly_income}, 
-            actual_monthly_expenses={self.actual_monthly_expenses}, 
             created_at={self.created_at}, 
             updated_at={self.updated_at}
         )>"""

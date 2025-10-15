@@ -48,3 +48,5 @@ Goal funds reallocation
 13. Reallocate funds on recalculation, update the financial record where expense called deficit was recorded, and income where savings were recorded.
 14. fund recalculation and goal allocation is expected to run frequently and let's say we've got a surplus income which will be distribute to cover the deficits or get saved as a saving at first time, but if it runs for the second time, becaue the income and expenses nothing changed, it may save a saving or a deficit without taking into account that no changes made in income and expenses.
     - Solution: to record the total income and total expenses at the first time of allocation, and when run for another time before updating the deficit or savings balances, compare the current income and expenses balances with those during the first time
+
+15. within that same month if expenses happen to exceed the income, the goal allocations shall reduce as well

@@ -50,16 +50,13 @@ def get_profile(profile_id):
     if not profile:
         return jsonify({"error": "Profile not found"}), 404
     
+    profile_data = profile.to_dict()
     return jsonify({
-        "id": profile.id,
-        "user_id": profile.user_id,
-        "expected_monthly_income": profile.expected_monthly_income,
-        "expected_monthly_expenses": profile.expected_monthly_expenses,
-        "expected_monthly_savings": profile.expected_monthly_savings,
-        "actual_monthly_income": profile.actual_monthly_income,
-        "actual_monthly_expenses": profile.actual_monthly_expenses,
-        "actual_monthly_savings": profile.actual_monthly_income - profile.actual_monthly_expenses
+        "message": "Profile fetched successfully",
+        "status": "success",
+        "data": profile_data
     }), 200
+        
 
 @fin_profile.route('/user/<user_id>', methods=['GET'])
 def get_profile_by_user(user_id):
