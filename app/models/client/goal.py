@@ -16,7 +16,12 @@ from datetime import datetime
 import traceback
 from sqlalchemy.dialects.postgresql import UUID, NUMERIC
 from uuid import uuid4
+from enum import Enum
 
+class GoalProtectionLevel(str, Enum):
+    FLEXIBLE = "flexible"
+    PROTECTED = "protected"
+    FINALIZED = "finalized"
 
 class Goal(db.Model):
 
@@ -59,6 +64,14 @@ class Goal(db.Model):
     priority = db.relationship("GoalPriority", back_populates="goals", lazy=True)
     status = db.relationship("GoalStatus", back_populates="goals", lazy=True)
     user = db.relationship("User", back_populates="goals")
+
+    # new fields
+    protection_level = db.Column(
+        db.Enum(GoalProtectionLevel),
+        default=GoalProtectionLevel.FLEXIBLE,
+        nullable=False
+    )
+
 
     def __repr__(self):
         return f"<Goal(title='{self.title}', target={self.target_amount}, user_id={self.user_id})>"

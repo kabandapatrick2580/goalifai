@@ -50,3 +50,5 @@ Goal funds reallocation
     - Solution: to record the total income and total expenses at the first time of allocation, and when run for another time before updating the deficit or savings balances, compare the current income and expenses balances with those during the first time
 
 15. within that same month if expenses happen to exceed the income, the goal allocations shall reduce as well
+
+16. At the end of the month, the savings or deficits are there, but the allocated funds need to be recognized, and categorized as goal funds categories in a sense that will help the user get a grasp on the situation
