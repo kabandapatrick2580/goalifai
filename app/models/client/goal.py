@@ -13,7 +13,7 @@ from datetime import datetime
 import traceback
 from sqlalchemy.dialects.postgresql import UUID, NUMERIC
 from uuid import uuid4
-from sqlalchemy import Enum
+from enum import Enum
 
 
 class GoalProtectionLevel(Enum):

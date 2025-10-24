@@ -422,36 +422,39 @@ class FinancialRecord(db.Model):
         Aggregates income and expenses for a given user and month.
         Returns totals for income, expense, and net balance.
         """
-        income_sum = (
-            db.session.query(func.coalesce(func.sum(FinancialRecord.amount), 0))
-            .filter(
-                FinancialRecord.user_id == user_id,
-                extract('year', FinancialRecord.recorded_at) == year,
-                extract('month', FinancialRecord.recorded_at) == month,
-                FinancialRecord.category.has(Categories.category_type == 'Income'),
-                FinancialRecord.expected_transaction == False
+        try:
+            income_sum = (
+                db.session.query(func.coalesce(func.sum(FinancialRecord.amount), 0))
+                .filter(
+                    FinancialRecord.user_id == user_id,
+                    extract('year', FinancialRecord.recorded_at) == year,
+                    extract('month', FinancialRecord.recorded_at) == month,
+                    FinancialRecord.category.has(Categories.category_type == 'Income'),
+                    FinancialRecord.expected_transaction == False
+                )
+                .scalar()
             )
-            .scalar()
-        )
 
-        expense_sum = (
-            db.session.query(func.coalesce(func.sum(FinancialRecord.amount), 0))
-            .filter(
-                FinancialRecord.user_id == user_id,
-                extract('year', FinancialRecord.recorded_at) == year,
-                extract('month', FinancialRecord.recorded_at) == month,
-                FinancialRecord.category.has(Categories.category_type == 'Expense'),
-                FinancialRecord.expected_transaction == False
+            expense_sum = (
+                db.session.query(func.coalesce(func.sum(FinancialRecord.amount), 0))
+                .filter(
+                    FinancialRecord.user_id == user_id,
+                    extract('year', FinancialRecord.recorded_at) == year,
+                    extract('month', FinancialRecord.recorded_at) == month,
+                    FinancialRecord.category.has(Categories.category_type == 'Expense'),
+                    FinancialRecord.expected_transaction == False
+                )
+                .scalar()
             )
-            .scalar()
-        )
 
-        return {
-            "total_income": Decimal(income_sum),
-            "total_expense": Decimal(expense_sum),
-            "net_income": Decimal(income_sum) - Decimal(expense_sum)
-        }
-    
+            return {
+                "total_income": Decimal(income_sum),
+                "total_expense": Decimal(expense_sum),
+                "net_income": Decimal(income_sum) - Decimal(expense_sum)
+            }
+        except Exception as e:
+            current_app.logger.error(f"Error calculating monthly summary totals: {str(e)}")
+            return None
     @staticmethod
     def carry_over_surplus(user_id, surplus_amount, from_month):
         """

@@ -164,6 +164,21 @@ def get_financial_records_by_month(user_id, month_year):
         year, month = map(int, month_year.split('-'))
         records = FinancialRecord.get_records_by_user_and_month(user_id, year, month)
 
+        if not records:
+            return jsonify({
+                "message": "No financial records found for the specified period.",
+                "data": {
+                    "income": [],
+                    "expenses": []
+                },
+                "total_income": 0,
+                "total_expenses": 0,
+                "net_amount": 0,
+                "income_count": 0,
+                "expense_count": 0,
+                "status": "success"
+            }), 200
+
         # separate income and expenses
         income_records = [record.to_dict() for record in records if record.category.type.name.lower() == 'income']
         expense_records = [record.to_dict() for record in records if record.category.type.name.lower() == 'expense']
@@ -185,6 +200,7 @@ def get_financial_records_by_month(user_id, month_year):
             "status": "success"
         }), 200
     except Exception as e:
+        current_app.logger.error(f"Error fetching monthly financial records: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 @financial_records_blueprint.route('/update/<uuid:record_id>', methods=['PUT'])
