@@ -300,7 +300,7 @@ class FinancialRecord(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True), default=func.now(), onupdate=func.now(), nullable=True)
     currency = db.Column(UUID(as_uuid=True), db.ForeignKey("currencies.id"), nullable=True)
     expected_transaction = db.Column(db.Boolean, default=True, nullable=False)  # True if expected, False if actual
-
+    is_allocation_transaction = db.Column(db.Boolean, default=False, nullable=False)  # True if part of goal allocation
     # Relationships
     user = db.relationship("User", back_populates="financial_records")
     category = db.relationship("Categories", back_populates="financial_records")
@@ -328,7 +328,7 @@ class FinancialRecord(db.Model):
         }
 
     @staticmethod
-    def create_record(user_id, category_id, amount, recorded_at, expected_transaction=False, description=None, currency_id=None):
+    def create_record(user_id, category_id, amount, recorded_at, expected_transaction=False, description=None, currency_id=None, is_allocation_transaction=False):
         """Creates a new financial record (either expected or actual)."""
         try:
             new_record = FinancialRecord(
@@ -339,6 +339,7 @@ class FinancialRecord(db.Model):
                 currency=currency_id if currency_id else None,
                 recorded_at=recorded_at,
                 description=description.strip() if description else None,
+                is_allocation_transaction=is_allocation_transaction,
                 created_at=datetime.now(timezone.utc)
             )
             db.session.add(new_record)
@@ -430,7 +431,8 @@ class FinancialRecord(db.Model):
                     extract('year', FinancialRecord.recorded_at) == year,
                     extract('month', FinancialRecord.recorded_at) == month,
                     FinancialRecord.category.has(Categories.category_type == 'Income'),
-                    FinancialRecord.expected_transaction == False
+                    FinancialRecord.expected_transaction == False,
+                    FinancialRecord.is_allocation_transaction == False
                 )
                 .scalar()
             )
@@ -442,7 +444,8 @@ class FinancialRecord(db.Model):
                     extract('year', FinancialRecord.recorded_at) == year,
                     extract('month', FinancialRecord.recorded_at) == month,
                     FinancialRecord.category.has(Categories.category_type == 'Expense'),
-                    FinancialRecord.expected_transaction == False
+                    FinancialRecord.expected_transaction == False,
+                    FinancialRecord.is_allocation_transaction == False
                 )
                 .scalar()
             )

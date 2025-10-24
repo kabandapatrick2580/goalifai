@@ -763,3 +763,13 @@ class MonthlyGoalAllocation(db.Model):
         if allocation:
             return True
         return False
+    
+    @staticmethod
+    def get_total_allocated_for_goal(goal_id, month):
+        """Get the total amount allocated to a specific goal in a given month."""
+        allocations = MonthlyGoalAllocation.query.filter_by(goal_id=goal_id, month=month).all()
+        if not allocations:
+            return 0
+        total_allocated = sum(float(allocation.allocated_amount or 0) for allocation in allocations)
+        return total_allocated
+    

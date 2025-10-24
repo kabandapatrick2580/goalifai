@@ -140,6 +140,7 @@ def recalculate_allocations(user_id):
                         expected_transaction=False,
                         description="Deficit fully repaid using current funds.",
                         recorded_at=datetime.now(timezone.utc),
+                        is_allocation_transaction=True
                     )
             else:
                 # Partial repayment
@@ -160,6 +161,7 @@ def recalculate_allocations(user_id):
                         expected_transaction=False,
                         description="Partial deficit repayment made.",
                         recorded_at=datetime.now(timezone.utc),
+                        is_allocation_transaction=True
                     )
 
                 # Update snapshots and commit
@@ -207,6 +209,7 @@ def recalculate_allocations(user_id):
                         expected_transaction=False,
                         description="Withdrawn from savings to cover expenses.",
                         recorded_at=datetime.now(timezone.utc),
+                        is_allocation_transaction=True
                     )
             
             # Step 2: Pull from FLEXIBLE goal allocations (respecting protection levels)
@@ -225,12 +228,11 @@ def recalculate_allocations(user_id):
                         goal_id = g.get("goal_id")
                         
                         # Get current month's allocation
-                        current_allocation = GoalAllocation.get_allocation(
-                            user_id=user_id,
+                        current_allocation = GoalAllocation.get_total_allocated_for_goal(
                             goal_id=goal_id,
                             month=current_month
                         )
-                        
+
                         if not current_allocation or current_allocation.get("allocated_amount", 0) <= 0:
                             continue
                         
@@ -332,6 +334,7 @@ def recalculate_allocations(user_id):
                         expected_transaction=False,
                         description="Recorded deficit after using available funds.",
                         recorded_at=datetime.now(timezone.utc),
+                        is_allocation_transaction=True
                     )
 
             # Update snapshots and commit
@@ -399,6 +402,7 @@ def recalculate_allocations(user_id):
                     expected_transaction=False,
                     description="No active goals — funds moved to savings.",
                     recorded_at=datetime.now(timezone.utc),
+                    is_allocation_transaction=True
                 )
 
             # Update snapshots and commit
@@ -453,6 +457,7 @@ def recalculate_allocations(user_id):
                     expected_transaction=False,
                     description="Goals already funded — funds saved.",
                     recorded_at=datetime.now(timezone.utc),
+                    is_allocation_transaction=True
                 )
 
             # Update snapshots and commit
@@ -554,6 +559,7 @@ def recalculate_allocations(user_id):
                     expected_transaction=False,
                     description="Unallocated funds moved to savings.",
                     recorded_at=datetime.now(timezone.utc),
+                    is_allocation_transaction=True
                 )
 
         # 15. Update snapshots to reflect what we've now processed
