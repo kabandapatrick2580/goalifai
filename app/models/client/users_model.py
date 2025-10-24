@@ -171,7 +171,7 @@ class UserFinancialProfile(db.Model):
     # Expected financial values (User's planned budget)
     expected_monthly_income = db.Column(db.Numeric(12, 2), nullable=False, default=0)
     expected_monthly_expenses = db.Column(db.Numeric(12, 2), nullable=False, default=0)
-
+    include_savings_in_alloc = db.Column(db.Boolean, default=False)
     # Financial deltas
     total_expense_snapshot = db.Column(db.Numeric(12, 2), nullable=True)  # recent expenses available
     total_income_snapshot = db.Column(db.Numeric(12, 2), nullable=True)  # recent income available
@@ -203,7 +203,8 @@ class UserFinancialProfile(db.Model):
             'last_calculated_at': self.last_calculated_at.isoformat() if self.last_calculated_at else None,
             'total_income_snapshot': float(self.total_income_snapshot) if self.total_income_snapshot is not None else None,
             'total_expense_snapshot': float(self.total_expense_snapshot) if self.total_expense_snapshot is not None else None,
-            'last_calculated_at': self.last_calculated_at.isoformat() if self.last_calculated_at else None
+            'last_calculated_at': self.last_calculated_at.isoformat() if self.last_calculated_at else None,
+            'include_savings_in_alloc': self.include_savings_in_alloc
         }
 
     def __repr__(self):
