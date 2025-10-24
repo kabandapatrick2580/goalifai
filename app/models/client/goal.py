@@ -1,11 +1,8 @@
 from psycopg2 import IntegrityError
 from app import db
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm.exc import NoResultFound
 import uuid
 from datetime import datetime
-from bcrypt import hashpw, gensalt, checkpw
-import hashlib
 from datetime import datetime, timezone
 from flask import current_app, jsonify
 from sqlalchemy import DateTime as Datetime
@@ -16,9 +13,11 @@ from datetime import datetime
 import traceback
 from sqlalchemy.dialects.postgresql import UUID, NUMERIC
 from uuid import uuid4
-from enum import Enum
+from sqlalchemy import Enum
 
-class GoalProtectionLevel(str, Enum):
+
+class GoalProtectionLevel(Enum):
+    """Defines the protection levels for goals."""
     FLEXIBLE = "flexible"
     PROTECTED = "protected"
     FINALIZED = "finalized"
@@ -27,6 +26,12 @@ class Goal(db.Model):
 
     """Model for user-defined goals."""
     __tablename__ = 'goals'
+
+    protection_level = db.Column(
+    db.Enum(GoalProtectionLevel),
+    default=GoalProtectionLevel.FLEXIBLE,
+    nullable=False
+    )
 
     goal_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=False)
@@ -66,11 +71,14 @@ class Goal(db.Model):
     user = db.relationship("User", back_populates="goals")
 
     # new fields
-    protection_level = db.Column(
-        db.Enum(GoalProtectionLevel),
-        default=GoalProtectionLevel.FLEXIBLE,
-        nullable=False
-    )
+
+
+    protection_reason = db.Column(db.String(255), nullable=True)
+    protected_at = db.Column(db.DateTime(timezone=True), nullable=True)
+    is_locked = db.Column(db.Boolean, default=False, nullable=False)
+    is_essential = db.Column(db.Boolean, default=False, nullable=False)
+    completed_at = db.Column(db.DateTime(timezone=True), nullable=True)
+    is_committed_expense = db.Column(db.Boolean, default=False, nullable=False)
 
 
     def __repr__(self):
@@ -748,3 +756,10 @@ class MonthlyGoalAllocation(db.Model):
             return None
         return [allocation.to_dict() for allocation in allocations]
 
+    @staticmethod
+    def check_if_monthly_allocation_finalized(user_id, month):
+        """Check if the monthly allocation for a user has been finalized."""
+        allocation = MonthlyGoalAllocation.query.filter_by(user_id=user_id, month=month, is_finalized=True).first()
+        if allocation:
+            return True
+        return False

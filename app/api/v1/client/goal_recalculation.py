@@ -47,10 +47,7 @@ def recalculate_allocations(user_id):
         current_month = now.strftime("%Y-%m")
 
         # 3. Check if current month is already finalized (shouldn't happen, but safety check)
-        month_finalization = MonthFinalization.query.filter_by(
-            user_id=user_id,
-            month=current_month
-        ).first()
+        month_finalization = GoalAllocation.check_if_monthly_allocation_finalized(user_id=user_id, month=current_month)
         
         if month_finalization:
             return jsonify({
