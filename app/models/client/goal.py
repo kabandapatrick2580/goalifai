@@ -107,6 +107,13 @@ class Goal(db.Model):
             "is_active": self.is_active,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
+            "protection_level":self.protection_level.value,
+            "protection_reason": self.protection_reason,
+            "protected_at": self.protected_at.isoformat() if self.protected_at else None,
+            "is_locked": self.is_locked,
+            "is_essential": self.is_essential,
+            "completed_at": self.completed_at.isoformat() if self.completed_at else None,
+            "is_committed_expense": self.is_committed_expense
         }
     
     @staticmethod
@@ -142,9 +149,6 @@ class Goal(db.Model):
             # Recalculate funding gap if amounts are updated
             if 'target_amount' in kwargs or 'current_amount' in kwargs:
                 goal.funding_gap = Goal.calculate_funding_gap(goal.target_amount, goal.current_amount)
-                if goal.funding_gap == 0:
-                    goal.is_completed = True
-                    goal.is_active = False
 
             db.session.commit()
             return goal.to_dict()
@@ -152,7 +156,30 @@ class Goal(db.Model):
             db.session.rollback()
             current_app.logger.error(f"Error updating goal: {e}")
             return e
-        
+    
+    @staticmethod
+    def finalize_goal(goal_id, **kwargs):
+        goal = Goal.query.filter_by(goal_id=goal_id).first()
+        if not goal:
+            return None
+        try:
+            for key, value in kwargs.items():
+                if hasattr(goal, key) and value is not None:
+                    setattr(goal, key, value)
+
+            # Recalculate funding gap if amounts are updated
+            if 'target_amount' in kwargs or 'current_amount' in kwargs:
+                goal.funding_gap = Goal.calculate_funding_gap(goal.target_amount, goal.current_amount)
+                goal.is_completed = True
+                goal.is_active = False
+                goal.status = 'Completed'
+            db.session.commit()
+            return goal.to_dict()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error finalizing goal: {e}")
+            return e
+
     @staticmethod
     def get_goals_by_user(user_id):
         goals = Goal.query.filter_by(user_id=user_id).all()

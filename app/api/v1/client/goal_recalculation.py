@@ -232,8 +232,8 @@ def recalculate_allocations(user_id):
                             goal_id=goal_id,
                             month=current_month
                         )
-
-                        if not current_allocation or current_allocation.get("allocated_amount", 0) <= 0:
+                        current_app.logger.info(f"[alloc] Goal {goal_id} allocation for {current_month}: {current_allocation}")
+                        if not current_allocation or current_allocation <= 0:
                             continue
                         
                         # Check protection level
@@ -272,10 +272,17 @@ def recalculate_allocations(user_id):
                             "allocation": current_allocation,
                             "pull_score": pull_score
                         })
+                        current_app.logger.info(
+                            f"[alloc] Goal {goal_id} eligible for pullback: "
+                            f"priority={priority_pct}, completion={completion_pct}, "
+                            f"is_essential={is_essential}, pull_score={pull_score}"
+                        )
                     
                     # Sort by pull_score (pull from lowest priority first)
                     pullable_goals.sort(key=lambda x: x["pull_score"])
-                    
+                    current_app.logger.info(
+                        f"[alloc] Pullable goals sorted for pullback: {pullable_goals}"
+                    )
                     # Pull from goals in order
                     for item in pullable_goals:
                         if shortage <= 0:
@@ -284,7 +291,7 @@ def recalculate_allocations(user_id):
                         goal = item["goal"]
                         allocation = item["allocation"]
                         goal_id = goal.get("goal_id")
-                        allocated_amt = Decimal(str(allocation.get("allocated_amount")))
+                        allocated_amt = Decimal(str(allocation))
                         
                         # Calculate how much to pull back
                         pullback = min(allocated_amt, shortage)
@@ -561,7 +568,7 @@ def recalculate_allocations(user_id):
                     recorded_at=datetime.now(timezone.utc),
                     is_allocation_transaction=True
                 )
-        
+
         # 15. Update snapshots to reflect what we've now processed
         profile.total_income_snapshot = total_income
         profile.total_expense_snapshot = total_expense
