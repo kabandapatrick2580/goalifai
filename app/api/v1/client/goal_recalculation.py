@@ -561,7 +561,7 @@ def recalculate_allocations(user_id):
                     recorded_at=datetime.now(timezone.utc),
                     is_allocation_transaction=True
                 )
-
+        
         # 15. Update snapshots to reflect what we've now processed
         profile.total_income_snapshot = total_income
         profile.total_expense_snapshot = total_expense

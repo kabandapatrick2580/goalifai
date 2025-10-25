@@ -519,7 +519,7 @@ class FinancialRecord(db.Model):
             FinancialRecord.user_id == user_id,
             extract('year', FinancialRecord.recorded_at) == year,
             extract('month', FinancialRecord.recorded_at) == month
-        ).all()
+                            ).all()
         if not records:
             return None
         return records
