@@ -518,8 +518,9 @@ class FinancialRecord(db.Model):
         records = FinancialRecord.query.filter(
             FinancialRecord.user_id == user_id,
             extract('year', FinancialRecord.recorded_at) == year,
-            extract('month', FinancialRecord.recorded_at) == month
-                            ).all()
+            extract('month', FinancialRecord.recorded_at) == month,
+            FinancialRecord.is_allocation_transaction == False
+        ).all()
         if not records:
             return None
         return records
