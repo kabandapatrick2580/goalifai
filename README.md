@@ -37,7 +37,7 @@ When `net_change > 0` and existing deficit exists:
   - Repay full deficit amount
   - Reduce `available_funds` by deficit amount
   - Set `deficit_balance = 0`
-  - Record repayment as income transaction (category: "Deficit")
+  - Record repayment as expense transaction (category: "Deficit")
 
 #### Partial Repayment
 - If `available_funds < existing_deficit`:
