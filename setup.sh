@@ -40,7 +40,26 @@ if prompt_continue "Do you want to install python3.12-venv?"; then
 fi
 
 
-# 3. Check and create local virtual environment
+# --- 1. Check Python Version ---
+REQUIRED_PYTHON="3.8"
+
+# Get current Python version
+if command -v python3 &>/dev/null; then
+    PY_VERSION=$(python3 -V 2>&1 | awk '{print $2}')
+else
+    echo "❌ Python3 is not installed. Please install Python ${REQUIRED_PYTHON} or higher."
+    exit 1
+fi
+
+# Compare versions
+if [ "$(printf '%s\n' "$REQUIRED_PYTHON" "$PY_VERSION" | sort -V | head -n1)" != "$REQUIRED_PYTHON" ]; then
+    echo "❌ Python version $PY_VERSION is lower than required $REQUIRED_PYTHON"
+    exit 1
+fi
+
+echo "✅ Python version check passed: $PY_VERSION"
+
+# --- 2. Check and create local virtual environment ---
 if [ -d "local-env" ]; then
     echo "Virtual environment 'local-env' already exists."
     if prompt_continue "Do you want to use the existing virtual environment?"; then
@@ -53,6 +72,7 @@ if [ -d "local-env" ]; then
 else
     prompt_continue "Do you want to create a virtual environment 'local-env'?" && python3 -m venv local-env
 fi
+
 
 # Activate virtual environment
 echo "Activating virtual environment..."
