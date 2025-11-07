@@ -54,19 +54,19 @@ app.logger.addHandler(handler)
 app.logger.setLevel(logging.INFO)
 
 from app.api.v1.client.users import user_blueprint
-from app.api.v1.client.goals import goal_blueprint
+from app.api.v1.goals.goals import goal_blueprint
 from app.api.v1.client.fin_profile import fin_profile
 from app.api.v1.hybrid.categories import categories_blueprint
 from app.api.v1.central.category_types import cat_types_blueprint
 from app.api.v1.client.degree import degree_blue_print
 from app.api.v1.client.education import education_blueprint
 from app.api.v1.client.financial_records import financial_records_blueprint
-from app.api.v1.central.goal_status import goal_status_bp
-from app.api.v1.central.goal_priorities import goal_priorities_blueprint
+from app.api.v1.goals.goal_status import goal_status_bp
+from app.api.v1.goals.goal_priorities import goal_priorities_blueprint
 from app.api.v1.central.currencies import currency_bp
 from app.api.v1.hybrid.user_access import user_access_bp
-from app.api.v1.hybrid.goal_categories import goal_categories_blueprint
-from app.api.v1.client.goal_recalculation import allocations_blueprint
+from app.api.v1.goals.goal_categories import goal_categories_blueprint
+from app.api.v1.goals.goal_recalculation import allocations_blueprint
 
 # Register blueprint
 app.register_blueprint(user_blueprint)
