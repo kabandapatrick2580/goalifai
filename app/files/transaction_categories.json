@@ -92,7 +92,7 @@
             "description": "Other expenses that do not fit into the above categories."
         },
         {
-            "name" :"Surplus",
+            "name": "Savings",
             "category_type": "Income",
             "description": "Any remaining funds after all expenses, goals funds are allocated."
         },
