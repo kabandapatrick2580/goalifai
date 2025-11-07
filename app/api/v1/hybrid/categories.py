@@ -225,11 +225,15 @@ def bulk_create_categories():
     try:
         data = request.get_json()
         if not data or 'transaction_categories' not in data:
-            return jsonify({"error": "No categories data provided"}), 400
+            return jsonify({
+                "status":"error",
+                "message": "No categories data provided"}), 400
 
         categories_data = data['transaction_categories']
         if not isinstance(categories_data, list) or not categories_data:
-            return jsonify({"error": "Categories data must be a non-empty list"}), 400
+            return jsonify({
+                "status":"error",
+                "message": "Categories data must be a non-empty list"}), 400
         
         skipped_categories = []
         created_categories = []
