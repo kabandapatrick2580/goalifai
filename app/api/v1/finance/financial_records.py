@@ -110,10 +110,14 @@ def create_financial_record(user_id):
 
 
 
-@financial_records_blueprint.route('/all/<uuid:user_id>', methods=['GET'])
-#@jwt_required()
+@financial_records_blueprint.route('/all/<uuid:user_id>', methods=['GET', 'OPTIONS'])
+@jwt_required(optional=True)
 def get_financial_records(user_id):
     """Fetch all financial records for a user."""
+
+    if request.method == 'OPTIONS':
+        return jsonify({}), 200
+
     try:
         records = FinancialRecord.get_records_by_user(user_id)
         return jsonify({

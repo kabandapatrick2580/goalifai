@@ -86,7 +86,7 @@ def login():
             current_app.logger.info(f"Invalid login attempt for email {email}, password {password}")
             return jsonify({"status": "error", "message": "Invalid email or password"}), 401
         
-
+        current_app.logger.info(f"User {email} authenticated successfully")
         # Create JWT token
         access_token = create_access_token(identity=str(user.user_id))
         refresh_token = create_refresh_token(identity=str(user.user_id))
