@@ -96,10 +96,6 @@ def update_profile(profile_id):
             "expected_monthly_savings": profile.expected_monthly_savings,
             "base_allocation_percentage": profile.base_allocation_percentage,
         }), 200
-    except NoResultFound:
-        return jsonify({"error": "Profile not found"}), 404
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
     except Exception as e:
         current_app.logger.error(f"Error updating financial profile: {str(e)}")
         current_app.logger.error(traceback.format_exc())
