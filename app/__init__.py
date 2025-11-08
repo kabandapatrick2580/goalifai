@@ -53,13 +53,13 @@ handler.setFormatter(formatter)
 app.logger.addHandler(handler)
 app.logger.setLevel(logging.INFO)
 
-from app.api.v1.client.users import user_blueprint
+from app.api.v1.user.users import user_blueprint
 from app.api.v1.goals.goals import goal_blueprint
 from app.api.v1.finance.fin_profile import fin_profile
 from app.api.v1.hybrid.categories import categories_blueprint
-from app.api.v1.central.category_types import cat_types_blueprint
-from app.api.v1.client.degree import degree_blue_print
-from app.api.v1.client.education import education_blueprint
+from app.api.v1.finance.category_types import cat_types_blueprint
+from app.api.v1.user.degree import degree_blue_print
+from app.api.v1.user.education import education_blueprint
 from app.api.v1.finance.financial_records import financial_records_blueprint
 from app.api.v1.goals.goal_status import goal_status_bp
 from app.api.v1.goals.goal_priorities import goal_priorities_blueprint

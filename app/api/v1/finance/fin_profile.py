@@ -13,7 +13,8 @@ def create_profile(user_id):
     Example:
     {
         "expected_monthly_income": 5000,
-        "expected_monthly_expenses": 3000
+        "expected_monthly_expenses": 3000,
+        "base_allocation_percentage": 50
     }
     
     """
@@ -22,9 +23,14 @@ def create_profile(user_id):
     expected_monthly_expenses = data.get('expected_monthly_expenses')
     base_allocation_percentage = data.get('base_allocation_percentage', 50)  # Default to 50% if not provided
     existing_profile = UserFinancialProfile.get_financial_profile_by_user_id(user_id)
+    
     if existing_profile:
         current_app.logger.error("Financial profile already exists for this user")
-        return None
+        return jsonify({
+            "status": "error",
+            "message": "Financial profile already exists for this user"
+            }), 400
+    
     missing_fields = [field for field, value in {
         "user_id": user_id,
         "expected_monthly_income": expected_monthly_income,
@@ -32,7 +38,10 @@ def create_profile(user_id):
     }.items() if not value]
 
     if missing_fields:
-        return jsonify({"error": f"Missing required fields: {', '.join(missing_fields)}"}), 400
+        return jsonify({
+            "status": "error",
+            "message": f"Missing required fields: {', '.join(missing_fields)}"
+            }), 400
 
 
     profile = UserFinancialProfile.create_financial_profile(
