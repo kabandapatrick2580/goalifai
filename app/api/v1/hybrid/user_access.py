@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import traceback
 import os
 
-user_access_bp = Blueprint('user_access_api', __name__)
+user_access_bp = Blueprint('user_access_api', __name__, url_prefix='/api/v1/auth')
 
 @user_access_bp.route('/signup', methods=['POST'])
 def signup():
@@ -85,6 +85,7 @@ def login():
         if user is None or not User.check_password(user, password):
             current_app.logger.info(f"Invalid login attempt for email {email}, password {password}")
             return jsonify({"status": "error", "message": "Invalid email or password"}), 401
+        
 
         # Create JWT token
         access_token = create_access_token(identity=str(user.user_id))

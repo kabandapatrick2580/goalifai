@@ -4,8 +4,8 @@ from app import db
 from datetime import datetime
 import traceback
 
-user_blueprint = Blueprint('user_api', __name__)
-@user_blueprint.route('/api/v1/users', methods=['POST'])
+user_blueprint = Blueprint('user_api', __name__, url_prefix='/api/v1/users')
+@user_blueprint.route('/create', methods=['POST'])
 def create_user():
     try:
         data = request.get_json()
@@ -59,7 +59,7 @@ def create_user():
 
 
 """List of all users"""
-@user_blueprint.route('/api/v1/users', methods=['GET'])
+@user_blueprint.route('/list', methods=['GET'])
 def users_list():
     try:
         users = User.get_all_users()
@@ -97,3 +97,24 @@ def users_list():
                 "status": "error",
                 "message": "User retrieval failed"
             }), 500
+
+"""update user info"""
+@user_blueprint.route('/update/<uuid:user_id>', methods=['PUT'])
+def update_user(user_id):
+    try:
+        data = request.get_json()
+        user = User.update_user(user_id, **data)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        return jsonify(
+            {
+                "status": "success",
+                "message": "User updated successfully"
+            }
+        ), 200
+
+    except Exception as e:
+        current_app.logger.error(f"An error occurred: {str(e)}")
+        current_app.logger.error(traceback.format_exc())
+        return jsonify({"error": str(e)}), 500

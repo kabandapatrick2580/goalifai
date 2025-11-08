@@ -133,6 +133,25 @@ class User(db.Model):
             return None
     
     @staticmethod
+    def update_user(user_id, **kwargs):
+        """Update user attributes dynamically."""
+        user = User.query.filter_by(user_id=user_id).first()
+
+        if not user:
+            raise NoResultFound("User not found")
+
+        # Update attributes dynamically
+        allowed_fields = {'first_name', 'last_name', 'date_of_birth', 'country_of_residence', 'currency', 'estimated_monthly_income', 'estimated_monthly_expenses', 'savings', 'is_employed', 'employment_status', 'email', 'password'}
+        for key, value in kwargs.items():
+            if key in allowed_fields and value is not None:
+                if key == 'password':
+                    value = User.set_password(value)
+                setattr(user, key, value)
+
+        db.session.commit()
+        return user
+
+    @staticmethod
     def get_all_users():
         return User.query.all()
 
