@@ -64,7 +64,7 @@ from app.api.v1.finance.financial_records import financial_records_blueprint
 from app.api.v1.goals.goal_status import goal_status_bp
 from app.api.v1.goals.goal_priorities import goal_priorities_blueprint
 from app.api.v1.central.currencies import currency_bp
-from app.api.v1.hybrid.user_access import user_access_bp
+from app.api.v1.user.user_access import user_access_bp
 from app.api.v1.goals.goal_categories import goal_categories_blueprint
 from app.api.v1.goals.goal_recalculation import allocations_blueprint
 from app.routes.pages import pages

@@ -107,7 +107,8 @@ def login():
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
-            "user_id": user.user_id
+            "user_id": user.user_id,
+            "timeout": os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 900) #15 minutes
         })
         set_refresh_cookies(response, refresh_token) # Set the refresh token in a secure HttpOnly cookie
 
