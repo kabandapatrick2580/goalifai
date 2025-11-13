@@ -131,9 +131,7 @@ class User(db.Model):
             current_app.logger.error(f"Error creating user:{str(e)}")
             current_app.logger.error(traceback.format_exc())
             return None
-    @staticmethod
-    def get_user_by_id(user_id):
-        return User.query.filter_by(user_id=user_id).first()
+
     @staticmethod
     def update_user(user_id, **kwargs):
         """Update user attributes dynamically."""
