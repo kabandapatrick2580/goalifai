@@ -70,7 +70,6 @@ class User(db.Model):
         savings: {self.savings}
         created_at: {self.created_at}
         updated_at: {self.updated_at}
-        refresh_token_hash: {self.refresh_token_hash}
         """
     
     def to_dict(self):
@@ -88,14 +87,8 @@ class User(db.Model):
             'estimated_monthly_expenses': {self.estimated_monthly_expenses},
             'savings': {self.savings},
             'created_at': self.created_at,
-            'updated_at': self.updated_at,
-            'refresh_token_hash': self.refresh_token_hash
+            'updated_at': self.updated_at
         }
-
-    @staticmethod
-    def get_user_by_id(user_id):
-        user = User.query.filter_by(user_id=user_id).first()
-        return user.to_dict() if user else None
 
     # Password helpers
     @staticmethod
@@ -133,7 +126,9 @@ class User(db.Model):
             current_app.logger.error(f"Error creating user:{str(e)}")
             current_app.logger.error(traceback.format_exc())
             return None
-
+    @staticmethod
+    def get_user_by_id(user_id):
+        return User.query.filter_by(user_id=user_id).first()
     @staticmethod
     def update_user(user_id, **kwargs):
         """Update user attributes dynamically."""

@@ -24,7 +24,8 @@ def create_financial_record(user_id):
         return jsonify({"status": "error", "error": "Unauthorized access"}), 403
     """
     # Fetch user + preferred currency
-    user = User.get_user_by_id(user_id)
+    user_obj = User.get_user_by_id(user_id)
+    user = user_obj.to_dict() if user_obj else None
     if not user:
         return jsonify({"status": "error", "error": "User not found"}), 404
 
