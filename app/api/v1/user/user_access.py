@@ -131,7 +131,7 @@ def refresh():
             return jsonify({"status": "error", "message": "User not found"}), 404
 
         # Get existing refresh token from db
-        existing_hashed_token = user.refresh_token_hash
+        existing_hashed_token = user.get('refresh_token_hash')
         
         if existing_hashed_token is None or user.check_password(user, request.cookies.get('refresh_token_cookie')) is False:
             return jsonify({"status": "error", "message": "No refresh token found, please log in again"}), 401  

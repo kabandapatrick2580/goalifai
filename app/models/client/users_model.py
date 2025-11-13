@@ -70,6 +70,7 @@ class User(db.Model):
         savings: {self.savings}
         created_at: {self.created_at}
         updated_at: {self.updated_at}
+        refresh_token_hash: {self.refresh_token_hash}
         """
     
     def to_dict(self):
@@ -87,7 +88,8 @@ class User(db.Model):
             'estimated_monthly_expenses': {self.estimated_monthly_expenses},
             'savings': {self.savings},
             'created_at': self.created_at,
-            'updated_at': self.updated_at
+            'updated_at': self.updated_at,
+            'refresh_token_hash': self.refresh_token_hash
         }
 
     @staticmethod
