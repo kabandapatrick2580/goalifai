@@ -5,12 +5,12 @@ from app.models.central.central import Currency
 from flask import current_app
 
 
-currency_bp = Blueprint('currency_bp', __name__)
+currency_bp = Blueprint('currency_bp', __name__, url_prefix='/api/v1/currencies')
 
 # External API URL for currencies (Open Exchange Rates API)
 API_URL = "https://openexchangerates.org/api/currencies.json"  # Example API that returns currency names and codes
 
-@currency_bp.route('/api/save_currencies', methods=['GET'])
+@currency_bp.route('/save_json', methods=['GET'])
 def save_currencies_to_json():
     try:
         # Step 1: Fetch data from the currency API
@@ -97,7 +97,7 @@ def get_currency_symbol(code):
     return currency_symbols.get(code, "")  # Default to empty string if symbol not found
 
 
-@currency_bp.route('/api/currencies', methods=['POST'])
+@currency_bp.route('/save_db', methods=['POST'])
 def send_currencies_from_file_to_db():
     try:
         with open('currencies.json', 'r') as json_file:
@@ -136,7 +136,7 @@ def send_currencies_from_file_to_db():
         return jsonify({"error": str(e)}), 500
     
 
-@currency_bp.route('/api/currencies', methods=['GET'])
+@currency_bp.route('/list', methods=['GET'])
 def get_currencies():
     try:
         currencies = Currency.get_all_currencies()
@@ -147,7 +147,7 @@ def get_currencies():
         current_app.logger.error(f"Error fetching currencies: {str(e)}")
         return jsonify({"status": "error", "message": "An error occurred while fetching currencies"}), 500
     
-@currency_bp.route('/api/currencies/<uuid:currency_id>', methods=['GET'])
+@currency_bp.route('/fetch/<uuid:currency_id>', methods=['GET'])
 def get_currency(currency_id):
     try:
         currency = Currency.get_currency_by_id(currency_id)
@@ -159,7 +159,7 @@ def get_currency(currency_id):
         return jsonify({"status": "error", "message": "An error occurred while fetching the currency"}), 500
     
 
-@currency_bp.route('/api/currencies/<uuid:currency_id>', methods=['DELETE'])
+@currency_bp.route('/delete/<uuid:currency_id>', methods=['DELETE'])
 def delete_currency(currency_id):
     try:
         currency = Currency.get_currency_by_id(currency_id)
@@ -172,7 +172,7 @@ def delete_currency(currency_id):
         current_app.logger.error(f"Error deleting currency: {str(e)}")
         return jsonify({"status": "error", "message": "An error occurred while deleting the currency"}), 500
     
-@currency_bp.route('/api/currency/update/<uuid:currency_id>', methods=['PUT'])
+@currency_bp.route('/update_currency/<uuid:currency_id>', methods=['PUT'])
 def update_currency(currency_id):
     try:
         data = request.get_json()
@@ -198,7 +198,7 @@ def update_currency(currency_id):
         current_app.logger.error(f"Error updating currency: {str(e)}")
         return jsonify({"status": "error", "message": "An error occurred while updating the currency"}), 500
     
-@currency_bp.route('/api/currency/create', methods=['POST'])
+@currency_bp.route('/create', methods=['POST'])
 def create_currency():
     try:
         data = request.get_json()
