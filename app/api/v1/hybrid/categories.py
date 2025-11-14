@@ -7,7 +7,7 @@ from sqlalchemy.orm.exc import NoResultFound
 import json
 
 categories_blueprint = Blueprint('categories_api', __name__, url_prefix='/api/v1/categories')
-@categories_blueprint.route('/  create', methods=['POST'])
+@categories_blueprint.route('/create', methods=['POST'])
 def create_category():
     try:
         data = request.get_json()
