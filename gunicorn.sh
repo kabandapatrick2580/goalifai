@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # Activate virtual environment
-if [ -f "./local-engine/bin/activate" ]; then
+if [ -f "./local-env/bin/activate" ]; then
     echo "Activating virtual environment..."
-    source ./local-engine/bin/activate
+    source ./local-env/bin/activate
 else
     echo "Virtual environment not found! Exiting."
     exit 1

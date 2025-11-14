@@ -28,5 +28,6 @@ app/models/__pycache__/central.cpython-312.pyc
 local-env/
 local_env/
 local_engine/
+local-engine/
 *.log
 app.log
