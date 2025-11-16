@@ -5,7 +5,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from datetime import datetime, timedelta
 import traceback
 import os
-
+from app.models.central.central import Currency
 user_access_bp = Blueprint('user_access_api', __name__, url_prefix='/api/v1/auth')
 
 @user_access_bp.route('/signup', methods=['POST'])
@@ -90,7 +90,7 @@ def login():
         # Create JWT token
         access_token = create_access_token(identity=str(user.user_id))
         refresh_token = create_refresh_token(identity=str(user.user_id))
-
+        
         try:
             # hash refresh token in the database
             hashed_refresh_token = User.set_password(refresh_token)
@@ -100,6 +100,8 @@ def login():
             current_app.logger.error(f"An error occurred while saving refresh token: {str(e)}")
             return jsonify({"status": "error", "message": "An error occurred while processing login"}), 500
 
+        currency = Currency.get_currency_by_code(user.currency)
+        default_currency = currency.id
         response = jsonify({
             "status": "success", 
             "message": "Login successful", 
@@ -108,11 +110,13 @@ def login():
             "last_name": user.last_name,
             "email": user.email,
             "user_id": user.user_id,
+            "currency_id": str(default_currency),
             "timeout": os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 900) #15 minutes
         })
         set_refresh_cookies(response, refresh_token) # Set the refresh token in a secure HttpOnly cookie
 
         current_app.logger.info(f"User {email} logged in successfully")
+        current_app.logger.info(f"Response data: {response.get_json()}")
         current_app.logger.info(f"Response headers: {response.headers}")
         return response, 200
 
