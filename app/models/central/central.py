@@ -1,6 +1,6 @@
 from psycopg2 import IntegrityError
 from app import db
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm.exc import NoResultFound
 import uuid
 from datetime import datetime
@@ -10,7 +10,6 @@ from datetime import datetime, timezone
 from flask import current_app
 from sqlalchemy import DateTime as Datetime
 from app import db
-from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import datetime
 import traceback
@@ -267,26 +266,32 @@ class Currency(db.Model):
             return None
         
 class ExpenseOrientation(db.Model):
-    """Model for expense orientations, e.g. 'Work', 'Personal development', 'Essentials', 'Leisure', 'Social responsibility'."""
     __tablename__ = 'expense_orientations'
-    
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    name = db.Column(db.String(255), unique=True, nullable=False)
-    description = db.Column(db.Text, nullable=True)  # Optional description of the expense orientation
+
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.id'), nullable=True)
+    slug = db.Column(db.String(100), unique=True, nullable=False)
+    name = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.String, nullable=True)
+    examples = db.Column(JSONB, default=list)   # stored as JSON array
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
-    expenses = db.relationship('Expense', back_populates='expense_orientation')
+
+    user = db.relationship('User', back_populates='expense_orientations')
 
     def __repr__(self):
-        return f"<ExpenseOrientation(id={self.id}, name={self.name})>"
-    
+        return f"<ExpenseOrientation(name={self.name}, slug={self.slug})>"
+
     def to_dict(self):
         return {
-            'id': str(self.id),
-            'name': self.name,
-            'description': self.description,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
+            "id": str(self.id),
+            "slug": self.slug,
+            "name": self.name,
+            "description": self.description,
+            "examples": self.examples,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+            "user_id": str(self.user_id) if self.user_id else None
         }
     
     @staticmethod
@@ -301,11 +306,24 @@ class ExpenseOrientation(db.Model):
         return ExpenseOrientation.query.filter_by(name=name.strip().lower()).first()
     
     @staticmethod
-    def create_orientation(name, description=None):
+    def create_orientation(**kwargs):
         """Create a new expense orientation."""
+        name = kwargs.get('name')
+        description = kwargs.get('description', None)
+        examples = kwargs.get('examples', [])
+        
+        if not name:
+            return None
+        
         if ExpenseOrientation.get_orientation_by_name(name):
-            raise ValueError("Expense orientation with this name already exists.")
-        orientation = ExpenseOrientation(name=name.strip().lower(), description=description)
+            return None  # Orientation with this name already exists
+        
+        orientation = ExpenseOrientation(
+            name=name.strip().lower(),
+            slug=name.strip().lower().replace(" ", "-"),
+            description=description,
+            examples=examples
+        )
         db.session.add(orientation)
         db.session.commit()
         return orientation
@@ -343,21 +361,27 @@ class ExpenseOrientation(db.Model):
     
     @staticmethod
     def bulk_create_orientations(orientations):
-        """Bulk create expense orientations from a list of dictionaries.
-            FORMAT: [{"name": "Work", "description": "Expenses related to work"}, ...]
-        """
+        """Bulk create expense orientations."""
         created_orientations = []
         for orientation_data in orientations:
             name = orientation_data.get('name')
             description = orientation_data.get('description', None)
+            examples = orientation_data.get('examples', [])
+            
             if not name:
-                continue  # Skip if name is not provided
+                continue
+            
             if ExpenseOrientation.get_orientation_by_name(name):
                 continue  # Skip if orientation with this name already exists
-            orientation = ExpenseOrientation(name=name.strip().lower(), description=description)
+            
+            orientation = ExpenseOrientation(
+                name=name.strip().lower(),
+                slug=name.strip().lower().replace(" ", "-"),
+                description=description,
+                examples=examples
+            )
             db.session.add(orientation)
             created_orientations.append(orientation)
         
         db.session.commit()
         return created_orientations
-

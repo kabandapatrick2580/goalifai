@@ -8,10 +8,12 @@ def create_expense_orientation():
     data = request.get_json()
     name = data.get('name')
     description = data.get('description')
+    examples = data.get('examples', [])
     try:
         new_orientation = ExpenseOrientation.create_orientation(
             name=name,
-            description=description
+            description=description,
+            examples=examples
         )
         return jsonify(
             {
@@ -154,3 +156,25 @@ def get_expense_orientation_by_name(name):
             }
         ), 400
     
+
+@expense_orientation_bp.route('/bulk_create', methods=['POST'])
+def bulk_create_expense_orientations():
+    data = request.get_json()
+    orientations = data.get('expense_orientations', [])
+    try:
+        created_orientations = ExpenseOrientation.bulk_create_orientations(orientations)
+        return jsonify(
+            {
+                "status": "success",
+                "message": "Expense orientations created successfully",
+                "data": [orientation.to_dict() for orientation in created_orientations]
+            }
+        )
+    except Exception as e:
+        current_app.logger.error(f"Error bulk creating expense orientations: {str(e)}")
+        return jsonify(
+            {
+                "status": "error",
+                "message": str(e)
+            }
+        ), 400

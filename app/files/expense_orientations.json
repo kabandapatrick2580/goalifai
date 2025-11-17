@@ -1,0 +1,54 @@
+{
+  "orientations": [
+    {
+      "name": "Essentials",
+      "description": "Basic living costs required for survival and household stability.",
+      "examples": ["groceries", "rent", "utilities", "basic clothing", "hygiene products"]
+    },
+    {
+      "name": "Leisure",
+      "description": "Spending for entertainment, hobbies, or relaxation.",
+      "examples": ["movies", "vacations", "dining out for fun", "video games"]
+    },
+    {
+      "name": "Work",
+      "description": "Expenses supporting employment, income generation, or productivity.",
+      "examples": ["fuel for commuting", "work tools", "office supplies", "software subscriptions"]
+    },
+    {
+      "name": "Education & Growth",
+      "description": "Expenses for personal or professional learning and development.",
+      "examples": ["courses", "books", "certifications", "seminars"]
+    },
+    {
+      "name": "Health & Wellness",
+      "description": "Expenses for maintaining physical or mental health.",
+      "examples": ["doctor visits", "medications", "therapy", "gym memberships"]
+    },
+    {
+      "name": "Obligation",
+      "description": "Mandatory or unavoidable payments.",
+      "examples": ["taxes", "insurance premiums", "loan repayments", "fines"]
+    },
+    {
+      "name": "Emergency",
+      "description": "Unexpected or urgent expenses that cannot be postponed.",
+      "examples": ["car breakdown", "urgent medical care", "home repairs"]
+    },
+    {
+      "name": "Social Connection",
+      "description": "Expenses made to maintain relationships or social bonds.",
+      "examples": ["gifts", "friend gatherings", "celebration contributions"]
+    },
+    {
+      "name": "Giving & Donations",
+      "description": "Spending to support charitable causes or community initiatives.",
+      "examples": ["church donations", "community projects", "charity contributions"]
+    },
+    {
+      "name": "Personal Development",
+      "description": "Expenses aimed at self-improvement or long-term benefit.",
+      "examples": ["coaching", "mentorship programs", "productivity tools"]
+    }
+  ]
+}
