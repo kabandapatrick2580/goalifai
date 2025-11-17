@@ -68,6 +68,7 @@ from app.api.v1.user.user_access import user_access_bp
 from app.api.v1.goals.goal_categories import goal_categories_blueprint
 from app.api.v1.goals.goal_recalculation import allocations_blueprint
 from app.routes.pages import pages
+from app.api.v1.central.expense_orientation import expense_orientation_bp
 
 # Register blueprint
 app.register_blueprint(user_blueprint)
@@ -85,3 +86,4 @@ app.register_blueprint(user_access_bp)
 app.register_blueprint(goal_categories_blueprint)
 app.register_blueprint(allocations_blueprint)
 app.register_blueprint(pages)
+app.register_blueprint(expense_orientation_bp)

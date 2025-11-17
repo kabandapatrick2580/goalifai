@@ -299,11 +299,12 @@ class FinancialRecord(db.Model):
     currency = db.Column(UUID(as_uuid=True), db.ForeignKey("currencies.id"), nullable=True)
     expected_transaction = db.Column(db.Boolean, default=True, nullable=False)  # True if expected, False if actual
     is_allocation_transaction = db.Column(db.Boolean, default=False, nullable=False)  # True if part of goal allocation
+    expense_orientation_id = db.Column(UUID(as_uuid=True), db.ForeignKey("expense_orientations.id"), nullable=True)
     # Relationships
     user = db.relationship("User", back_populates="financial_records")
     category = db.relationship("Categories", back_populates="financial_records")
     currency_rel = db.relationship("Currency", backref="financial_records", lazy=True)
-    expense_orientation = db.relationship("ExpenseOrientation", back_populates="financial_records", lazy=True)
+    expense_orientation = db.relationship("ExpenseOrientation", back_populates="transaction", lazy=True)
 
 
     def __repr__(self):

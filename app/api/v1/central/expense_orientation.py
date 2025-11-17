@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app
 from app.models.central.central import ExpenseOrientation
 
-expense_orientation_bp = Blueprint('expense_orientation', __name__, url_prefix='/api/v1/central/expense_orientation')
+expense_orientation_bp = Blueprint('expense_orientation', __name__, url_prefix='/api/v1/expense_orientation')
 
 @expense_orientation_bp.route('/create', methods=['POST'])
 def create_expense_orientation():
@@ -30,29 +30,7 @@ def create_expense_orientation():
                 "message": str(e)
             }
         ), 400
-    
-@expense_orientation_bp.route('/bulk_create', methods=['POST'])
-def bulk_create_expense_orientations():
-    data = request.get_json()
-    orientations = data.get('orientations', [])
-    try:
-        created_orientations = ExpenseOrientation.bulk_create_orientations(orientations)
-        return jsonify(
-            {
-                "status": "success",
-                "message": "Expense orientations created successfully",
-                "data": [orientation.to_dict() for orientation in created_orientations]
-            }
-        )
-    except Exception as e:
-        current_app.logger.error(f"Error bulk creating expense orientations: {str(e)}")
-        return jsonify(
-            {
-                "status": "error",
-                "message": str(e)
-            }
-        ), 400
-    
+
 @expense_orientation_bp.route('/list', methods=['GET'])
 def list_expense_orientations():
     try:

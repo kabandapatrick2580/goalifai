@@ -279,7 +279,7 @@ class ExpenseOrientation(db.Model):
     transaction = db.relationship('FinancialRecord', back_populates='expense_orientation')
 
     def __repr__(self):
-        return f"<ExpenseOrientation(name={self.name}, slug={self.slug})>"
+        return f"<ExpenseOrientation(name={self.name}, id={self.id})>"
 
     def to_dict(self):
         return {
@@ -318,7 +318,6 @@ class ExpenseOrientation(db.Model):
         
         orientation = ExpenseOrientation(
             name=name.strip().lower(),
-            slug=name.strip().lower().replace(" ", "-"),
             description=description,
             examples=examples
         )
@@ -396,7 +395,6 @@ class ExpenseOrientation(db.Model):
             
             orientation = ExpenseOrientation(
                 name=name.strip().lower(),
-                slug=name.strip().lower().replace(" ", "-"),
                 description=description,
                 examples=examples
             )
