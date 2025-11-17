@@ -62,10 +62,10 @@ def create_expense_orientation_by_user(user_id):
         ), 400
 
 
-@expense_orientation_bp.route('/list', methods=['GET'])
-def list_expense_orientations():
+@expense_orientation_bp.route('/list/<uuid:user_id>', methods=['GET'])
+def list_expense_orientations(user_id):
     try:
-        orientations = ExpenseOrientation.get_all_orientations()
+        orientations = ExpenseOrientation.get_all_orientations(user_id)
         return jsonify(
             {
                 "status": "success",
