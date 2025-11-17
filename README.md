@@ -502,6 +502,10 @@ elif response.json()["status"] == "expense_processed":
     protected = response.json()["protected_goals"]
 ```
 
+## Up Next
+For the purpose of AI Finance Insights and how we spend
+on ourselves, communities, Families
+
 ## Future Enhancements
 - Scheduled month-end finalization automation
 - Goal allocation forecasting
