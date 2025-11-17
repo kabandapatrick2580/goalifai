@@ -326,6 +326,33 @@ class ExpenseOrientation(db.Model):
         return orientation
     
     @staticmethod
+    def create_orientation_by_user(user_id, **kwargs):
+        """Create a new expense orientation for a specific user."""
+        name = kwargs.get('name')
+        description = kwargs.get('description', None)
+        examples = kwargs.get('examples', [])
+        
+        if not name:
+            return None
+        
+        existing_orientation = ExpenseOrientation.query.filter_by(
+            name=name.strip().lower(),
+            user_id=user_id
+        ).first()
+        if existing_orientation:
+            return None  # Orientation with this name already exists for this user
+        
+        orientation = ExpenseOrientation(
+            user_id=user_id,
+            name=name.strip().lower(),
+            description=description,
+            examples=examples
+        )
+        db.session.add(orientation)
+        db.session.commit()
+        return orientation
+
+    @staticmethod
     def get_all_orientations(user_id=None):
         """
         Fetch expense orientations:

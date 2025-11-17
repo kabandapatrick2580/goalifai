@@ -31,6 +31,37 @@ def create_expense_orientation():
             }
         ), 400
 
+
+@expense_orientation_bp.route('/create_by_user/<uuid:user_id>', methods=['POST'])
+def create_expense_orientation_by_user(user_id):
+    data = request.get_json()
+    name = data.get('name')
+    description = data.get('description')
+    examples = data.get('examples', [])
+    try:
+        new_orientation = ExpenseOrientation.create_orientation_by_user(
+            user_id=user_id,
+            name=name,
+            description=description,
+            examples=examples
+        )
+        return jsonify(
+            {
+                "status": "success",
+                "message": "Expense orientation created successfully",
+                "data": new_orientation.to_dict()
+            }
+        )
+    except Exception as e:
+        current_app.logger.error(f"Error creating expense orientation by user: {str(e)}")
+        return jsonify(
+            {
+                "status": "error",
+                "message": str(e)
+            }
+        ), 400
+
+
 @expense_orientation_bp.route('/list', methods=['GET'])
 def list_expense_orientations():
     try:
