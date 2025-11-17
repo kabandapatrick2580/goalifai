@@ -212,8 +212,6 @@ class Categories(db.Model):
         
 
         for key, value in kwargs.items():
-            if key == "category_type" and value not in allowed_types:
-                raise ValueError(f"Invalid category type: {value}")
             
             if isinstance(value, str):  # Remove leading/trailing whitespace for string inputs
                 value = value.strip()
