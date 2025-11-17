@@ -303,6 +303,8 @@ class FinancialRecord(db.Model):
     user = db.relationship("User", back_populates="financial_records")
     category = db.relationship("Categories", back_populates="financial_records")
     currency_rel = db.relationship("Currency", backref="financial_records", lazy=True)
+    expense_orientation = db.relationship("ExpenseOrientation", back_populates="financial_records", lazy=True)
+
 
     def __repr__(self):
         return f"<FinancialRecord(user_id={self.user_id}, record_type={self.record_type}, amount={self.amount}, expected={self.expected})>"

@@ -8,7 +8,7 @@ from bcrypt import hashpw, gensalt, checkpw
 import hashlib
 from datetime import datetime, timezone
 from flask import current_app
-from sqlalchemy import DateTime as Datetime
+from sqlalchemy import DateTime as Datetime, or_
 from app import db
 import uuid
 from datetime import datetime
@@ -278,6 +278,7 @@ class ExpenseOrientation(db.Model):
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     user = db.relationship('User', back_populates='expense_orientations')
+    transaction = db.relationship('FinancialRecord', back_populates='expense_orientation')
 
     def __repr__(self):
         return f"<ExpenseOrientation(name={self.name}, slug={self.slug})>"
@@ -285,7 +286,6 @@ class ExpenseOrientation(db.Model):
     def to_dict(self):
         return {
             "id": str(self.id),
-            "slug": self.slug,
             "name": self.name,
             "description": self.description,
             "examples": self.examples,
@@ -329,9 +329,31 @@ class ExpenseOrientation(db.Model):
         return orientation
     
     @staticmethod
-    def get_all_orientations():
-        """Get all expense orientations."""
-        return ExpenseOrientation.query.all()
+    def get_all_orientations(user_id=None):
+        """
+        Fetch expense orientations:
+        - If user_id is provided: global + user-defined orientations
+        - If no user_id: only global orientations
+        """
+        query = ExpenseOrientation.query
+
+        if user_id:
+            # include global (user_id IS NULL) + user-specific
+            query = query.filter(
+                or_(
+                    ExpenseOrientation.user_id == user_id,
+                    ExpenseOrientation.user_id.is_(None)
+                )
+            )
+        else:
+            # only global orientations
+            query = query.filter(ExpenseOrientation.user_id.is_(None))
+
+        # Optional: order global first
+        query = query.order_by(ExpenseOrientation.user_id.asc().nullsfirst())
+
+        return query.all()
+        
     
     @staticmethod
     def update_orientation(orientation_id, name=None, description=None):
