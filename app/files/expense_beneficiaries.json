@@ -1,0 +1,39 @@
+{
+  "beneficiaries": [
+    {
+      "name": "Self",
+      "description": "Expenses that directly benefit the user themselves.",
+      "examples": ["personal groceries", "fitness classes", "tuition for self"]
+    },
+    {
+      "name": "Family",
+      "description": "Expenses supporting immediate or extended family members.",
+      "examples": ["children's school fees", "family groceries", "parents' medical bills"]
+    },
+    {
+      "name": "Friends",
+      "description": "Expenses for social connections or helping friends.",
+      "examples": ["gifts", "friends' meals", "party contributions"]
+    },
+    {
+      "name": "Partner",
+      "description": "Expenses intended for a romantic partner.",
+      "examples": ["dining out", "gifts", "special outings"]
+    },
+    {
+      "name": "Children",
+      "description": "Expenses specifically for one's children.",
+      "examples": ["school fees", "toys", "clothes", "activities"]
+    },
+    {
+      "name": "Community",
+      "description": "Expenses benefiting the wider community or society.",
+      "examples": ["charity donations", "church tithe", "community projects"]
+    },
+    {
+      "name": "Work",
+      "description": "Expenses made for work purposes or reimbursable by the employer.",
+      "examples": ["commuting fuel", "office supplies", "software licenses"]
+    }
+  ]
+}
