@@ -265,3 +265,99 @@ class Currency(db.Model):
             db.session.rollback()
             current_app.logger.error(f"Error deleting currency: {str(e)}")
             return None
+        
+class ExpenseOrientation(db.Model):
+    """Model for expense orientations, e.g. 'Work', 'Personal development', 'Essentials', 'Leisure', 'Social responsibility'."""
+    __tablename__ = 'expense_orientations'
+    
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+    name = db.Column(db.String(255), unique=True, nullable=False)
+    description = db.Column(db.Text, nullable=True)  # Optional description of the expense orientation
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    expenses = db.relationship('Expense', back_populates='expense_orientation')
+
+    def __repr__(self):
+        return f"<ExpenseOrientation(id={self.id}, name={self.name})>"
+    
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'name': self.name,
+            'description': self.description,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
+        }
+    
+    @staticmethod
+    def get_orientation_by_id(orientation_id):
+        """Get an expense orientation by its ID."""
+        return ExpenseOrientation.query.filter_by(id=orientation_id).first()
+    
+    @staticmethod
+    def get_orientation_by_name(name):
+        """Get an expense orientation by its name."""
+        name = name.strip().lower()
+        return ExpenseOrientation.query.filter_by(name=name.strip().lower()).first()
+    
+    @staticmethod
+    def create_orientation(name, description=None):
+        """Create a new expense orientation."""
+        if ExpenseOrientation.get_orientation_by_name(name):
+            raise ValueError("Expense orientation with this name already exists.")
+        orientation = ExpenseOrientation(name=name.strip().lower(), description=description)
+        db.session.add(orientation)
+        db.session.commit()
+        return orientation
+    
+    @staticmethod
+    def get_all_orientations():
+        """Get all expense orientations."""
+        return ExpenseOrientation.query.all()
+    
+    @staticmethod
+    def update_orientation(orientation_id, name=None, description=None):
+        """Update an existing expense orientation."""
+        orientation = ExpenseOrientation.get_orientation_by_id(orientation_id)
+        if not orientation:
+            return None
+        
+        if name:
+            orientation.name = name.strip().lower()
+        if description:
+            orientation.description = description
+        
+        db.session.commit()
+        return orientation
+    
+    @staticmethod
+    def delete_orientation(orientation_id):
+        """Delete an expense orientation by its ID."""
+        orientation = ExpenseOrientation.get_orientation_by_id(orientation_id)
+        if not orientation:
+            return None
+        
+        db.session.delete(orientation)
+        db.session.commit()
+        return orientation
+    
+    @staticmethod
+    def bulk_create_orientations(orientations):
+        """Bulk create expense orientations from a list of dictionaries.
+            FORMAT: [{"name": "Work", "description": "Expenses related to work"}, ...]
+        """
+        created_orientations = []
+        for orientation_data in orientations:
+            name = orientation_data.get('name')
+            description = orientation_data.get('description', None)
+            if not name:
+                continue  # Skip if name is not provided
+            if ExpenseOrientation.get_orientation_by_name(name):
+                continue  # Skip if orientation with this name already exists
+            orientation = ExpenseOrientation(name=name.strip().lower(), description=description)
+            db.session.add(orientation)
+            created_orientations.append(orientation)
+        
+        db.session.commit()
+        return created_orientations
+
