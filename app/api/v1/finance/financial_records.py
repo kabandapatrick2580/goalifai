@@ -10,6 +10,7 @@ from app.models.central.central import Currency
 from app.models.client.users_model import User
 # Validate amount
 from decimal import Decimal, InvalidOperation
+from app.models.central.central import ExpenseOrientation
 
 
 financial_records_blueprint = Blueprint('financial_record_api', __name__, url_prefix='/api/v1/financial_records')
@@ -48,20 +49,20 @@ def create_financial_record(user_id):
         try:
             category_id_uuid = uuid.UUID(data["category_id"])
         except ValueError:
-            return jsonify({"status": "error", "error": "Invalid category_id format"}), 400
+            return jsonify({"status": "error", "message": "Invalid category_id format"}), 400
 
         category = Categories.query.get(category_id_uuid)
         if not category:
-            return jsonify({"status": "error", "error": "Invalid category"}), 400
+            return jsonify({"status": "error", "message": "Invalid category"}), 400
 
 
         try:
             amount = Decimal(str(data["amount"])).quantize(Decimal("0.01"))
         except (InvalidOperation, ValueError):
-            return jsonify({"status": "error", "error": "Invalid amount format"}), 400
+            return jsonify({"status": "error", "message": "Invalid amount format"}), 400
 
         if amount <= 0:
-            return jsonify({"status": "error", "error": "Amount must be positive"}), 400
+            return jsonify({"status": "error", "message": "Amount must be positive"}), 400
 
         # Resolve currency
         currency_id = None
@@ -78,7 +79,19 @@ def create_financial_record(user_id):
         elif user_currency_id:
             currency_id = user_currency_id
         else:
-            return jsonify({"status": "error", "error": "Currency is required"}), 400
+            return jsonify({"status": "error", "message": "Currency is required"}), 400
+
+        expense_orientation_id = None
+        if data.get("expense_orientation_id"):
+            try:
+                expense_orientation_uuid = uuid.UUID(data["expense_orientation_id"])
+            except ValueError:
+                return jsonify({"status": "error", "message": "Invalid expense_orientation_id format"}), 400
+
+            expense_orientation = ExpenseOrientation.get_orientation_by_id(expense_orientation_uuid)
+            if not expense_orientation:
+                return jsonify({"status": "error", "message": "Invalid expense orientation"}), 400
+            expense_orientation_id = expense_orientation.id
 
         # Create record
         new_record = FinancialRecord.create_record(
@@ -88,7 +101,8 @@ def create_financial_record(user_id):
             recorded_at=datetime.fromisoformat(data["recorded_at"]),
             description=data.get("description"),
             currency_id=currency_id if currency_id else None,
-            expected_transaction=data.get("expected_transaction", False)
+            expected_transaction=data.get("expected_transaction", False),
+            expense_orientation_id=expense_orientation_id
         )
 
         if new_record:

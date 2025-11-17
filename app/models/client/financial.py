@@ -326,10 +326,12 @@ class FinancialRecord(db.Model):
             "currency": str(self.currency) if self.currency else None,
             "currency_code": self.currency_rel.code if self.currency_rel else None,
             "expected_transaction": self.expected_transaction,
+            "is_allocation_transaction": self.is_allocation_transaction,
+            "expense_orientation_name": self.expense_orientation.name if self.expense_orientation else None,
         }
 
     @staticmethod
-    def create_record(user_id, category_id, amount, recorded_at, expected_transaction=False, description=None, currency_id=None, is_allocation_transaction=False):
+    def create_record(user_id, category_id, amount, recorded_at, expected_transaction=False, description=None, currency_id=None, is_allocation_transaction=False, expense_orientation_id=None):
         """Creates a new financial record (either expected or actual)."""
         try:
             new_record = FinancialRecord(
@@ -341,6 +343,7 @@ class FinancialRecord(db.Model):
                 recorded_at=recorded_at,
                 description=description.strip() if description else None,
                 is_allocation_transaction=is_allocation_transaction,
+                expense_orientation_id=expense_orientation_id,
                 created_at=datetime.now(timezone.utc)
             )
             db.session.add(new_record)
