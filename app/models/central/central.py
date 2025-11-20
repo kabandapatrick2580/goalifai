@@ -430,3 +430,144 @@ class ExpenseOrientation(db.Model):
         
         db.session.commit()
         return created_orientations
+
+class ExpenseBeneficiary(db.Model):
+    """Model for expense beneficiaries, e.g. 'Self', 'Family', 'Business', etc."""
+    __tablename__ = 'expense_beneficiaries'
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+    name = db.Column(db.String(255), unique=True, nullable=False)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=True)
+    description = db.Column(db.Text, nullable=True)  # Optional description of the beneficiary
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    user = db.relationship('User', back_populates='expense_beneficiaries')
+
+    def __repr__(self):
+        return f"<ExpenseBeneficiary(id={self.id}, name={self.name})>"
+    
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'name': self.name,
+            'user_id': str(self.user_id) if self.user_id else None,
+            'description': self.description,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
+        }
+    
+    @staticmethod
+    def create_beneficiary(name, user_id=None, description=None):
+        """Create a new expense beneficiary."""
+        try:
+            beneficiary = ExpenseBeneficiary(name=name, user_id=user_id, description=description)
+            db.session.add(beneficiary)
+            db.session.commit()
+            return beneficiary
+        except IntegrityError as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error creating expense beneficiary: {str(e)}")
+            return None
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Unexpected error creating expense beneficiary: {str(e)}")
+            return None
+        
+    @staticmethod
+    def get_beneficiary_by_id(beneficiary_id):
+        """Get an expense beneficiary by its ID."""
+        return ExpenseBeneficiary.query.filter_by(id=beneficiary_id).first()
+    
+    @staticmethod
+    def get_beneficiary_by_name(name):
+        """Get an expense beneficiary by its name."""
+        return ExpenseBeneficiary.query.filter_by(name=name.strip().lower()).first()
+    
+    @staticmethod
+    def get_all_beneficiaries(user_id=None):
+        """Get all expense beneficiaries, optionally filtered by user_id."""
+        query = ExpenseBeneficiary.query
+        if user_id:
+            query = query.filter(
+                or_(
+                    ExpenseBeneficiary.user_id == user_id,
+                    ExpenseBeneficiary.user_id.is_(None)
+                )
+            )
+        else:
+            query = query.filter(ExpenseBeneficiary.user_id.is_(None))
+        return query.all()
+    
+    @staticmethod
+    def update_beneficiary(beneficiary_id, name=None, description=None):
+        """Update an existing expense beneficiary."""
+        beneficiary = ExpenseBeneficiary.get_beneficiary_by_id(beneficiary_id)
+        if not beneficiary:
+            return None
+        
+        if name:
+            beneficiary.name = name.strip().lower()
+        if description:
+            beneficiary.description = description
+        
+        db.session.commit()
+        return beneficiary
+    
+    @staticmethod
+    def update_user_def_beneficiary(user_id, name, description=None):
+        """Update a user-defined expense beneficiary by name."""
+        beneficiary = ExpenseBeneficiary.query.filter_by(
+            user_id=user_id,
+            name=name.strip().lower()
+        ).first()
+        if not beneficiary:
+            return None
+        
+        if description:
+            beneficiary.description = description
+        
+        db.session.commit()
+        return beneficiary
+    
+    @staticmethod
+    def delete_beneficiary(beneficiary_id):
+        """Delete an expense beneficiary by its ID."""
+        beneficiary = ExpenseBeneficiary.get_beneficiary_by_id(beneficiary_id)
+        if not beneficiary:
+            return None
+        
+        db.session.delete(beneficiary)
+        db.session.commit()
+        return beneficiary
+    
+    @staticmethod
+    def bulk_create_beneficiaries(beneficiaries, user_id=None):
+        """Bulk create expense beneficiaries."""
+        created_beneficiaries = []
+        for beneficiary_data in beneficiaries:
+            name = beneficiary_data.get('name')
+            description = beneficiary_data.get('description', None)
+            
+            if not name:
+                continue
+            
+            existing_beneficiary = ExpenseBeneficiary.query.filter_by(
+                name=name.strip().lower(),
+                user_id=user_id
+            ).first()
+            if existing_beneficiary:
+                continue  # Skip if beneficiary with this name already exists for this user
+            
+            beneficiary = ExpenseBeneficiary(
+                name=name.strip().lower(),
+                user_id=user_id,
+                description=description
+            )
+            db.session.add(beneficiary)
+            created_beneficiaries.append(beneficiary)
+        
+        db.session.commit()
+        return created_beneficiaries
+    
+    
+    

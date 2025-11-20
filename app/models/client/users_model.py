@@ -56,6 +56,7 @@ class User(db.Model):
     goal_categories = db.relationship('GoalCategories', back_populates='user', cascade='all, delete')
     goal_priorities = db.relationship('GoalPriority', back_populates='users', cascade='all, delete')
     expense_orientations = db.relationship('ExpenseOrientation', back_populates='user', cascade='all, delete')
+    expense_beneficiaries = db.relationship('ExpenseBeneficiary', back_populates='user', cascade='all, delete')
 
     def __repr__(self):
         return f"""
