@@ -300,12 +300,13 @@ class FinancialRecord(db.Model):
     expected_transaction = db.Column(db.Boolean, default=True, nullable=False)  # True if expected, False if actual
     is_allocation_transaction = db.Column(db.Boolean, default=False, nullable=False)  # True if part of goal allocation
     expense_orientation_id = db.Column(UUID(as_uuid=True), db.ForeignKey("expense_orientations.id"), nullable=True)
+    expense_beneficiary_id = db.Column(UUID(as_uuid=True), db.ForeignKey("expense_beneficiaries.id"), nullable=True)
     # Relationships
     user = db.relationship("User", back_populates="financial_records")
     category = db.relationship("Categories", back_populates="financial_records")
     currency_rel = db.relationship("Currency", backref="financial_records", lazy=True)
     expense_orientation = db.relationship("ExpenseOrientation", back_populates="transaction", lazy=True)
-
+    expense_beneficiary = db.relationship("ExpenseBeneficiary", back_populates="financial_records", lazy=True)
 
     def __repr__(self):
         return f"<FinancialRecord(user_id={self.user_id}, record_type={self.record_type}, amount={self.amount}, expected={self.expected})>"
@@ -328,10 +329,11 @@ class FinancialRecord(db.Model):
             "expected_transaction": self.expected_transaction,
             "is_allocation_transaction": self.is_allocation_transaction,
             "expense_orientation_name": self.expense_orientation.name if self.expense_orientation else None,
+            "expense_beneficiary_name": self.expense_beneficiary.name if self.expense_beneficiary else None,
         }
 
     @staticmethod
-    def create_record(user_id, category_id, amount, recorded_at, expected_transaction=False, description=None, currency_id=None, is_allocation_transaction=False, expense_orientation_id=None):
+    def create_record(user_id, category_id, amount, recorded_at, expected_transaction=False, description=None, currency_id=None, is_allocation_transaction=False, expense_orientation_id=None, expense_beneficiary_id=None):
         """Creates a new financial record (either expected or actual)."""
         try:
             new_record = FinancialRecord(
@@ -344,7 +346,8 @@ class FinancialRecord(db.Model):
                 description=description.strip() if description else None,
                 is_allocation_transaction=is_allocation_transaction,
                 expense_orientation_id=expense_orientation_id,
-                created_at=datetime.now(timezone.utc)
+                created_at=datetime.now(timezone.utc),
+                expense_beneficiary_id=expense_beneficiary_id
             )
             db.session.add(new_record)
             db.session.commit()

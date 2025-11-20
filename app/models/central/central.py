@@ -443,7 +443,7 @@ class ExpenseBeneficiary(db.Model):
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     user = db.relationship('User', back_populates='expense_beneficiaries')
-
+    financial_records = db.relationship('FinancialRecord', back_populates='expense_beneficiary', cascade='all, delete')
     def __repr__(self):
         return f"<ExpenseBeneficiary(id={self.id}, name={self.name})>"
     
