@@ -1,5 +1,5 @@
 {
-  "beneficiaries": [
+  "expense_beneficiaries": [
     {
       "name": "Self",
       "description": "Expenses that directly benefit the user themselves.",

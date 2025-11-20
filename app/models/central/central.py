@@ -574,5 +574,16 @@ class ExpenseBeneficiary(db.Model):
         db.session.commit()
         return created_beneficiaries
     
+    def delete_all_beneficiaries():
+        """Delete all expense beneficiaries."""
+        try:
+            num_deleted = ExpenseBeneficiary.query.delete()
+            db.session.commit()
+            return num_deleted
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error deleting all expense beneficiaries: {str(e)}")
+            return 0
+    
 
     

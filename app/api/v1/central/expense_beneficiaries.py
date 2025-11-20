@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app
 from app.models.central.central import ExpenseBeneficiary
 
-expense_beneficiary_bp = Blueprint('expense_beneficiary', __name__, url_prefix='/api/v1/expense_beneficiary')
+expense_beneficiary_bp = Blueprint('expense_beneficiary', __name__, url_prefix='/api/v1/expense_beneficiaries')
 
 @expense_beneficiary_bp.route('/create', methods=['POST'])
 def create_expense_beneficiary():
@@ -166,6 +166,25 @@ def bulk_create_expense_beneficiaries():
         )
     except Exception as e:
         current_app.logger.error(f"Error bulk creating expense beneficiaries: {str(e)}")
+        return jsonify(
+            {
+                "status": "error",
+                "message": str(e)
+            }
+        ), 400
+
+@expense_beneficiary_bp.route('/delete_all', methods=['DELETE'])
+def delete_all_expense_beneficiaries():
+    try:
+        ExpenseBeneficiary.delete_all_beneficiaries()
+        return jsonify(
+            {
+                "status": "success",
+                "message": "All expense beneficiaries deleted successfully"
+            }
+        )
+    except Exception as e:
+        current_app.logger.error(f"Error deleting all expense beneficiaries: {str(e)}")
         return jsonify(
             {
                 "status": "error",
