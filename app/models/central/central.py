@@ -438,6 +438,7 @@ class ExpenseBeneficiary(db.Model):
     name = db.Column(db.String(255), unique=True, nullable=False)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_id'), nullable=True)
     description = db.Column(db.Text, nullable=True)  # Optional description of the beneficiary
+    examples = db.Column(JSONB, default=list) 
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
@@ -452,6 +453,7 @@ class ExpenseBeneficiary(db.Model):
             'name': self.name,
             'user_id': str(self.user_id) if self.user_id else None,
             'description': self.description,
+            'examples': self.examples,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }
@@ -460,7 +462,7 @@ class ExpenseBeneficiary(db.Model):
     def create_beneficiary(name, user_id=None, description=None):
         """Create a new expense beneficiary."""
         try:
-            beneficiary = ExpenseBeneficiary(name=name, user_id=user_id, description=description)
+            beneficiary = ExpenseBeneficiary(name=name, user_id=user_id, description=description, examples=[])
             db.session.add(beneficiary)
             db.session.commit()
             return beneficiary
@@ -499,7 +501,7 @@ class ExpenseBeneficiary(db.Model):
         return query.all()
     
     @staticmethod
-    def update_beneficiary(beneficiary_id, name=None, description=None):
+    def update_beneficiary(beneficiary_id, name=None, description=None, examples=None):
         """Update an existing expense beneficiary."""
         beneficiary = ExpenseBeneficiary.get_beneficiary_by_id(beneficiary_id)
         if not beneficiary:
@@ -509,12 +511,13 @@ class ExpenseBeneficiary(db.Model):
             beneficiary.name = name.strip().lower()
         if description:
             beneficiary.description = description
-        
+        if examples is not None:
+            beneficiary.examples = examples
         db.session.commit()
         return beneficiary
     
     @staticmethod
-    def update_user_def_beneficiary(user_id, name, description=None):
+    def update_user_def_beneficiary(user_id, name, description=None, examples=None):
         """Update a user-defined expense beneficiary by name."""
         beneficiary = ExpenseBeneficiary.query.filter_by(
             user_id=user_id,
@@ -525,6 +528,8 @@ class ExpenseBeneficiary(db.Model):
         
         if description:
             beneficiary.description = description
+        if examples is not None:
+            beneficiary.examples = examples
         
         db.session.commit()
         return beneficiary
@@ -547,7 +552,7 @@ class ExpenseBeneficiary(db.Model):
         for beneficiary_data in beneficiaries:
             name = beneficiary_data.get('name')
             description = beneficiary_data.get('description', None)
-            
+            examples = beneficiary_data.get('examples', [])
             if not name:
                 continue
             
@@ -569,5 +574,5 @@ class ExpenseBeneficiary(db.Model):
         db.session.commit()
         return created_beneficiaries
     
-    
+
     
