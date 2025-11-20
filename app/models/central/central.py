@@ -566,7 +566,8 @@ class ExpenseBeneficiary(db.Model):
             beneficiary = ExpenseBeneficiary(
                 name=name.strip().lower(),
                 user_id=user_id,
-                description=description
+                description=description,
+                examples=examples
             )
             db.session.add(beneficiary)
             created_beneficiaries.append(beneficiary)

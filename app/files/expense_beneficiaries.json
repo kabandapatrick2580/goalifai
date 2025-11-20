@@ -13,7 +13,7 @@
     {
       "name": "Friends",
       "description": "Expenses for social connections or helping friends.",
-      "examples": ["gifts", "friends' meals", "party contributions"]
+      "examples": ["gifts", "friends' meals", "party contributions", "Visiting friends", "travel to see friends"]
     },
     {
       "name": "Partner",
