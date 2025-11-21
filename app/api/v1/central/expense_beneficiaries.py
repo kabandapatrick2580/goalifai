@@ -129,9 +129,8 @@ def get_expense_beneficiary_by_name(name):
             }
         ), 400
     
-@expense_beneficiary_bp.route('/list', methods=['GET'])
-def list_expense_beneficiaries():
-    user_id = request.args.get('user_id')
+@expense_beneficiary_bp.route('/list/<uuid:user_id>', methods=['GET'])
+def list_expense_beneficiaries(user_id):
     try:
         beneficiaries = ExpenseBeneficiary.get_all_beneficiaries(user_id=user_id)
         beneficiaries_data = [b.to_dict() for b in beneficiaries]

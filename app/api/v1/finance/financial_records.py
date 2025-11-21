@@ -10,7 +10,7 @@ from app.models.central.central import Currency
 from app.models.client.users_model import User
 # Validate amount
 from decimal import Decimal, InvalidOperation
-from app.models.central.central import ExpenseOrientation
+from app.models.central.central import ExpenseOrientation, ExpenseBeneficiary
 
 
 financial_records_blueprint = Blueprint('financial_record_api', __name__, url_prefix='/api/v1/financial_records')
@@ -92,6 +92,18 @@ def create_financial_record(user_id):
             if not expense_orientation:
                 return jsonify({"status": "error", "message": "Invalid expense orientation"}), 400
             expense_orientation_id = expense_orientation.id
+        
+        expense_beneficiary_id = None
+        if data.get("expense_beneficiary_id"):
+            try:
+                expense_beneficiary_uuid = uuid.UUID(data["expense_beneficiary_id"])
+            except ValueError:
+                return jsonify({"status": "error", "message": "Invalid expense_beneficiary_id format"}), 400
+            expense_beneficiary = ExpenseBeneficiary.get_beneficiary_by_id(expense_beneficiary_uuid)
+            if not expense_beneficiary:
+                return jsonify({"status": "error", "message": "Invalid expense beneficiary"}), 400
+            expense_beneficiary_id = expense_beneficiary.id
+            
 
         # Create record
         new_record = FinancialRecord.create_record(
@@ -102,7 +114,8 @@ def create_financial_record(user_id):
             description=data.get("description"),
             currency_id=currency_id if currency_id else None,
             expected_transaction=data.get("expected_transaction", False),
-            expense_orientation_id=expense_orientation_id
+            expense_orientation_id=expense_orientation_id,
+            expense_beneficiary_id=expense_beneficiary_id
         )
 
         if new_record:
