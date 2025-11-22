@@ -81,7 +81,7 @@ def list_expense_orientations(user_id):
             }
         ), 400
     
-@expense_orientation_bp.route('/delete/<int:orientation_id>', methods=['DELETE'])
+@expense_orientation_bp.route('/delete/<uuid:orientation_id>', methods=['DELETE'])
 def delete_expense_orientation(orientation_id):
     try:
         ExpenseOrientation.delete_orientation(orientation_id)
