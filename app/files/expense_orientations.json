@@ -43,12 +43,22 @@
     {
       "name": "Giving & Donations",
       "description": "Spending to support charitable causes or community initiatives.",
-      "examples": ["church donations", "community projects", "charity contributions"]
+      "examples": ["tithe","church donations", "community projects", "charity contributions"]
     },
     {
       "name": "Personal Development",
       "description": "Expenses aimed at self-improvement or long-term benefit.",
       "examples": ["coaching", "mentorship programs", "productivity tools"]
+    },
+    {
+      "name": "Community Support",
+      "description": "Expenses related to participating in or supporting community events and responsibilities (non-donation).",
+      "examples": ["transport to community meetings", "attending funerals", "participating in community gatherings"]
+    },
+    {
+      "name": "Faith & Spiritual",
+      "description": "Expenses related to religious or spiritual practices (non-donation).",
+      "examples": ["transport to church or mosque", "spiritual materials", "choir participation costs", "religious event attendance"]
     }
   ]
 }
