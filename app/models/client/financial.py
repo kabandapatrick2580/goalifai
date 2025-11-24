@@ -7,7 +7,7 @@ from datetime import datetime
 from datetime import datetime, timezone
 from flask import current_app
 from app import db
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 import uuid
 from datetime import datetime
 from flask import jsonify
@@ -138,6 +138,7 @@ class Categories(db.Model):
     name = db.Column(db.String(100), nullable=False)
     category_type = db.Column(db.String(255),db.ForeignKey("categories_type.name"), nullable=False, unique=False)  # Foreign key to CategoriesType.name
     description = db.Column(db.String(255), nullable=True)
+    examples = db.Column(JSONB, nullable=True)  # New column to store examples as JSONB
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     # Relationship (User can have multiple categories)
     user = db.relationship("User", back_populates="categories")
@@ -267,6 +268,25 @@ class Categories(db.Model):
             return []
         return [category.to_dict() for category in categories]
 
+    @staticmethod
+    def update_category_by_name(name, **kwargs):
+        """Update a category by its name with dynamic arguments passed as kwargs."""
+        category = Categories.query.filter(
+                db.func.lower(Categories.name) == db.func.lower(name.strip())
+            ).first()
+        
+        if not category:
+            raise NoResultFound("Category not found")
+        
+        for key, value in kwargs.items():
+            if isinstance(value, str):  # Remove leading/trailing whitespace for string inputs
+                value = value.strip()
+
+            if hasattr(category, key):  # Only update valid attributes
+                setattr(category, key, value)
+        db.session.commit()
+        return category
+    
 
 
 class FinancialRecord(db.Model):

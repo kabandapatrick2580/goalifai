@@ -4,112 +4,170 @@
         {
             "name": "Salary",
             "category_type": "Income",
-            "description": "Monthly salary income from employer."
+            "description": "Monthly salary income from employer.",
+            "examples": ["monthly paycheck", "bi-weekly salary"]
         },
         {
             "name": "Freelance Income",
             "category_type": "Income",
-            "description": "Income from freelance projects or side jobs."
+            "description": "Income from freelance projects or side jobs.",
+            "examples": ["freelance writing", "graphic design", "consulting"]
         },
         {
             "name": "Investment Income",
             "category_type": "Income",
-            "description": "Income generated from investments (e.g., dividends, interest)."
+            "description": "Income generated from investments (e.g., dividends, interest).",
+            "examples": ["dividends", "interest payments"]
         },
         {
             "name": "Rental Income",
             "category_type": "Income",
-            "description": "Income from renting out property."
+            "description": "Income from renting out property.",
+            "examples": ["apartment rent", "house rental", "item rental"]
         },
         {
             "name": "Bank Interest",
             "category_type": "Income",
-            "description": "Interest earned from savings accounts or investments."
+            "description": "Interest earned from savings accounts or investments.",
+            "examples": ["savings account interest", "investment interest"]
         },
         {
             "name": "Groceries",
             "category_type": "Expense",
-            "description": "Monthly expenses for food and household supplies."
+            "description": "Expenses for food and household supplies.",
+            "examples": ["Milk", "bread", "cleaning supplies", "fruits and vegetables", "Beverages"]
         },
         {
             "name": "Utilities",
             "category_type": "Expense",
-            "description": "Expenses for utilities like electricity, water, gas, etc."
+            "description": "Expenses for utilities like electricity, water, gas, etc.",
+            "examples": ["electricity bill", "water bill", "internet service"]
         },
         {
             "name": "Rent/Mortgage",
             "category_type": "Expense",
-            "description": "Monthly rent or mortgage payment for housing."
+            "description": "Monthly rent or mortgage payment for housing.",
+            "examples": ["monthly rent", "mortgage payment"]
         },
         {
             "name": "Transportation",
             "category_type": "Expense",
-            "description": "Expenses related to transportation, including gas, car payments, or public transit."
+            "description": "Expenses related to transportation, including gas, car payments, or public transit.",
+            "examples": ["gasoline", "bus fare", "train tickets", "car payment"]
         },
         {
             "name": "Insurance",
             "category_type": "Expense",
-            "description": "Insurance payments (e.g., health, life, car)."
+            "description": "Insurance payments (e.g., health, life, car).",
+            "examples": ["health insurance", "car insurance", "life insurance"]
         },
         {
             "name": "Entertainment",
             "category_type": "Expense",
-            "description": "Spending on leisure activities like movies, dining out, etc."
+            "description": "Spending on leisure activities like movies, dining out, etc.",
+            "examples": ["movie tickets", "concerts"]
         },
         {
             "name": "Medical",
             "category_type": "Expense",
-            "description": "Expenses related to healthcare and medical bills."
+            "description": "Expenses related to healthcare and medical bills.",
+            "examples": ["doctor visits", "medical prescriptions", "medical procedures"]
         },
         {
             "name": "Debt Repayment",
             "category_type": "Expense",
-            "description": "Payments toward credit card or loan debt."
+            "description": "Payments toward credit card or loan debt.",
+            "examples": ["credit card payment", "loan repayment"]
         },
         {
             "name": "Savings",
             "category_type": "Expense",
-            "description": "Monthly savings contribution to a bank account or investment fund."
+            "description": "Monthly savings contribution to a bank account or investment fund.",
+            "examples": ["savings account deposit", "investment fund contribution"]
         },
         {
             "name": "Taxes",
             "category_type": "Expense",
-            "description": "Income tax payments or other tax-related expenses."
+            "description": "Income tax payments or other tax-related expenses.",
+            "examples": ["income tax", "property tax"]
         },
         {
             "name": "Education",
             "category_type": "Expense",
-            "description": "Expenses related to education, such as tuition or books."
+            "description": "Expenses related to education, such as tuition or books.",
+            "examples": ["tuition fees", "textbooks", "online courses"]
         },
         {
             "name": "Gifts & Donations",
             "category_type": "Expense",
-            "description": "Money spent on gifts or charitable donations."
+            "description": "Money spent on gifts or charitable donations.",
+            "examples": ["birthday gifts", "charity donations"]
         },
         {
             "name": "Miscellaneous",
             "category_type": "Expense",
-            "description": "Other expenses that do not fit into the above categories."
-        },
-        {
-            "name": "Savings",
-            "category_type": "Income",
-            "description": "Any remaining funds after all expenses, goals funds are allocated."
+            "description": "Other expenses that do not fit into the above categories.",
+            "examples": ["pet care", "hobbies"]
         },
         {
             "name": "Deficit",
             "category_type": "Expense",
-            "description": "Any shortfall when expenses exceed income."
+            "description": "Any shortfall when expenses exceed income.",
+            "examples": ["monthly budget deficit"]
         },
         {
             "name": "Uncategorized",
             "category_type": "Expense",
-            "description": "Transactions that have not been categorized yet."
+            "description": "Transactions that have not been categorized yet.",
+            "examples": ["uncategorized transaction"]
         },
         {
             "name": "Other Income",
             "category_type": "Income",
-            "description": "Any other sources of income not listed above."
+            "description": "Any other sources of income not listed above.",
+            "examples": ["bonuses", "gifts received"]
+        },
+        {
+            "name": "Electronics & Accessories",
+            "category_type": "Expense",
+            "description": "Expenses related to purchasing electronic devices and accessories.",
+            "examples": ["smartphones", "laptops", "headphones", "chargers"]
+        },
+        {
+            "name": "Travel & Accommodation",
+            "category_type": "Expense",
+            "description": "Expenses for travel, lodging, and related costs.",
+            "examples": ["flights", "hotel stays", "car rentals"]
+        },
+        {
+            "name": "Subscriptions & Memberships",
+            "category_type": "Expense",
+            "description": "Recurring expenses for subscriptions and memberships.",
+            "examples": ["streaming services", "gym memberships", "magazine subscriptions"]
+        },
+        {
+            "name": "Home Maintenance & Repairs",
+            "category_type": "Expense",
+            "description": "Costs associated with maintaining and repairing a home.",
+            "examples": ["plumbing repairs", "electrical repairs", "roof maintenance"]
+        },
+        {
+            "name": "Clothing & Apparel",
+            "category_type": "Expense",
+            "description": "Spending on clothing and related items.",
+            "examples": ["shirts", "pants", "shoes", "accessories"]
+        },
+        {
+            "name": "Dining Out & Takeaway",
+            "category_type": "Expense",
+            "description": "Expenses for eating out at restaurants or ordering takeaway food.",
+            "examples": ["restaurant meals", "takeout orders", "food delivery"]
+        },
+        {
+            "name": "Rentals & Leases",
+            "category_type": "Expense",
+            "description": "Expenses for renting or leasing items or properties for temporary use.",
+            "examples": ["equipment rental", "vehicle lease", "property rental"]
         }
     ]
 }

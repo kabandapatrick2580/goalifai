@@ -56,7 +56,7 @@ app.logger.setLevel(logging.INFO)
 from app.api.v1.user.users import user_blueprint
 from app.api.v1.goals.goals import goal_blueprint
 from app.api.v1.finance.fin_profile import fin_profile
-from app.api.v1.hybrid.categories import categories_blueprint
+from app.api.v1.finance.categories import categories_blueprint
 from app.api.v1.finance.category_types import cat_types_blueprint
 from app.api.v1.user.degree import degree_blue_print
 from app.api.v1.user.education import education_blueprint

@@ -37,7 +37,11 @@ def create_category():
         )
         if new_category:
             current_app.logger.info(f"Category {data['name']} created successfully")
-            return jsonify({"message": "Category created successfully"}), 201
+            return jsonify({
+                "message": "Category created successfully",
+                "status": "success",
+                "category": new_category.to_dict()
+                }), 201
         if new_category is None:
             current_app.logger.error(f"An error occurred while creating the category")
             return jsonify({"error": "An error occurred while creating the category"}), 500
@@ -257,6 +261,45 @@ def bulk_create_categories():
                         "created_categories": [cat.to_dict() for cat in created_categories],
                         "skipped_categories": len(skipped_categories),
                         "status":"success"}), 201
+    except Exception as e:
+        current_app.logger.error(f"An unexpected error occurred: {str(e)}")
+        return jsonify({"error": "An unexpected error occurred", "status":"error"}), 500
+
+
+@categories_blueprint.route('/update_by_name', methods=['PUT'])
+def update_category_by_name():
+    """Update a category by its name."""
+    try:
+        # Ensure request contains JSON data
+        if not request.is_json:
+            return jsonify({"error": "Request must be JSON"}), 400
+        
+        data = request.get_json()
+
+        if not data or 'name' not in data:
+            return jsonify({"error": "No data provided or 'name' is missing"}), 400
+        
+        # Check if category exists
+        existing_category = Categories.get_category_by_name(data.get('name'))
+        current_app.logger.info(f"Existing category: {existing_category}")
+        if existing_category is None:
+            return jsonify({"error": "Category does not exist"}), 404
+        
+        # Update category
+        updated_category = Categories.update_category_by_name(
+            name=data['name'],
+            category_type=data.get('category_type' if 'category_type' in data else None, existing_category.get('category_type')),
+            description=data.get('description' if 'description' in data else None, existing_category.get('description')),
+            user_id=data.get('user_id' if 'user_id' in data else None, existing_category.get('user_id')),
+            examples=data.get('examples' if 'examples' in data else None, existing_category.get('examples'))
+        )
+        if updated_category:
+            current_app.logger.info(f"Category {existing_category.name} updated successfully")
+            return jsonify({"message": "Category updated successfully", "status":"success"}), 200
+        if updated_category is None:
+            current_app.logger.error(f"An error occurred while updating the category")
+            return jsonify({"error": "An error occurred while updating the category", "status":"error"}), 500
+        
     except Exception as e:
         current_app.logger.error(f"An unexpected error occurred: {str(e)}")
         return jsonify({"error": "An unexpected error occurred", "status":"error"}), 500
