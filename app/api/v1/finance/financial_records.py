@@ -115,7 +115,8 @@ def create_financial_record(user_id):
             currency_id=currency_id if currency_id else None,
             expected_transaction=data.get("expected_transaction", False),
             expense_orientation_id=expense_orientation_id,
-            expense_beneficiary_id=expense_beneficiary_id
+            expense_beneficiary_id=expense_beneficiary_id,
+            
         )
 
         if new_record:

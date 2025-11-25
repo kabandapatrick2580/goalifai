@@ -33,7 +33,8 @@ def create_category():
             user_id=data.get('user_id', None),
             name=data['name'],
             category_type=data['category_type'],
-            description=data.get('description', None)
+            description=data.get('description', None),
+            examples=data.get('examples', None),
         )
         if new_category:
             current_app.logger.info(f"Category {data['name']} created successfully")

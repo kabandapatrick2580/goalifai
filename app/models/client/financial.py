@@ -163,16 +163,14 @@ class Categories(db.Model):
     def create_category(**kwargs):
         """Create a new category with dynamic arguments passed as kwargs."""
         try:
-            name = kwargs.get("name")
-            category_type = kwargs.get("category_type")
-            description = kwargs.get("description", None)
-            user_id = kwargs.get("user_id", None)
             new_category = Categories(
-                name=name,
-                category_type=category_type,
-                description=description,
-                user_id=user_id
+                **kwargs
             )
+            # Validate category type
+            if 'category_type' in kwargs:
+                category_type = kwargs['category_type'].strip()
+                if not CategoriesType.query.filter_by(name=category_type).first():
+                    raise ValueError(f"Category type '{category_type}' does not exist.")
 
             db.session.add(new_category)
             db.session.commit()

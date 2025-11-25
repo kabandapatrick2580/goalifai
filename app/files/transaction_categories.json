@@ -168,6 +168,12 @@
             "category_type": "Expense",
             "description": "Expenses for renting or leasing items or properties for temporary use.",
             "examples": ["equipment rental", "vehicle lease", "property rental"]
+        },
+        {
+            "name": "Personal Care & Hygiene",
+            "category_type": "Expense",
+            "description": "Expenses related to personal care and hygiene products or services.",
+            "examples": ["haircuts", "skincare products", "toiletries"]
         }
     ]
 }
