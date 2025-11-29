@@ -1,5 +1,5 @@
 from flask import request, jsonify, Blueprint, current_app
-from app.models.client.users_model import User
+from app.models.client.users_model import User, WaitlistUser as Waitlist
 from app import db
 from datetime import datetime
 import traceback
@@ -118,3 +118,40 @@ def update_user(user_id):
         current_app.logger.error(f"An error occurred: {str(e)}")
         current_app.logger.error(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
+
+@user_blueprint.route('/add_to_waitlist', methods=['POST'])
+def add_to_waitlist():
+    try:
+        data = request.get_json()
+        required_fields = ['email']
+        # Validate required fields
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"'{field}' is required"}), 400
+            
+        # Check if user already exists
+        email = data['email'].strip().lower()
+        existing_user = User.get_user_by_email(email)
+        if existing_user:
+            current_app.logger.info(f"User with email {email} already exists")
+            return jsonify({"message": "User with this email already exists", "status": "error"}), 400
+        # Add user to waitlist
+        user = Waitlist.add_to_waitlist(email)
+        if not user:
+            current_app.logger.error(f"An error occurred while adding to waitlist")
+            return jsonify({
+                "message": "An error occurred while adding to waitlist",
+                "status": "error"
+            }), 500
+        current_app.logger.info(f"User {email} added to waitlist successfully")
+        return jsonify({
+            "message": "User added to waitlist successfully",
+            "status": "success"
+        }), 201
+    except Exception as e:
+        current_app.logger.error(f"An error occurred: {str(e)}")
+        current_app.logger.error(traceback.format_exc())
+        return jsonify({
+            "message": str(e),
+            "status": "error"
+        }), 500

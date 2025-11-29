@@ -437,3 +437,56 @@ class Education(db.Model):
         return Education.query.filter_by(user_id=user_id).all()
     
 
+class WaitlistUser(db.Model):
+    __tablename__ = 'waitlist_users'
+
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<WaitlistUser(id={self.id}, email={self.email}, created_at={self.created_at})>"
+    
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'email': self.email,
+            'created_at': self.created_at.isoformat()
+        }
+    
+    @staticmethod
+    def add_to_waitlist(email):
+        """Add a user to the waitlist."""
+        try:
+            waitlist_user = WaitlistUser(email=email)
+            db.session.add(waitlist_user)
+            db.session.commit()
+            return waitlist_user
+        except IntegrityError:
+            db.session.rollback()
+            return None  # Email already exists in the waitlist
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error adding to waitlist: {str(e)}")
+            return None
+        
+    @staticmethod
+    def get_waitlist_user_by_email(email):
+        """Get a waitlist user by email."""
+        return WaitlistUser.query.filter_by(email=email).first()
+    
+    @staticmethod
+    def get_all_waitlist_users():
+        """Get all waitlist users."""
+        return WaitlistUser.query.all()
+    
+    @staticmethod
+    def remove_from_waitlist(email):
+        """Remove a user from the waitlist by email."""
+        waitlist_user = WaitlistUser.get_waitlist_user_by_email(email)
+        if not waitlist_user:
+            return None
+        
+        db.session.delete(waitlist_user)
+        db.session.commit()
+        return waitlist_user
