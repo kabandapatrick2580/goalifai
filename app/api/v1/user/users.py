@@ -1,8 +1,10 @@
 from flask import request, jsonify, Blueprint, current_app
 from app.models.client.users_model import User, WaitlistUser as Waitlist
-from app import db
 from datetime import datetime
 import traceback
+from app import redis_client
+from app.utils.rate_limiter import rate_limiter
+
 
 user_blueprint = Blueprint('user_api', __name__, url_prefix='/api/v1/users')
 @user_blueprint.route('/create', methods=['POST'])
@@ -120,38 +122,75 @@ def update_user(user_id):
         return jsonify({"error": str(e)}), 500
 
 @user_blueprint.route('/add_to_waitlist', methods=['POST'])
+@rate_limiter(redis_client, limit=1, window=30, key_prefix="waitlist")
 def add_to_waitlist():
     try:
-        data = request.get_json()
-        required_fields = ['email']
-        # Validate required fields
-        for field in required_fields:
-            if field not in data:
-                return jsonify({"error": f"'{field}' is required"}), 400
-            
-        # Check if user already exists
-        email = data['email'].strip().lower()
-        existing_user = User.get_user_by_email(email)
+        data = request.get_json() or {}
+        email = data.get("email", "").strip().lower()
+
+        # 1️⃣ Validate email presence
+        if not email:
+            return jsonify({"error": "'email' is required"}), 400
+
+        # 2️⃣ Validate email format
+        import re
+        email_regex = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+        if not re.match(email_regex, email):
+            return jsonify({"error": "Invalid email format"}), 400
+
+        # 3️⃣ Redis rate limit (1 request / 30 sec)
+        rate_key = f"rate:waitlist:{email}"
+        if redis_client.get(rate_key):
+            return jsonify({"error": "Too many requests. Please wait before retrying."}), 429
+        redis_client.setex(rate_key, 30, "1")
+
+        # 4️⃣ Prevent duplicates
+        existing_user = Waitlist.get_waitlist_user_by_email(email)
         if existing_user:
-            current_app.logger.info(f"User with email {email} already exists")
-            return jsonify({"message": "User with this email already exists", "status": "error"}), 400
-        # Add user to waitlist
+            current_app.logger.info(f"Email {email} already in waitlist")
+            return jsonify({
+                "message": "User with this email already exists",
+                "status": "error"
+            }), 400
+
+        # 5️⃣ Add user to waitlist
         user = Waitlist.add_to_waitlist(email)
         if not user:
-            current_app.logger.error(f"An error occurred while adding to waitlist")
             return jsonify({
                 "message": "An error occurred while adding to waitlist",
                 "status": "error"
             }), 500
-        current_app.logger.info(f"User {email} added to waitlist successfully")
+
+        # 6️⃣ Generate verification token
+        from itsdangerous import URLSafeTimedSerializer
+        s = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+        token = s.dumps(email)
+
+        # Store in Redis (15 min expiration)
+        redis_client.setex(f"verify:{token}", 900, email)
+
+        # 7️⃣ Send verification email
+        verify_url = f"{current_app.config['FRONTEND_URL']}/verify-email?token={token}"
+        send_verification_email(email, verify_url)
+
+        current_app.logger.info(f"Waitlist entry created & verification sent: {email}")
+
         return jsonify({
-            "message": "User added to waitlist successfully",
+            "message": "User added to waitlist. Verification email sent.",
             "status": "success"
         }), 201
+
     except Exception as e:
-        current_app.logger.error(f"An error occurred: {str(e)}")
+        current_app.logger.error(f"Error adding to waitlist: {str(e)}")
         current_app.logger.error(traceback.format_exc())
-        return jsonify({
-            "message": str(e),
-            "status": "error"
-        }), 500
+        return jsonify({"message": "Internal server error", "status": "error"}), 500
+
+
+# ⭐ Email sender stub
+def send_verification_email(email, verify_url):
+    """
+    Replace this with your SendGrid/Mailgun logic.
+    """
+    print("Verification email would be sent to:", email, verify_url)
+
+
