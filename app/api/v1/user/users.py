@@ -1,9 +1,9 @@
-from flask import render_template, request, jsonify, Blueprint, current_app
+from flask import redirect, render_template, request, jsonify, Blueprint, current_app
 from app.models.client.users_model import User, WaitlistUser as Waitlist
 from datetime import datetime
 import traceback
 import re
-from itsdangerous import URLSafeTimedSerializer
+from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 from app import redis_client
 from app.utils.rate_limiter import rate_limiter
 from app.helpers.send_email import send_email
@@ -192,4 +192,37 @@ def send_verification_email(email, verify_url):
     current_app.logger.info(f"Verification email sent to {email}")
     return True
 
+@user_blueprint.route("/verify-email/<token>", methods=["GET"])
+def verify_email_get(token):
+    try:
+        s = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+        try:
+            email = s.loads(token, max_age=900)  # 15 min expiration
+        except SignatureExpired:
+            return redirect(f"{current_app.config['FRONTEND_URL']}/verify-email-result?status=expired")
+        except BadSignature:
+            return redirect(f"{current_app.config['FRONTEND_URL']}/verify-email-result?status=invalid")
 
+        redis_key = f"verify:{token}"
+        if not redis_client.get(redis_key):
+            return redirect(f"{current_app.config['FRONTEND_URL']}/verify-email-result?status=used")
+
+        # Prevent duplicates
+        if Waitlist.get_waitlist_user_by_email(email):
+            redis_client.delete(redis_key)
+            return redirect(f"{current_app.config['FRONTEND_URL']}/verify-email-result?status=exists")
+
+        # Add to waitlist
+        user = Waitlist.add_to_waitlist(email)
+        if not user:
+            return redirect(f"{current_app.config['FRONTEND_URL']}/verify-email-result?status=error")
+
+        # Remove token from Redis
+        redis_client.delete(redis_key)
+        current_app.logger.info(f"User added to waitlist after verification: {email}")
+
+        return redirect(f"{current_app.config['FRONTEND_URL']}/verify-email-result?status=success")
+
+    except Exception as e:
+        current_app.logger.error(f"Error verifying email: {str(e)}")
+        return redirect(f"{current_app.config['FRONTEND_URL']}/verify-email-result?status=error")

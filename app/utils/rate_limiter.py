@@ -3,7 +3,7 @@
 from functools import wraps
 from flask import request, jsonify
 
-def rate_limiter(redis_client, limit=5, window=60, key_prefix="rl"):
+def rate_limiter(redis_client, limit=5, window=10, key_prefix="rl"):
     """
     Docstring for rate_limiter
     
@@ -25,7 +25,8 @@ def rate_limiter(redis_client, limit=5, window=60, key_prefix="rl"):
 
             if current > limit:
                 return jsonify({
-                    "error": "Too many requests. Slow down."
+                    "message": f"Too many requests, please try after {window} seconds.",
+                    "status": "error"
                 }), 429
 
             return f(*args, **kwargs)
