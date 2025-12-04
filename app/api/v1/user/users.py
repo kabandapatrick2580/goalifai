@@ -1,3 +1,4 @@
+import os
 from flask import redirect, render_template, request, jsonify, Blueprint, current_app
 from app.models.client.users_model import User, WaitlistUser as Waitlist
 from datetime import datetime
@@ -204,18 +205,25 @@ def verify_email_get(token):
             return redirect(f"{current_app.config['FRONTEND_URL']}/verify-email-result?status=invalid")
 
         redis_key = f"verify:{token}"
-        if not redis_client.get(redis_key):
-            return redirect(f"{current_app.config['FRONTEND_URL']}/verify-email-result?status=used")
 
+        env = os.getenv('FLASK_ENV', 'development')
+        if env == 'production':
+            frontend_url = current_app.config['FRONTEND_URL']
+        else:
+            frontend_url = current_app.config[os.getenv('FRONTEND_URL_DEV', 'FRONTEND_URL_DEV')]
+        
+        if not redis_client.get(redis_key):
+            return redirect(f"{frontend_url}/verify-email-result?status=invalid")
+        
         # Prevent duplicates
         if Waitlist.get_waitlist_user_by_email(email):
             redis_client.delete(redis_key)
-            return redirect(f"{current_app.config['FRONTEND_URL']}/verify-email-result?status=exists")
-
+            return redirect(f"{frontend_url}/verify-email-result?status=exists")
+        
         # Add to waitlist
         user = Waitlist.add_to_waitlist(email)
         if not user:
-            return redirect(f"{current_app.config['FRONTEND_URL']}/verify-email-result?status=error")
+            return redirect(f"{frontend_url}/verify-email-result?status=error")
 
         # Remove token from Redis
         redis_client.delete(redis_key)
