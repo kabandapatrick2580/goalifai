@@ -37,6 +37,7 @@ app.config['JWT_REFRESH_TOKEN_EXPIRES'] = int(os.getenv('JWT_REFRESH_TOKEN_EXPIR
 app.config['JWT_COOKIE_SECURE'] = True if os.getenv('FLASK_ENV') == 'production' else False
 app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 app.config['JWT_HTTPONLY'] = True
+app.config['FRONTEND_URL'] = os.getenv('FRONTEND_URL', '')
 
 
 if not app.config['SQLALCHEMY_DATABASE_URI']:

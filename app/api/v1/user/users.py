@@ -1,9 +1,12 @@
-from flask import request, jsonify, Blueprint, current_app
+from flask import render_template, request, jsonify, Blueprint, current_app
 from app.models.client.users_model import User, WaitlistUser as Waitlist
 from datetime import datetime
 import traceback
+import re
+from itsdangerous import URLSafeTimedSerializer
 from app import redis_client
 from app.utils.rate_limiter import rate_limiter
+from app.helpers.send_email import send_email
 
 
 user_blueprint = Blueprint('user_api', __name__, url_prefix='/api/v1/users')
@@ -130,67 +133,63 @@ def add_to_waitlist():
 
         # 1️⃣ Validate email presence
         if not email:
-            return jsonify({"error": "'email' is required"}), 400
+            return jsonify({"status": "error", "message": "'email' is required"}), 400
 
         # 2️⃣ Validate email format
-        import re
         email_regex = r"^[\w\.-]+@[\w\.-]+\.\w+$"
         if not re.match(email_regex, email):
-            return jsonify({"error": "Invalid email format"}), 400
+            return jsonify({"status": "error", "message": "Invalid email format"}), 400
 
         # 3️⃣ Redis rate limit (1 request / 30 sec)
         rate_key = f"rate:waitlist:{email}"
         if redis_client.get(rate_key):
-            return jsonify({"error": "Too many requests. Please wait before retrying."}), 429
+            return jsonify({"status": "error", "message": "Too many requests. Please wait before retrying."}), 429
         redis_client.setex(rate_key, 30, "1")
 
         # 4️⃣ Prevent duplicates
         existing_user = Waitlist.get_waitlist_user_by_email(email)
         if existing_user:
             current_app.logger.info(f"Email {email} already in waitlist")
-            return jsonify({
-                "message": "User with this email already exists",
-                "status": "error"
-            }), 400
+            return jsonify({"status": "error", "message": "User with this email already exists"}), 400
 
-        # 5️⃣ Add user to waitlist
-        user = Waitlist.add_to_waitlist(email)
-        if not user:
-            return jsonify({
-                "message": "An error occurred while adding to waitlist",
-                "status": "error"
-            }), 500
-
-        # 6️⃣ Generate verification token
-        from itsdangerous import URLSafeTimedSerializer
+        # 5️⃣ Generate verification token
         s = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
         token = s.dumps(email)
 
-        # Store in Redis (15 min expiration)
+        # Store in Redis for 15 min (until user verifies)
         redis_client.setex(f"verify:{token}", 900, email)
 
-        # 7️⃣ Send verification email
+        # 6️⃣ Send verification email
         verify_url = f"{current_app.config['FRONTEND_URL']}/verify-email?token={token}"
-        send_verification_email(email, verify_url)
+        email_sent = send_verification_email(email, verify_url)
 
-        current_app.logger.info(f"Waitlist entry created & verification sent: {email}")
+        if not email_sent:
+            return jsonify({"status": "error", "message": "Failed to send verification email"}), 500
+
+        current_app.logger.info(f"Verification email sent for waitlist: {email}")
 
         return jsonify({
-            "message": "User added to waitlist. Verification email sent.",
-            "status": "success"
-        }), 201
+            "status": "success",
+            "message": "Verification email sent. You will be added to the waitlist after confirming your email."
+        }), 200
 
     except Exception as e:
         current_app.logger.error(f"Error adding to waitlist: {str(e)}")
         current_app.logger.error(traceback.format_exc())
-        return jsonify({"message": "Internal server error", "status": "error"}), 500
-
-
-# ⭐ Email sender stub
+        return jsonify({"status": "error", "message": "Internal server error"}), 500
+# Email sender stub
 def send_verification_email(email, verify_url):
-    """
-    Replace this with your SendGrid/Mailgun logic.
-    """
-    print("Verification email would be sent to:", email, verify_url)
+    subject = "Please verify your email address"
+    html_content = render_template(
+        "email/verify_email.html",
+        verify_url=verify_url,
+        email=email
+    )
+    success, message = send_email(email, subject, html_content)
+    if not success:
+        current_app.logger.error(f"Failed to send verification email: {message}")
+        return False
+    current_app.logger.info(f"Verification email sent to {email}")
+    return True
 
 

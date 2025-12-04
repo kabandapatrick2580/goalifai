@@ -59,6 +59,11 @@
       "name": "Faith & Spiritual",
       "description": "Expenses related to religious or spiritual practices (non-donation).",
       "examples": ["transport to church or mosque", "spiritual materials", "choir participation costs", "religious event attendance"]
+    },
+    {
+      "name": "Family Support",
+      "description": "Expenses incurred to support family members financially or through caregiving.",
+      "examples": ["childcare costs", "financial support to relatives", "elder care expenses"]
     }
   ]
 }
