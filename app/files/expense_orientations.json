@@ -1,69 +1,89 @@
 {
   "expense_orientations": [
     {
-      "name": "Essentials",
-      "description": "Basic living costs required for survival and household stability.",
-      "examples": ["groceries", "rent", "utilities", "basic clothing", "hygiene products"]
+      "name": "Survival Needs",
+      "description": "Essential expenses required for basic living, health, and day-to-day functioning.",
+      "examples": [
+        "groceries",
+        "rent",
+        "utilities",
+        "essential transportation",
+        "medical care",
+        "basic clothing",
+        "hygiene products"
+      ]
     },
     {
-      "name": "Leisure",
-      "description": "Spending for entertainment, hobbies, or relaxation.",
-      "examples": ["movies", "vacations", "dining out for fun", "video games"]
+      "name": "Lifestyle Wants",
+      "description": "Non-essential spending aimed at enjoyment, comfort, or personal preferences.",
+      "examples": [
+        "entertainment",
+        "restaurants",
+        "fashion shopping",
+        "vacations",
+        "hobbies",
+        "subscription services"
+      ]
     },
     {
-      "name": "Work",
-      "description": "Expenses supporting employment, income generation, or productivity.",
-      "examples": ["fuel for commuting", "work tools", "office supplies", "software subscriptions"]
+      "name": "Social Obligations",
+      "description": "Expenses driven by cultural, community, family, or relationship-related responsibilities.",
+      "examples": [
+        "wedding contributions",
+        "funeral support",
+        "gifts",
+        "family financial support",
+        "church or spiritual attendance transport",
+        "community participation costs"
+      ]
     },
     {
-      "name": "Education & Growth",
-      "description": "Expenses for personal or professional learning and development.",
-      "examples": ["courses", "books", "certifications", "seminars"]
+      "name": "Growth & Career",
+      "description": "Investments that improve skills, career advancement, productivity, or personal development.",
+      "examples": [
+        "courses",
+        "certifications",
+        "professional clothing",
+        "books",
+        "mentorship programs",
+        "work tools",
+        "software for productivity"
+      ]
     },
     {
-      "name": "Health & Wellness",
-      "description": "Expenses for maintaining physical or mental health.",
-      "examples": ["doctor visits", "medications", "therapy", "gym memberships"]
+      "name": "Financial Obligations",
+      "description": "Mandatory payments required to meet contractual, legal, or financial responsibilities.",
+      "examples": [
+        "taxes",
+        "loan repayments",
+        "insurance premiums",
+        "penalties and fines",
+        "debt interest payments"
+      ]
     },
     {
-      "name": "Obligation",
-      "description": "Mandatory or unavoidable payments.",
-      "examples": ["taxes", "insurance premiums", "loan repayments", "fines"]
+      "name": "Assets & Long-term Purchases",
+      "description": "Purchases that provide long-term value or utility beyond everyday consumption.",
+      "examples": [
+        "laptops",
+        "phones",
+        "furniture",
+        "home appliances",
+        "vehicle purchase",
+        "land or construction materials"
+      ]
     },
     {
-      "name": "Emergency",
-      "description": "Unexpected or urgent expenses that cannot be postponed.",
-      "examples": ["car breakdown", "urgent medical care", "home repairs"]
-    },
-    {
-      "name": "Social Connection",
-      "description": "Expenses made to maintain relationships or social bonds.",
-      "examples": ["gifts", "friend gatherings", "celebration contributions"]
-    },
-    {
-      "name": "Giving & Donations",
-      "description": "Spending to support charitable causes or community initiatives.",
-      "examples": ["tithe","church donations", "community projects", "charity contributions"]
-    },
-    {
-      "name": "Personal Development",
-      "description": "Expenses aimed at self-improvement or long-term benefit.",
-      "examples": ["coaching", "mentorship programs", "productivity tools"]
-    },
-    {
-      "name": "Community Support",
-      "description": "Expenses related to participating in or supporting community events and responsibilities (non-donation).",
-      "examples": ["transport to community meetings", "attending funerals", "participating in community gatherings"]
-    },
-    {
-      "name": "Faith & Spiritual",
-      "description": "Expenses related to religious or spiritual practices (non-donation).",
-      "examples": ["transport to church or mosque", "spiritual materials", "choir participation costs", "religious event attendance"]
-    },
-    {
-      "name": "Family Support",
-      "description": "Expenses incurred to support family members financially or through caregiving.",
-      "examples": ["childcare costs", "financial support to relatives", "elder care expenses"]
+      "name": "Business & Hustle",
+      "description": "Expenses related to operating or growing a business or side income activity.",
+      "examples": [
+        "inventory",
+        "marketing",
+        "business tools",
+        "office equipment",
+        "transport for business tasks",
+        "registration or licensing fees"
+      ]
     }
   ]
 }

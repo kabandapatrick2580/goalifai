@@ -26,14 +26,24 @@
       "examples": ["school fees", "toys", "clothes", "activities"]
     },
     {
-      "name": "Community",
-      "description": "Expenses benefiting the wider community or society.",
-      "examples": ["charity donations", "church tithe", "community projects"]
+      "name": "Faith group",
+      "description": "Expenses related to religious or spiritual groups.",
+      "examples": ["donations", "event contributions", "travel to place of worship"]
     },
     {
-      "name": "Work",
-      "description": "Expenses made for work purposes or reimbursable by the employer.",
-      "examples": ["commuting fuel", "office supplies", "software licenses"]
+      "name": "Church",
+      "description": "Expenses specifically for church-related activities or donations.",
+      "examples": ["tithes", "church events", "mission contributions"]
+    },
+    {
+      "name": "Community",
+      "description": "Expenses benefiting local or broader community groups.",
+      "examples": ["charity donations", "community event fees", "volunteering costs"]
+    },
+    {
+      "name": "Employer",
+      "description": "Expenses incurred for work purposes or reimbursable by the employer.",
+      "examples": ["business travel", "work supplies", "professional development"]
     }
   ]
 }
