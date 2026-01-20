@@ -1,7 +1,7 @@
 from flask import request, jsonify, Blueprint, current_app
 from app.models.client.users_model import User
 from app import db, jwt
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, set_refresh_cookies
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, set_refresh_cookies, make_response
 from datetime import datetime, timedelta
 import traceback
 import os
@@ -71,6 +71,16 @@ def signup():
 @user_access_bp.route('/login', methods=['POST'])
 def login():
     try:
+
+        if request.method == 'OPTIONS':
+            # This is the preflight response
+            response = make_response()
+            response.headers.add("Access-Control-Allow-Origin", "https://www.goalifai.app")
+            response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+            return response, 200
+        
+
         data = request.get_json()
         email = data.get('email')
         if email:

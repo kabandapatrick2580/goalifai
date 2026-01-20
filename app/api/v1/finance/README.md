@@ -49,15 +49,15 @@ Defines **who benefits** from the expense.
 
 **Supported Beneficiaries:**
 
-| Beneficiary   | Description                                     |
-| ------------- | ----------------------------------------------- |
-| **Self**      | Directly benefits the user.                     |
-| **Family**    | Parents, siblings, extended family.             |
-| **Friends**   | Social relationships, friendships.              |
-| **Partner**   | Romantic partner/spouse.                        |
-| **Children**  | Biological, adopted, dependents.                |
-| **Community** | Society, charity, church, public contributions. |
-| **Employer/work**      | Employer-related or job-related spending.       |
+| Beneficiary   | Description                                       |
+| ------------- | --------------------------------------------------|
+| **Self**      | Directly benefits the user.                       |
+| **Family**    | Parents, siblings, extended family.               |
+| **Friends**   | Social relationships, friendships.                |
+| **Partner**   | Romantic partner/spouse.                          |
+| **Children**  | Biological, adopted, dependents.                  |
+| **Community** | Society, charity, church, public contributions.   |
+| **Employer/work**      | Employer-related or job-related spending.|
 
 **Examples:**
 
