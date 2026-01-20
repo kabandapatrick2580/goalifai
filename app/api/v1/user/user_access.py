@@ -1,7 +1,8 @@
 from flask import request, jsonify, Blueprint, current_app
 from app.models.client.users_model import User
 from app import db, jwt
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, set_refresh_cookies, make_response
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, set_refresh_cookies
+from flask import make_response
 from datetime import datetime, timedelta
 import traceback
 import os
